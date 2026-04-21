@@ -1,62 +1,18 @@
-# 🎓 Amigo: Campus Student Service Marketplace
+# React + Vite
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![MERN](https://img.shields.io/badge/stack-MERN-green)
-![License](https://img.shields.io/badge/license-MIT-orange)
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-**Amigo** is a peer-to-peer digital marketplace designed exclusively for university ecosystems. It allows students to outsource small tasks, offer professional skills, and earn a side income—all within a trusted, verified campus community.
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## 🚀 Key Features
+## React Compiler
 
-### For Students
-* **Service Listings:** Post gigs like "Quick Printouts," "Coding Help," or "Campus Rides."
-* **Smart Discovery:** Search and filter services by category, price, or rating.
-* **In-App Messaging:** Secure chat system to coordinate task details.
-* **Trust System:** Rating and review mechanism to ensure service quality.
-* **Secure Auth:** University-restricted access using JWT and encrypted passwords.
+The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
 
-### For Admins
-* **User Management:** Monitor activity and manage student accounts.
-* **Moderation:** Review reports and remove inappropriate service listings.
+Note: This will impact Vite dev & build performances.
 
----
+## Expanding the ESLint configuration
 
-## 🛠️ Technical Stack
-
-| Layer | Technology |
-| :--- | :--- |
-| **Frontend** | React.js (Hooks, Context API) |
-| **Backend** | Node.js, Express.js |
-| **Database** | MongoDB (Atlas) |
-| **Auth** | JSON Web Tokens (JWT) & Bcrypt |
-| **Styling** | CSS3 / Styled Components |
-
----
-
-## 🏗️ Architecture
-
-Amigo follows the **MERN (MongoDB, Express, React, Node)** architecture, ensuring a smooth flow of data through RESTful APIs.
-
-
-
----
-
-## 📂 Project Structure
-
-```text
-amigo-marketplace/
-├── backend/
-│   ├── config/         # Database & Auth config
-│   ├── controllers/    # Request handling logic
-│   ├── models/         # MongoDB Schemas
-│   ├── routes/         # API Endpoints
-│   └── middleware/     # Auth & Error handlers
-├── frontend/
-│   ├── public/         # Static assets
-│   ├── src/
-│   │   ├── components/ # Reusable UI elements
-│   │   ├── pages/      # View components
-│   │   └── context/    # Global state management
-└── README.md
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
