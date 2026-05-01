@@ -1,18 +1,17 @@
 import React, { useState, useRef } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
-import { Routes, Route } from 'react-router-dom';
 import Navbar from "./Components/Landing/Navbar";
 import Hero from "./Components/Landing/Hero";
 import Dashboard from "./Components/Landing/DashBoard";
 import Footer from "./Components/Landing/Footer";
 import AmigoLanding from "./Components/Landing/AmigoLanding";
-import CuratorWorkspace from "./Components/CreateService/CuratorWorkspace";
+import CuratorWorkspace from "./services/createService";
 import "./index.css";
+import ServicePage from "./services/ServicePage.jsx";
 
 /**
  * APP COMPONENT:
  * The root component of the Amigo platform. It manages:
- * 1. Global Routing (using React Router).
  * 2. Scroll-linked animations (using Framer Motion).
  * 3. The "Locking" logic of the Navbar based on user position.
  */
@@ -120,16 +119,5 @@ export default function App() {
     </div>
   );
 
-  /* 
-     9. REACT ROUTER:
-     Defines the navigation paths for the app.
-     - "/" renders the main landing page and marketplace.
-     - "/CuratorWorkspace" renders the form to create new services.
-  */
-  return (
-    <Routes>
-      <Route path="/" element={LandingPage} />
-      <Route path="/CuratorWorkspace" element={<CuratorWorkspace />} />
-    </Routes>
-  );
+  return LandingPage;
 }

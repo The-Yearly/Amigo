@@ -1,11 +1,11 @@
 // ServicePage.jsx
 // Main service detail page. Composes all sub-components.
 
-import TopAppBar from "@/components/TopAppBar";
-import BottomNavBar from "@/components/BottomNavBar";
-import BookingCard from "@/components/BookingCard";
-import RequirementCard from "@/components/RequirementCard";
-import ReviewCard from "@/components/ReviewCard";
+import TopAppBar from "@/Components//Landing/Navbar";
+import BottomNavBar from "@/Components/Landing/Footer";
+import BookingCard from "@/Components/Services/BookingCard";
+import RequirementCard from "@/Components/Services/RequirementCard";
+import ReviewCard from "@/Components/Services/ReviewCard";
 import { ChevronRight } from "lucide-react";
 
 // ─── Static data ────────────────────────────────────────────────────────────
@@ -95,7 +95,7 @@ const CREATOR_SRC =
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function ServicePage() {
+export default function ServicePage( {service}) {
   return (
     <div className="bg-surface text-on-surface antialiased">
       <TopAppBar avatarSrc={AVATAR_SRC} />

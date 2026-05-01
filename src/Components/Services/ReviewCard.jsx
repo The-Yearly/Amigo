@@ -9,7 +9,7 @@
 //   rating        – number of filled stars (0–5)
 //   review        – review body text
 
-import StarRating from "./StarRating";
+import StarRating from "../../components/StarRating";
 
 export default function ReviewCard({
   initials,

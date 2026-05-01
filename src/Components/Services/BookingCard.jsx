@@ -9,8 +9,8 @@
 //   features     – array of { icon, label }
 //   onBook       – callback for the CTA button
 
-import StarRating from "./StarRating";
-import FeatureBadge from "./FeatureBadge";
+import StarRating from "../../components/StarRating";
+import FeatureBadge from "../../components/FeatureBadge";
 
 export default function BookingCard({
   title,
