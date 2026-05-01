@@ -1,8 +1,8 @@
 import React from "react";
-import WorkspaceSidebar from "./WorkspaceSidebar";
-import ExpertiseForm from "./ExpertiseForm";
-import Navbar from "../Landing/Navbar";
-const CuratorWorkspace = () => {
+import WorkspaceSidebar from "../Components/Services/WorkspaceSidebar";
+import ExpertiseForm from "../Components/Services/ExpertiseForm";
+import Navbar from "../Components/Landing/Navbar";
+const createService = () => {
   return (
     <div className=" stickymin-h-screen bg-[#F9F9F9] text-[#1a1a1a] font-sans">
       {/* Header */}
@@ -26,4 +26,4 @@ const CuratorWorkspace = () => {
   );
 };
 
-export default CuratorWorkspace;
+export default createService;
