@@ -11,7 +11,9 @@ export default function DashboardPage() {
 
       <main className="pt-24 pb-10 max-w-5xl mx-auto px-6">
         <section className="mb-10">
-          <h1 className="text-4xl font-black tracking-tight mb-3">Welcome to Amigo</h1>
+          <h1 className="text-4xl font-black tracking-tight mb-3">
+            Welcome to Amigo
+          </h1>
           <p className="text-tertiary max-w-2xl">
             Explore services and stay connected with your chats from one place.
           </p>
@@ -22,7 +24,9 @@ export default function DashboardPage() {
             to="/service"
             className="bg-surface-container border border-outline-variant/20 rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow"
           >
-            <p className="text-xs font-bold uppercase tracking-widest text-tertiary mb-3">Service</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-tertiary mb-3">
+              Service
+            </p>
             <h2 className="text-2xl font-bold mb-2">Graduation Photography</h2>
             <p className="text-sm text-tertiary">
               Open the full service details, requirements, and booking card.
@@ -33,7 +37,9 @@ export default function DashboardPage() {
             to="/messages"
             className="bg-surface-container border border-outline-variant/20 rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow"
           >
-            <p className="text-xs font-bold uppercase tracking-widest text-tertiary mb-3">Messages</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-tertiary mb-3">
+              Messages
+            </p>
             <h2 className="text-2xl font-bold mb-2">Chat Inbox</h2>
             <p className="text-sm text-tertiary">
               Jump into your conversations and continue chatting instantly.

@@ -8,7 +8,14 @@
 //   time       – timestamp string
 //   read       – bool, show read receipt checkmark (sent only)
 
-export default function ChatBubble({ messages = [], sent = false, avatarSrc, avatarAlt, time, read = false }) {
+export default function ChatBubble({
+  messages = [],
+  sent = false,
+  avatarSrc,
+  avatarAlt,
+  time,
+  read = false,
+}) {
   if (sent) {
     return (
       <div className="flex flex-row-reverse gap-4 max-w-[80%] ml-auto">
@@ -46,7 +53,10 @@ export default function ChatBubble({ messages = [], sent = false, avatarSrc, ava
       />
       <div className="space-y-1">
         {messages.map((msg, i) => (
-          <div key={i} className="bg-surface-container-low px-4 py-3 rounded-2xl rounded-bl-none">
+          <div
+            key={i}
+            className="bg-surface-container-low px-4 py-3 rounded-2xl rounded-bl-none"
+          >
             <p className="text-sm text-on-surface">{msg}</p>
           </div>
         ))}

@@ -100,7 +100,10 @@ export default function MessagesPage() {
         id: Date.now(),
         sent: true,
         messages: [text],
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
         read: false,
       },
     ]);
@@ -115,7 +118,9 @@ export default function MessagesPage() {
         {/* ── Left Pane: Conversations List ── */}
         <aside className="w-full md:w-96 flex flex-col bg-surface-container z-10">
           <div className="p-6">
-            <h1 className="text-2xl font-bold tracking-tight text-on-surface mb-6">Messages</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-on-surface mb-6">
+              Messages
+            </h1>
             {/* Search */}
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-tertiary text-sm">
@@ -165,7 +170,9 @@ export default function MessagesPage() {
                 <div className="absolute bottom-0 right-0 h-2.5 w-2.5 bg-green-500 rounded-full border-2 border-white" />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-on-surface">Marcus Chen</h2>
+                <h2 className="text-sm font-bold text-on-surface">
+                  Marcus Chen
+                </h2>
                 <p className="text-[10px] font-semibold text-tertiary uppercase tracking-widest">
                   Online • Local Groomer
                 </p>
@@ -173,10 +180,14 @@ export default function MessagesPage() {
             </div>
             <div className="flex gap-2">
               <button className="h-10 w-10 flex items-center justify-center rounded-full bg-surface-container-high hover:bg-surface-container-highest transition-colors">
-                <span className="material-symbols-outlined text-on-surface text-xl">call</span>
+                <span className="material-symbols-outlined text-on-surface text-xl">
+                  call
+                </span>
               </button>
               <button className="h-10 w-10 flex items-center justify-center rounded-full bg-surface-container-high hover:bg-surface-container-highest transition-colors">
-                <span className="material-symbols-outlined text-on-surface text-xl">more_vert</span>
+                <span className="material-symbols-outlined text-on-surface text-xl">
+                  more_vert
+                </span>
               </button>
             </div>
           </header>
