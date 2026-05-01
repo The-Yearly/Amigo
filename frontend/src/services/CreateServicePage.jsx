@@ -1,8 +1,3 @@
-// CreateServicePage.jsx
-// "Create New Service" page with a live-updating preview sidebar.
-// Reuses ExploreNavBar, ExploreFooter, ListingTipsPanel, ServicePreviewCard,
-// ImageUpload, FormField.
-
 import { useState } from "react";
 import ExploreNavBar from "@/Components/Landing/Navbar";
 import ExploreFooter from "@/Components/Landing/Footer";
@@ -10,8 +5,16 @@ import ListingTipsPanel from "@/Components/Services/ListingTipsPanel";
 import ServicePreviewCard from "@/Components/Services/ServicePreviewCard";
 import ImageUpload from "@/Components/Services/ImageUpload";
 import FormField from "@/Components/Services/FormField";
+import axios from "axios";
 
-const CATEGORIES = ["Photography", "Tutoring", "Tech Support", "Graphic Design", "Moving Help", "Other"];
+const CATEGORIES = [
+  "Photography",
+  "Tutoring",
+  "Tech Support",
+  "Graphic Design",
+  "Moving Help",
+  "Other",
+];
 
 export default function CreateServicePage() {
   const [form, setForm] = useState({
@@ -20,8 +23,10 @@ export default function CreateServicePage() {
     price: "",
     location: "",
     description: "",
+    image: "",
   });
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   function set(field) {
     return (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -29,12 +34,28 @@ export default function CreateServicePage() {
 
   function handleImageChange(file) {
     const url = URL.createObjectURL(file);
+
     setImagePreview(url);
+
+    // TEMP: store preview URL (later → cloud upload)
+    setForm((prev) => ({
+      ...prev,
+      image: url,
+    }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    alert("Service published! (wire to your API here)");
+    if (!form.title || !form.price) {
+      alert("Title and price required");
+      return;
+    }
+    setLoading(true);
+
+    await axios.post("http://localhost:5000/api/services", form);
+
+    alert("Service created!");
+    setLoading(false);
   }
 
   return (
@@ -48,8 +69,8 @@ export default function CreateServicePage() {
             New Service Listing
           </h1>
           <p className="text-on-surface-variant max-w-xl text-lg leading-relaxed">
-            Design your offering with care. Our marketplace thrives on the talent and unique
-            perspectives of our campus curators.
+            Design your offering with care. Our marketplace thrives on the
+            talent and unique perspectives of our campus curators.
           </p>
         </div>
 
@@ -125,7 +146,7 @@ export default function CreateServicePage() {
                     type="submit"
                     className="bg-primary-gradient text-white px-10 py-4 rounded-xl font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
                   >
-                    Publish Service
+                    {loading ? "Publishing..." : "Publish Service"}
                   </button>
                 </div>
               </form>

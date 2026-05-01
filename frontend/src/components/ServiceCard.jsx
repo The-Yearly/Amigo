@@ -1,18 +1,3 @@
-// ServiceCard.jsx
-// Standard service listing card with 4:3 image, badge, creator info, rating, price.
-// Props:
-//   imageSrc     – card hero image URL
-//   imageAlt     – alt text
-//   badge        – { label, variant: "primary" | "secondary" } — optional
-//   creatorImg   – creator avatar URL
-//   creatorName  – creator name string
-//   creatorRole  – creator role/major string
-//   title        – service title
-//   rating       – numeric rating
-//   reviewCount  – number of reviews
-//   price        – price string e.g. "$45"
-//   onClick      – click handler
-
 export default function ServiceCard({
   imageSrc,
   imageAlt,
@@ -74,7 +59,7 @@ export default function ServiceCard({
           >
             star
           </span>
-          <span className="font-bold text-sm">{rating.toFixed(1)}</span>
+          <span className="font-bold text-sm">{Number(rating || 0).toFixed(1)}</span>
           <span className="text-on-surface-variant text-sm">({reviewCount})</span>
         </div>
 

@@ -1,101 +1,22 @@
-// ServicePage.jsx
-// Main service detail page. Composes all sub-components.
-
 import TopAppBar from "@/Components//Landing/Navbar";
 import BottomNavBar from "@/Components/Landing/Footer";
 import BookingCard from "@/Components/Services/BookingCard";
 import RequirementCard from "@/Components/Services/RequirementCard";
 import ReviewCard from "@/Components/Services/ReviewCard";
 import { ChevronRight } from "lucide-react";
+import { useParams } from "react-router-dom";
 
-// ─── Static data ────────────────────────────────────────────────────────────
-
-const AVATAR_SRC =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuCx5i7nHIW7NB8EoFRtOl4Exyai2KQutI_inbXmSBgo_BCu2WdL5idGWoxmn_yPiLq40D5WY5_QfZihqIs8Eux0qz26bBMbaGseZnWU72G9tkA_lc5FIPvWVUfSkXH2s90aLKEGzGmrZqVdcHvqlIgi2yCqAX51GWC9dmlp2PId3Pb3BAugjm6jh4aiZu2lx5Xlf94XPI_kDaoHqp8xbgxsmZp_NiOEl_-G33Ya7NL0fnC_Cw_9iV5TykmyizHxVRIG8S0L-xgLlEU";
-
-const GALLERY_IMAGES = [
-  {
-    src: "https://lh3.googleusercontent.com/aida-public/AB6AXuCTa8hrHkN5BG0bSJ27mdSnAONA25PHI8pfGHw3JwGwGyYPxAgLRMYDmVJpPBsAvdBcONkbGmx6Gz3-HFPTvKcQnFPUcCpZyFlqJaTJlxSY8ZsjBY0xu1PEls4OZpATsMr9bC906JkzUDG04yFmXGioywvb_87GZexVCXz0nSCFQoVU-coGWz9Nw62rxSv1-wqLVZBtK28L8ONtfDH6ZmwspVHcpnE4HJYlR0trejKSExDIN41WLHKk4uaba6ZQpvkBdFHa9qSTAdg",
-    alt: "Graduate throwing cap in the air",
-    className: "col-span-4 row-span-2",
-  },
-  {
-    src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBm46jG8YjP_FzcMjl5OJPvgUdkuSQ1-4SCOGmvm-OKSaLrejlPSPnRnFcKrctNmqQRCVM3fM8NmN1winUtXjORu6_lnzkPE9viZD_qMcYabty5e_K6f4k4y1i7Psq8HH6lzFOkeFaodXJanst59HmxbUMOiHAlJLYg4ualsQWS01wY4V2M-fTZsrfwShLy95epLCrFTIVNHVzXII1NXJuhkX_CvR_VNTornV7W-KjpGRWQlBRGXKn-bLvAE0xb5gs3kuZcmwuUrc4",
-    alt: "Student holding diploma",
-    className: "col-span-2",
-  },
-  {
-    src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBDDBwhGEhkI0u7wGRFaDkz9fVd_MMjiZlo68yFENWJywLtzG5eGWmuVGU48ZiPHLJfR19_xAqYLZY6IMF4lQmIcVuglRw_FyWQ98lGCIZKwu0aBicTT9MlNpNnMIEbm7c3hD6ONmHv4dSG6-NZWsXe_7k1uOSFwobRmIVOkNQp7DwRn-pG5Sd3FmVvnuu2-9T9IwBXQyTOpnNii38H0q2iqGgWLdnz9M_FdRdN-5-N-OiqMAD375ApuLcFrxzA5vgZJfUb-IyzdSE",
-    alt: "Graduates laughing on campus lawn",
-    className: "col-span-2",
-  },
-];
-
-const BOOKING_FEATURES = [
-  { icon: "verified_user", label: "Top Rated Student Creator" },
-  { icon: "shutter_speed", label: "48-hour digital delivery" },
-  { icon: "image", label: "35+ professionally edited photos" },
-];
-
-const REQUIREMENTS = [
-  {
-    icon: "school",
-    title: "Attire",
-    description:
-      "Please bring your own cap, gown, and tassel. We recommend steaming them prior to arrival.",
-  },
-  {
-    icon: "groups",
-    title: "Group Limit",
-    description:
-      "Up to 2 additional friends can join for a few shots at no extra charge. Large groups require custom pricing.",
-  },
-  {
-    icon: "calendar_month",
-    title: "Booking Notice",
-    description:
-      "Minimum 48-hour notice required for rescheduling to ensure campus access permits.",
-  },
-  {
-    icon: "location_on",
-    title: "Meeting Point",
-    description:
-      "Typically the Main Quad entrance, unless otherwise specified during booking.",
-  },
-];
-
-const REVIEWS = [
-  {
-    initials: "SJ",
-    avatarBg: "bg-secondary-fixed",
-    avatarText: "text-on-secondary-fixed",
-    name: "Sarah Jenkins",
-    meta: "Class of 2024 • 2 weeks ago",
-    rating: 5,
-    review:
-      "Absolutely incredible experience! They knew all the secret spots on campus where the lighting was perfect. I got my photos back in just 24 hours and they looked like they belong in a magazine.",
-  },
-  {
-    initials: "MW",
-    avatarBg: "bg-primary-fixed",
-    avatarText: "text-on-primary-fixed",
-    name: "Marcus Wong",
-    meta: "Class of 2023 • 1 month ago",
-    rating: 4,
-    review:
-      "Great session. Very professional and helpful with posing since I'm usually awkward in front of cameras. Highly recommend for any senior!",
-  },
-];
-
-const MAP_SRC =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuDjjDdGsIoen-mfUoRX3UNU-FEamgFzNBe2bVCwZwFJ_aluSNnOgNUbH67yo6mAHjVLHMahKT9G5rF4YbnaA9VTCqlTPFaI1X4TCOSWycv72daqNZbl2sSspfTeblcnlg0Gw1pPypNBfIBFirWWxDs_Zh0R__Y4KoJ6vLHnMbF1PQki3DoSLqN6qjGOCPjxlW1pLK1_sXljmZ-MN1_kXEh3lLZKP2KaXvhRGLmn8LlU0sodwd-DrOIy_l8BQ7FvNSkpKXVvWZhB-LE";
-
-const CREATOR_SRC =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAlgH77lWUHnpcpXDqsoPZjdx-du7JaJGSCnv2svg87FUvzQOaFpp5sS97TiECb6JtTDsMTQB4nf510sZZmkFDZEZSIg8UxL9PB5Ub3dMvh4WXTdG26qELWM2fQZvdU9FI3DfGxQYIKnA45GHViJoQxfv3t3iXgJC4U2bwdV1JfecgQYL2200o7x9t1CZuk-mPuGKwiEdDCJxaK_jcOeil7rnXHrkeGV6YQ-J_9KmKErV9i5TfIzgfMc12VQVcc-6rTxDoAumyfMOI";
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function ServicePage( {service}) {
+export default function ServicePage() {
+
+  const { id } = useParams();
+  const [service, setService] = useState(null);
+
+  useEffect(() => {
+    axios.get(`/api/services/${id}`).then((res) => setService(res.data));
+  }, [id]);
   return (
     <div className="bg-surface text-on-surface antialiased">
       <TopAppBar avatarSrc={AVATAR_SRC} />
