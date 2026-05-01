@@ -1,11 +1,11 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 
-const ServiceCard = ({ title, price, description, author }) => {
+const ServiceCard = ({ title, price, description, author, image }) => {
   return (
     <div className="bg-white group cursor-pointer">
       <div className="relative aspect-[4/3] overflow-hidden rounded-sm mb-4">
-        <img src="service-image.jpg" className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+        <img src={image} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
         <span className="absolute top-3 left-3 bg-[#8b2e5f] text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase">
           Top Curator
         </span>

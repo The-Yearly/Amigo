@@ -37,7 +37,7 @@ const Dashboard = () => {
             title="Organic Chemistry II Exam Prep Support"
             author="Sarah J." 
             rating="4.9" 
-            image="https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?w=400"
+            image="/assets/serviceImage1.jpeg"
             avatar="https://i.pravatar.cc/150?u=1"
           />
           <ServiceCard 
@@ -46,7 +46,7 @@ const Dashboard = () => {
             title="Graduation Portrait Session - Spring '24"
             author="Marcus T." 
             rating="5.0" 
-            image="https://images.unsplash.com/photo-1492691523567-6170f0295da4?w=400"
+            image="https://plus.unsplash.com/premium_photo-1714397507054-b34acc119eb5?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             avatar="https://i.pravatar.cc/150?u=2"
           />
         </div>

@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-mot
 import { Routes, Route } from 'react-router-dom';
 import Navbar from "./Components/Landing/Navbar";
 import Hero from "./Components/Landing/Hero";
-import Dashboard from "./Components/Landing/Dashboard";
+import Dashboard from "./Components/Landing/DashBoard";
 import Footer from "./Components/Landing/Footer";
 import AmigoLanding from "./Components/Landing/AmigoLanding";
 import CuratorWorkspace from "./Components/CreateService/CuratorWorkspace";
