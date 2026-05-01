@@ -5,7 +5,6 @@ import Hero from "./Components/Landing/Hero";
 import Dashboard from "./Components/Landing/DashBoard";
 import Footer from "./Components/Landing/Footer";
 import AmigoLanding from "./Components/Landing/AmigoLanding";
-import CuratorWorkspace from "./services/createService";
 import "./index.css";
 import ServicePage from "./services/ServicePage.jsx";
 

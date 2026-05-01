@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  email         String   @unique
+  password      String
+  department    String?
+  year          String?
+  profileImage  String?
+  rating        Float    @default(0)
+  createdAt     DateTime @default(now())
+
+  services      Service[]
+  requestsMade  ServiceRequest[] @relation("Requester")
+  requestsRecv  ServiceRequest[] @relation("Provider")
+  messagesSent  Message[] @relation("Sender")
+  messagesRecv  Message[] @relation("Receiver")
+}
+
+model Service {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String?
+  category      String?
+  price         Float
+  image         String?
+  location      String?
+  estimatedTime String?
+  createdAt     DateTime @default(now())
+
+  creatorId     String   @db.ObjectId
+  creator       User     @relation(fields: [creatorId], references: [id])
+
+  requests      ServiceRequest[]
+}
+
+model ServiceRequest {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  status       String   // Pending, Accepted, InProgress, Completed
+  createdAt    DateTime @default(now())
+
+  serviceId    String   @db.ObjectId
+  service      Service  @relation(fields: [serviceId], references: [id])
+
+  requesterId  String   @db.ObjectId
+  requester    User     @relation("Requester", fields: [requesterId], references: [id])
+
+  providerId   String   @db.ObjectId
+  provider     User     @relation("Provider", fields: [providerId], references: [id])
+
+  messages     Message[]
+  review       Review?
+}
+
+model Message {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  content          String
+  createdAt        DateTime @default(now())
+
+  serviceRequestId String   @db.ObjectId
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
+
+  senderId         String   @db.ObjectId
+  sender           User     @relation("Sender", fields: [senderId], references: [id])
+
+  receiverId       String   @db.ObjectId
+  receiver         User     @relation("Receiver", fields: [receiverId], references: [id])
+}
+
+model Review {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  rating           Float
+  comment          String?
+  createdAt        DateTime @default(now())
+
+  serviceRequestId String   @unique @db.ObjectId
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
+
+  reviewerId       String   @db.ObjectId
+  providerId       String   @db.ObjectId
+}
