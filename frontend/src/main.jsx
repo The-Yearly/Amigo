@@ -7,8 +7,12 @@ import ServicePage from "./services/ServicePage";
 import ExplorePage from "./services/ExplorePage";
 import MyServicesPage from "./services/MyServicesPage";
 import MyRequestsPage from "./services/MyRequestsPage";
+import Layout from "./admin/layout";
+import AdminHome from "./admin/page";
+import AdminFlagged from "./admin/flagged/page";
+import ManageAdmins from "./admin/manageAdmins/page";
+import AuditLog from "./admin/auditlog/page";
 import CreateServicePage from "./services/CreateServicePage";
-
 const router = createBrowserRouter([
   {
     path: "/", 
@@ -37,7 +41,29 @@ const router = createBrowserRouter([
   {
     path: "/messages",
     element: <div>Messages Page (to be implemented)</div>,
-  }  
+  },
+  {
+    path: "/adminSettings",
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <AdminHome />,
+      },
+      {
+        path: "flagged",
+        element: <AdminFlagged />,
+      },
+      {
+        path: "permissions",
+        element: <ManageAdmins />,
+      },
+      {
+        path: "auditlogs",
+        element: <AuditLog />,
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(
