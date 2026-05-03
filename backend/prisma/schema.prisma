@@ -8,6 +8,7 @@ datasource db {
 }
 
 model User {
+  admin Admin?
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   email         String   @unique
@@ -26,13 +27,15 @@ model User {
   messagesRecv  Message[] @relation("Receiver")
 }
 
-model Admin{
-  id String
+model Admin {
+  id String @id @map("_id")
+
   isSuperAdmin Boolean @default(false)
   canAdd Boolean @default(false)
   canKick Boolean @default(false)
   canOverride Boolean @default(false)
-  userAdmin User @relation(fields: [id],references: [id])
+
+  userAdmin User @relation(fields: [id], references: [id])
 }
 
 model Service {

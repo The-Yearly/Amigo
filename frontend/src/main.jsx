@@ -1,3 +1,5 @@
+import UserLogin from "./pages/UserLogin";
+import AdminLogin from "./pages/AdminLogin";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
@@ -16,30 +18,41 @@ import CreateServicePage from "./services/CreateServicePage";
 import SignUp from "./auth/page"
 const router = createBrowserRouter([
   {
-    path: "/", 
+    path: "/",
     element: <App />,
   },
+
+  // ✅ LOGIN ROUTES
+  {
+    path: "/user-login",
+    element: <UserLogin />,
+  },
+  {
+    path: "/admin-login",
+    element: <AdminLogin />,
+  },
+
   {
     path: "/create-service",
     element: <CreateServicePage />,
   },
   {
     path: "/services",
-    element: <ExplorePage />, 
+    element: <ExplorePage />,
   },
   {
     path: "/my/services",
-    element: <MyServicesPage />, 
+    element: <MyServicesPage />,
   },
   {
     path: "/my/requests",
-    element: <MyRequestsPage  />,
+    element: <MyRequestsPage />,
   },
-    {
+  {
     path: "/authentication",
-    element: <SignUp />, 
+    element: <SignUp />,
   },
-  ,{
+  {
     path: "/services/:serviceId",
     element: <ServicePage />,
   },
