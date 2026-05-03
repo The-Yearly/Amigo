@@ -17,12 +17,22 @@ model User {
   profileImage  String?
   rating        Float    @default(0)
   createdAt     DateTime @default(now())
-
+  isAdmin       Boolean @default(false)
+  isEmailVerified Boolean @default(false)
   services      Service[]
   requestsMade  ServiceRequest[] @relation("Requester")
   requestsRecv  ServiceRequest[] @relation("Provider")
   messagesSent  Message[] @relation("Sender")
   messagesRecv  Message[] @relation("Receiver")
+}
+
+model Admin{
+  id String
+  isSuperAdmin Boolean @default(false)
+  canAdd Boolean @default(false)
+  canKick Boolean @default(false)
+  canOverride Boolean @default(false)
+  userAdmin User @relation(fields: [id],references: [id])
 }
 
 model Service {

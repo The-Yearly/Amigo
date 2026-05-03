@@ -5,7 +5,7 @@ import cors from "cors";
 import { corsOptions } from "./config/cors.js";
 import serviceRoutes from "./routes/service.routes.js";
 import requestRoutes from "./routes/request.routes.js";
-
+import authRoutes from "./routes/auth.routes.js"
 dotenv.config();
 
 const app = express();
@@ -17,6 +17,7 @@ app.use(express.json());
 // routes
 app.use("/api/services", serviceRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/auth", authRoutes);
 
 
 

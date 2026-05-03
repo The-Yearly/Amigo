@@ -13,6 +13,7 @@ import AdminFlagged from "./admin/flagged/page";
 import ManageAdmins from "./admin/manageAdmins/page";
 import AuditLog from "./admin/auditlog/page";
 import CreateServicePage from "./services/CreateServicePage";
+import SignUp from "./auth/page"
 const router = createBrowserRouter([
   {
     path: "/", 
@@ -34,7 +35,11 @@ const router = createBrowserRouter([
     path: "/my/requests",
     element: <MyRequestsPage  />,
   },
-  {
+    {
+    path: "/authentication",
+    element: <SignUp />, 
+  },
+  ,{
     path: "/services/:serviceId",
     element: <ServicePage />,
   },

@@ -67,7 +67,7 @@ export default function App() {
       <motion.div 
         initial={false} 
         animate={{ y: isLocked ? 0 : -100 }}
-        className="fixed top-0 left-0 w-full z-[100]"
+        className="fixed top-0 left-0 w-full z-100"
       >
         <Navbar />
       </motion.div>
