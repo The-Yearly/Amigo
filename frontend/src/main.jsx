@@ -13,40 +13,44 @@ import AdminFlagged from "./admin/flagged/page";
 import ManageAdmins from "./admin/manageAdmins/page";
 import AuditLog from "./admin/auditlog/page";
 import CreateServicePage from "./services/CreateServicePage";
-import SignUp from "./auth/page"
+import MessagesPage from "./messaging/MessagesPage";
+import SignUp from "./auth/page";
+import RootLayout from "./layout.jsx";
+import ProtectedRoute from "./ProtectedRoute";
+import SignInPage from "./auth/SignInPage";
+import SignUpPage from "./auth/SignUpPage";
 const router = createBrowserRouter([
   {
-    path: "/", 
-    element: <App />,
+    path: "/",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/",
+        element: <App />,
+      },
+      {
+        element: <RootLayout />,
+        children: [
+          { path: "/services", element: <ExplorePage /> },
+          { path: "/create-service", element: <CreateServicePage /> },
+          { path: "/my/services", element: <MyServicesPage /> },
+          { path: "/my/requests", element: <MyRequestsPage /> },
+          { path: "/services/:serviceId", element: <ServicePage /> },
+          { path: "/messages", element: <MessagesPage /> },
+        ],
+      },
+    ],
+  },
+
+  {
+    path: "/signup",
+    element: <SignUpPage />,
   },
   {
-    path: "/create-service",
-    element: <CreateServicePage />,
+    path: "/login",
+    element: <SignInPage />,
   },
-  {
-    path: "/services",
-    element: <ExplorePage />, 
-  },
-  {
-    path: "/my/services",
-    element: <MyServicesPage />, 
-  },
-  {
-    path: "/my/requests",
-    element: <MyRequestsPage  />,
-  },
-    {
-    path: "/authentication",
-    element: <SignUp />, 
-  },
-  ,{
-    path: "/services/:serviceId",
-    element: <ServicePage />,
-  },
-  {
-    path: "/messages",
-    element: <div>Messages Page (to be implemented)</div>,
-  },
+
   {
     path: "/adminSettings",
     element: <Layout />,
@@ -72,7 +76,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+  // <StrictMode>
+  <RouterProvider router={router} />,
+  // </StrictMode>
 );

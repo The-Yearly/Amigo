@@ -3,15 +3,18 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "../lib/sendMail.js";
+
 const generateEncodedToken = (userId) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
     return Buffer.from(token).toString("base64");
 };
 
 function getRandomInt(min, max) {
-  const minCeiled = Math.ceil(min);
-  const maxFloored = Math.floor(max);
-  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);}
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+}
+
 export const signup = asyncHandler(async (req, res) => {
     const { userData } = req.body;
     const existingUser = await prisma.user.findUnique({
@@ -25,7 +28,7 @@ export const signup = asyncHandler(async (req, res) => {
     const otp = getRandomInt(100000, 999999).toString();
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const verificationToken = jwt.sign(
-        { 
+        {
             userData: {
                 name: userData.name,
                 email: userData.mail,
@@ -33,7 +36,7 @@ export const signup = asyncHandler(async (req, res) => {
                 department: userData.department || null,
                 year: userData.year || null,
             },
-            otp 
+            otp
         },
         process.env.JWT_SECRET,
         { expiresIn: "10m" }

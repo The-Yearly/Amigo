@@ -15,7 +15,7 @@ export default function MessageInput({ value, onChange, onSend }) {
 
   return (
     <footer className="p-6 bg-surface/80 backdrop-blur-md">
-      <div className="max-w-4xl mx-auto flex items-end gap-3 bg-surface-container-low p-2 rounded-[2rem] focus-within:ring-2 focus-within:ring-primary/10 transition-all">
+      <div className="max-w-4xl mx-auto flex items-end gap-3 bg-surface-container-low p-2 rounded-[2rem] border-2 border-primary shadow-md focus-within:ring-2 focus-within:ring-primary/20 focus-within:shadow-lg transition-all">
         <button className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-tertiary transition-colors">
           <span className="material-symbols-outlined">add_circle</span>
         </button>

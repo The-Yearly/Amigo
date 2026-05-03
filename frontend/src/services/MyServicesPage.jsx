@@ -6,6 +6,43 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+// ─── Pulsating Animation ──────────────────────────────────────────────────────
+
+const pulseStyles = `
+  @keyframes intensePulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+  .animate-intense-pulse {
+    animation: intensePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+`;
+
+// ─── Skeleton Components ──────────────────────────────────────────────────────
+
+function StatCardSkeleton() {
+  return (
+    <div className="bg-surface-container border border-outline-variant rounded-2xl p-6 shadow-md overflow-hidden">
+      <div className="h-4 bg-surface-container-highest rounded w-24 mb-4 animate-intense-pulse" />
+      <div className="h-8 bg-surface-container-highest rounded w-32 mb-2 animate-intense-pulse" />
+      <div className="h-3 bg-surface-container-highest rounded w-20 animate-intense-pulse" />
+    </div>
+  );
+}
+
+function MyServiceCardSkeleton() {
+  return (
+    <div className="bg-surface-container border border-outline-variant rounded-2xl overflow-hidden shadow-md">
+      <div className="h-48 bg-surface-container-highest animate-intense-pulse" />
+      <div className="p-4 space-y-3">
+        <div className="h-6 bg-surface-container-highest rounded w-3/4 animate-intense-pulse" />
+        <div className="h-4 bg-surface-container-highest rounded w-full animate-intense-pulse" />
+        <div className="h-10 bg-surface-container-highest rounded w-full animate-intense-pulse" />
+      </div>
+    </div>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function MyServicesPage() {
@@ -30,17 +67,46 @@ export default function MyServicesPage() {
     },
   ];
   const [services, setServices] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/services/my")
-      .then((res) => setServices(res.data));
+    Promise.all([
+      axios.get("http://localhost:5000/api/services/my"),
+      axios.get("http://localhost:5000/api/requests/provider"),
+    ])
+      .then(([sRes, rRes]) => {
+        setServices(sRes.data);
+        setRequests(rRes.data);
+      })
+      .finally(() => setLoading(false));
   }, []);
+
+  const requestsByService = Array.isArray(requests)
+    ? requests.reduce((acc, r) => {
+        if (!acc[r.serviceId]) acc[r.serviceId] = [];
+        acc[r.serviceId].push(r);
+        return acc;
+      }, {})
+    : {};
+
+  async function updateStatus(id, status) {
+    await axios.patch(`http://localhost:5000/api/requests/${id}/status`, {
+      status,
+    });
+
+    // refresh UI optimistically
+    setRequests((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, status } : r)),
+    );
+  }
+
   return (
     <div className="bg-surface text-on-surface font-body antialiased">
+      <style>{pulseStyles}</style>
       <Navbar />
 
-      <main className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-surface via-surface to-surface-dim/30">
+      <main className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-surface via-surface to-surface-dim/30 ">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12">
           {/* Dashboard Header */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
@@ -65,22 +131,80 @@ export default function MyServicesPage() {
 
           {/* Stats bento */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-            {STATS.map((stat) => (
-              <StatCard key={stat.label} {...stat} />
-            ))}
+            {loading ? (
+              <>
+                {[...Array(4)].map((_, i) => (
+                  <StatCardSkeleton key={i} />
+                ))}
+              </>
+            ) : (
+              STATS.map((stat) => <StatCard key={stat.label} {...stat} />)
+            )}
           </div>
 
           {/* Listings grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service) => (
-              <MyServiceCard
-                key={service.id}
-                {...service}
-                onView={() => console.log("view", service.id)}
-                onEdit={() => console.log("edit", service.id)}
-                onDelete={() => console.log("delete", service.id)}
-              />
-            ))}
+            {loading ? (
+              <>
+                {[...Array(6)].map((_, i) => (
+                  <div key={i}>
+                    <MyServiceCardSkeleton />
+                  </div>
+                ))}
+              </>
+            ) : (
+              services.map((service) => (
+                <div key={service.id}>
+                  <MyServiceCard
+                    {...service}
+                    onView={() => console.log("view", service.id)}
+                    onEdit={() => console.log("edit", service.id)}
+                    onDelete={() => console.log("delete", service.id)}
+                  />
+                  <div className="mt-4 space-y-3">
+                    {(requestsByService[service.id] || []).length === 0 ? (
+                      <p className="text-sm text-tertiary/60">
+                        No requests yet
+                      </p>
+                    ) : (
+                      (requestsByService[service.id] || []).map((req) => (
+                        <div
+                          key={req.id}
+                          className="p-4 border-2 border-primary rounded-lg shadow-md flex justify-between items-center bg-surface-container hover:shadow-lg transition-shadow"
+                        >
+                          <div>
+                            <p className="font-semibold text-on-surface">
+                              {req.requesterName}
+                            </p>
+                            <p className="text-xs text-tertiary font-medium uppercase tracking-wide">
+                              {req.status}
+                            </p>
+                          </div>
+
+                          {req.status === "Pending" && (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => updateStatus(req.id, "Accepted")}
+                                className="px-4 py-2 bg-gradient-to-tr from-primary to-primary-container text-on-primary rounded-lg font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all text-sm"
+                              >
+                                Accept
+                              </button>
+
+                              <button
+                                onClick={() => updateStatus(req.id, "Rejected")}
+                                className="px-4 py-2 bg-error/20 text-error rounded-lg font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all text-sm border border-error/30"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </main>

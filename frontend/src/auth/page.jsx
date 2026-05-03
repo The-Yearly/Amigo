@@ -17,10 +17,10 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
-function verifyEmail(email) {
-  const regex = /^am\.sc\.u4cse\d{5}@am\.students\.amrita\.edu$/;
-  return regex.test(email);
-}
+  function verifyEmail(email) {
+    const regex = /^am\.sc\.u4cse\d{5}@am\.students\.amrita\.edu$/;
+    return regex.test(email);
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,15 +32,23 @@ function verifyEmail(email) {
     setLoading(true);
     try {
       if (isSignUp) {
+        if (!verifyEmail(data.email)) {
+          toast.error("Please use a valid Amrita student email");
+          setLoading(false);
+          return;
+        }
         const payload = {
           userData: {
             name: data.name,
             mail: data.email,
             password: data.password,
-          }
+          },
         };
         //add check for amrita mail here before complete
-        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signUp`, payload);
+        const res = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/signUp`,
+          payload,
+        );
         setVerificationToken(res.data.verificationToken);
         setIsVerifying(true);
         toast.success(res.data.message);
@@ -49,7 +57,10 @@ function verifyEmail(email) {
           email: data.email,
           password: data.password,
         };
-        const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, payload);
+        const res = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+          payload,
+        );
         handlePostAuthSuccess(res.data);
       }
     } catch (err) {
@@ -63,11 +74,14 @@ function verifyEmail(email) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-otp`, {
-        otp,
-        verificationToken
-      });
-      
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-otp`,
+        {
+          otp,
+          verificationToken,
+        },
+      );
+
       toast.success("Email verified successfully!");
       handlePostAuthSuccess(res.data);
     } catch (err) {
@@ -82,7 +96,7 @@ function verifyEmail(email) {
     const creds = { uid: user.id, session: token };
 
     Cookies.set("creds", JSON.stringify(creds), { expires: 7 });
-    
+
     toast.info("Redirecting...");
     setTimeout(() => {
       window.location.href = "/";
@@ -99,15 +113,16 @@ function verifyEmail(email) {
       />
       <div className="flex justify-center items-center min-h-screen">
         <div className="modal p-8 rounded-lg shadow-lg w-[90vw] max-w-md bg-white/80 backdrop-blur-md">
-          
           {!isVerifying ? (
             <form onSubmit={handleAuth}>
               <h2 className="text-3xl font-bold text-center mb-6 text-slate-800">
                 {isSignUp ? "Sign Up" : "Login"}
               </h2>
-              
+
               <div className="mb-4">
-                <label className="block text-sm font-semibold mb-2 text-slate-700">Email</label>
+                <label className="block text-sm font-semibold mb-2 text-slate-700">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -121,7 +136,9 @@ function verifyEmail(email) {
 
               {isSignUp && (
                 <div className="mb-4">
-                  <label className="block text-sm font-semibold mb-2 text-slate-700">Username</label>
+                  <label className="block text-sm font-semibold mb-2 text-slate-700">
+                    Username
+                  </label>
                   <input
                     type="text"
                     value={data.name}
@@ -135,7 +152,9 @@ function verifyEmail(email) {
               )}
 
               <div className="mb-6 relative">
-                <label className="block text-sm font-semibold mb-2 text-slate-700">Password</label>
+                <label className="block text-sm font-semibold mb-2 text-slate-700">
+                  Password
+                </label>
                 <input
                   type={showPassword ? "text" : "password"}
                   value={data.password}
@@ -159,14 +178,20 @@ function verifyEmail(email) {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? "Processing..." : (isSignUp ? "Get Verification Code" : "Sign In")}
+                {loading
+                  ? "Processing..."
+                  : isSignUp
+                    ? "Get Verification Code"
+                    : "Sign In"}
               </button>
 
               <p
                 className="text-center mt-4 cursor-pointer text-blue-600 hover:underline text-sm"
                 onClick={() => setIsSignUp(!isSignUp)}
               >
-                {isSignUp ? "Already have an account? Login" : "New here? Create an account"}
+                {isSignUp
+                  ? "Already have an account? Login"
+                  : "New here? Create an account"}
               </p>
             </form>
           ) : (
@@ -176,12 +201,14 @@ function verifyEmail(email) {
                   <ShieldCheck size={40} />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold mb-2 text-slate-800">Verify Email</h2>
+              <h2 className="text-2xl font-bold mb-2 text-slate-800">
+                Verify Email
+              </h2>
               <p className="text-slate-600 text-sm mb-6">
-                Enter the 6-digit code sent to <br/>
+                Enter the 6-digit code sent to <br />
                 <span className="font-semibold">{data.email}</span>
               </p>
-              
+
               <div className="mb-6">
                 <input
                   type="text"

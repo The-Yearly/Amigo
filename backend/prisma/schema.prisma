@@ -18,6 +18,7 @@ model User {
   rating        Float    @default(0)
   createdAt     DateTime @default(now())
   isAdmin       Boolean @default(false)
+  admin         Admin?
   isEmailVerified Boolean @default(false)
   services      Service[]
   requestsMade  ServiceRequest[] @relation("Requester")
@@ -26,13 +27,16 @@ model User {
   messagesRecv  Message[] @relation("Receiver")
 }
 
-model Admin{
-  id String
-  isSuperAdmin Boolean @default(false)
-  canAdd Boolean @default(false)
-  canKick Boolean @default(false)
-  canOverride Boolean @default(false)
-  userAdmin User @relation(fields: [id],references: [id])
+model Admin {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @unique @db.ObjectId
+
+  isSuperAdmin  Boolean  @default(false)
+  canAdd        Boolean  @default(false)
+  canKick       Boolean  @default(false)
+  canOverride   Boolean  @default(false)
+
+  user          User     @relation(fields: [userId], references: [id])
 }
 
 model Service {

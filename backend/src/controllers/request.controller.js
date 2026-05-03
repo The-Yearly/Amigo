@@ -70,3 +70,32 @@ export const updateRequestStatus = asyncHandler(async (req, res) => {
 
     res.json(updated);
 });
+
+
+export const getProviderRequests = asyncHandler(async (req, res) => {
+    const requests = await prisma.serviceRequest.findMany({
+        where: {
+            providerId: req.user,
+        },
+        include: {
+            service: true,
+            requester: true,
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+
+    const formatted = requests.map((r) => ({
+        id: r.id,
+        serviceId: r.serviceId,
+        serviceTitle: r.service.title,
+        requesterName: r.requester.name,
+        requesterId: r.requester.id,
+        status: r.status,
+        price: `₹${r.service.price}`,
+        date: r.createdAt,
+    }));
+
+    res.json(formatted);
+});

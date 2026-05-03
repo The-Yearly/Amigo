@@ -4,11 +4,10 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100 shadow-sm">
-      
+    <nav className="relative z-[60] flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100 shadow-sm">
       {/* LOGO */}
       <Link to="/">
-        <div className="text-2xl font-bold tracking-tighter text-[#1a1a1a]">
+        <div className="text-2xl font-bold tracking-tighter text-[#1a1a1a] cursor-pointer">
           Amigo
         </div>
       </Link>
@@ -31,10 +30,9 @@ const Navbar = () => {
 
       {/* RIGHT SIDE */}
       <div className="flex items-center space-x-5">
-        
         {/* CREATE SERVICE BUTTON */}
         <Link
-          to="/services/create"
+          to="/create-service"
           className="flex items-center gap-2 bg-[#064e3b] text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-green-900 transition"
         >
           <Plus size={16} />

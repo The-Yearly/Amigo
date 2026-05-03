@@ -1,82 +1,119 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+/* ============================================================
+   AMIGO — The Editorial Marketplace
+   Design System: "The Modern Curator"
+   Tailwind 4 CSS — single source of truth
+   ============================================================ */
+
+/* ── 1. Google Fonts (must come before everything else) ────── */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
+/* ── 3. Design-system tokens ───────────────────────────────── */
 @theme {
-  /* ── AMIGO (red) theme tokens ── */
-  --color-secondary: #0056c3;
-  --color-secondary-fixed: #d9e2ff;
-  --color-inverse-on-surface: #f1f1f1;
-  --color-tertiary-container: #747474;
-  --color-surface-container-high: #e8e8e8;
-  --color-inverse-surface: #2f3131;
-  --color-surface-container-low: #f3f3f3;
-  --color-on-primary-fixed-variant: #930100;
-  --color-surface-tint: #c00100;
-  --color-surface-bright: #f9f9f9;
-  --color-surface-container: #eeeeee;
-  --color-on-surface: #1a1c1c;
-  --color-on-primary-container: #fffbff;
-  --color-secondary-fixed-dim: #afc6ff;
+
+  /* ── Colors ─────────────────────────────────────────────── */
+
+  /* Primary — "Iconic Green" (anchor of trust) */
+  --color-primary:                  #002107;
+  --color-on-primary:               #ffffff;
+  --color-primary-container:        #003912;
+  --color-on-primary-container:     #6fa572;
+  --color-primary-fixed:            #b7f1b8;
+  --color-primary-fixed-dim:        #9cd49d;
+  --color-on-primary-fixed:         #002108;
+  --color-on-primary-fixed-variant: #1d5127;
+  --color-inverse-primary:          #9cd49d;
+
+  /* Secondary — "Digital Berry" (editorial energy & high-intent CTAs) */
+  --color-secondary:                #984063;
+  --color-on-secondary:             #ffffff;
+  --color-secondary-container:      #fd93b9;
+  --color-on-secondary-container:   #78274a;
+  --color-secondary-fixed:          #ffd9e3;
+  --color-secondary-fixed-dim:      #ffb0ca;
+  --color-on-secondary-fixed:       #3e001f;
+  --color-on-secondary-fixed-variant: #7a294c;
+
+  /* Tertiary */
+  --color-tertiary:                 #1a1b1f;
+  --color-on-tertiary:              #ffffff;
+  --color-tertiary-container:       #2f3034;
+  --color-on-tertiary-container:    #97989c;
+  --color-tertiary-fixed:           #e3e2e7;
+  --color-tertiary-fixed-dim:       #c6c6cb;
+  --color-on-tertiary-fixed:        #1a1b1f;
+  --color-on-tertiary-fixed-variant: #46474b;
+
+  /* Error */
+  --color-error:                    #ba1a1a;
+  --color-on-error:                 #ffffff;
+  --color-error-container:          #ffdad6;
+  --color-on-error-container:       #93000a;
+
+  /* Surface hierarchy — tonal layering, no-line rule */
+  /* Level 1 — base page background */
+  --color-background:               #faf9fb;
+  --color-on-background:            #1a1c1e;
+  --color-surface:                  #faf9fb;
+  --color-on-surface:               #1a1c1e;   /* never #000000 per design rules */
+  --color-surface-bright:           #faf9fb;
+  --color-surface-dim:              #dbd9dc;
+
+  /* Level 2 — inlay / secondary content areas */
+  --color-surface-container-low:    #f4f3f5;
+  --color-surface-container:        #efedf0;
+  --color-surface-container-high:   #e9e8ea;   /* input field bg */
+
+  /* Level 3 — elevated interactive cards (white on grey = natural lift) */
   --color-surface-container-lowest: #ffffff;
-  --color-tertiary: #5c5c5c;
-  --color-on-secondary: #ffffff;
-  --color-tertiary-fixed-dim: #c6c6c6;
-  --color-on-tertiary-fixed-variant: #474747;
-  --color-outline-variant: #ebbbb4;
-  --color-on-error-container: #93000a;
-  --color-on-tertiary: #ffffff;
-  --color-error: #ba1a1a;
-  --color-primary-fixed: #ffdad4;
-  --color-primary-container: #eb0000;
-  --color-tertiary-fixed: #e2e2e2;
-  --color-on-tertiary-fixed: #1b1b1b;
-  --color-outline: #956d67;
-  --color-surface: #f9f9f9;
-  --color-surface-container-highest: #e2e2e2;
-  --color-primary: #bc0100;
-  --color-surface-dim: #dadada;
-  --color-on-secondary-fixed: #001944;
-  --color-background: #f9f9f9;
-  --color-on-secondary-fixed-variant: #004299;
-  --color-inverse-primary: #ffb4a8;
-  --color-primary-fixed-dim: #ffb4a8;
-  --color-on-error: #ffffff;
-  --color-on-tertiary-container: #fcfcfc;
-  --color-on-background: #1a1c1c;
-  --color-secondary-container: #2a6fe5;
-  --color-error-container: #ffdad6;
-  --color-on-primary-fixed: #410000;
-  --color-on-surface-variant: #603e39;
-  --color-on-primary: #ffffff;
-  --color-surface-variant: #e2e2e2;
-  --color-on-secondary-container: #fefcff;
+  --color-surface-container-highest:#e3e2e4;
 
-  /* ── EXPLORE (green) theme tokens ── */
-  --color-on-primary-fixed-variant-g: #1d5127;
-  --color-primary-container-g: #003912;
-  --color-on-primary-container-g: #6fa572;
-  --color-primary-fixed-g: #b7f1b8;
-  --color-primary-fixed-dim-g: #9cd49d;
+  /* On-surface variants */
+  --color-on-surface-variant:       #414940;
+  --color-surface-variant:          #e3e2e4;
+  --color-inverse-surface:          #2f3032;
+  --color-inverse-on-surface:       #f2f0f3;
 
-  /* Border radius */
-  --radius-DEFAULT: 0.25rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
-  --radius-full: 9999px;
+  /* Surface tint */
+  --color-surface-tint:             #36693c;
 
-  /* Fonts */
-  --font-headline: 'Inter', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-label: 'Inter', sans-serif;
-  --font-display: 'Plus Jakarta Sans', sans-serif;
+  /* Outline — ghost border rule: use at 20% opacity when a boundary is required */
+  --color-outline:                  #71796f;
+  --color-outline-variant:          #c1c9bd;
+
+  /* ── Border radius ───────────────────────────────────────── */
+  /* Every interactive element must have at least DEFAULT (0.25rem) */
+  --radius-DEFAULT: 0.125rem;   /* base — matches original config */
+  --radius-lg:      0.25rem;
+  --radius-xl:      0.5rem;
+  --radius-full:    0.75rem;    /* pill shape for badges & chips */
+
+  /* ── Typography ─────────────────────────────────────────── */
+  /* Display & Headlines — "Voice" of the brand (Plus Jakarta Sans) */
+  --font-display:  'Plus Jakarta Sans', sans-serif;
+  --font-headline: 'Plus Jakarta Sans', sans-serif;
+  /* Titles & Body — "Engine" of the brand (Inter) */
+  --font-body:     'Inter', sans-serif;
+  --font-label:    'Inter', sans-serif;
 }
 
-/* Material Symbols */
+/* ── 4. Base resets ────────────────────────────────────────── */
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #faf9fb;         /* surface — Level 1 */
+  color: #1a1c1e;                    /* on-surface (never pure black) */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── 5. Material Symbols icon font ─────────────────────────── */
+
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -91,27 +128,90 @@
   direction: ltr;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
+/* ── 6. Gradient utilities ──────────────────────────────────── */
+
+/* CTAs & heroes: primary → primary-container at 135° (Glass & Gradient Rule) */
+.editorial-gradient,
+.bg-primary-gradient,
+.hero-gradient {
+  background: linear-gradient(135deg, #002107 0%, #003912 100%);
 }
 
-.glass-nav {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Explore page gradient utilities */
+/* Gradient text (Explore page hero) */
 .text-editorial-gradient {
   background: linear-gradient(135deg, #002107 0%, #003912 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.bg-primary-gradient {
-  background: linear-gradient(135deg, #002107 0%, #003912 100%);
+/* ── 7. Elevation & shadow utilities ───────────────────────── */
+
+/*
+  Ambient shadow: high diffusion, LOW opacity.
+  Feels like natural light, not a dark smudge (Elevation § rule).
+*/
+.editorial-shadow,
+.shadow-ambient {
+  box-shadow: 0 12px 32px rgba(26, 28, 30, 0.06);
 }
 
-/* Custom scrollbar */
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+/* ── 8. Glassmorphism — global header rule ─────────────────── */
+
+/*
+  surface_bright (#faf9fb) at 70% opacity + blur.
+  Content bleeds through on scroll, maintains sense of place.
+*/
+.glass-nav {
+  background: rgba(250, 249, 251, 0.70);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/*
+  Lighter glass for overlaying labels / floating elements.
+  surface_container_lowest at 80% + blur(12px).
+*/
+.glass-panel {
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── 9. Scrollbar styling ───────────────────────────────────── */
+
+.custom-scrollbar::-webkit-scrollbar       { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e2e2; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c9bd;   /* outline-variant */
+  border-radius: 10px;
+}
+
+/* ── 10. Typography scale helpers ───────────────────────────── */
+
+/*
+  Contrast Principle: pair a large display headline with a small body label.
+  The scale difference creates the "designed, not templated" feel.
+*/
+.display-lg {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 3.5rem;        /* 56px */
+  font-weight: 800;
+  letter-spacing: -0.02em;  /* tight tracking — editorial rule */
+  line-height: 1.1;
+}
+
+.display-md {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2.5rem;        /* 40px */
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+/* ── 11. Selection highlight ────────────────────────────────── */
+
+::selection {
+  background-color: #b7f1b8;   /* primary-fixed */
+  color: #002108;              /* on-primary-fixed */
+}

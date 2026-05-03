@@ -18,7 +18,7 @@ export default function ServicePage() {
     axios.get(`/api/services/${id}`).then((res) => setService(res.data));
   }, [id]);
   return (
-    <div className="bg-surface text-on-surface antialiased">
+    <div className="bg-surface text-on-surface antialiased ">
       <TopAppBar avatarSrc={AVATAR_SRC} />
 
       <main className="pt-24 pb-32 max-w-7xl mx-auto px-6">
