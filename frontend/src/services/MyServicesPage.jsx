@@ -72,12 +72,17 @@ export default function MyServicesPage() {
 
   useEffect(() => {
     Promise.all([
-      axios.get("http://localhost:5000/api/services/my"),
-      axios.get("http://localhost:5000/api/requests/provider"),
+      axios.get("http://localhost:5000/api/services/my", {
+        withCredentials: true,
+      }),
+      axios.get("http://localhost:5000/api/requests/provider", {
+        withCredentials: true,
+      }),
     ])
       .then(([sRes, rRes]) => {
         setServices(sRes.data);
         setRequests(rRes.data);
+        console.log("requests", rRes.data);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -99,6 +104,7 @@ export default function MyServicesPage() {
     setRequests((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status } : r)),
     );
+    console.log(`Request ${id} updated to ${status}`);
   }
 
   return (

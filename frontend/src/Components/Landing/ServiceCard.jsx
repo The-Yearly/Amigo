@@ -1,13 +1,27 @@
-import React from 'react';
-import { Star } from 'lucide-react';
+import React from "react";
+import { Star } from "lucide-react";
 
-const ServiceCard = ({ title, price, description, author, image }) => {
+const ServiceCard = ({
+  title,
+  rating,
+  creatorName,
+  badge,
+  price,
+  description,
+  imageSrc,
+}) => {
   return (
     <div className="bg-white group cursor-pointer">
       <div className="relative aspect-[4/3] overflow-hidden rounded-sm mb-4">
-        <img src={image} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" />
+        <img
+          src={imageSrc}
+          className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+        />
         <span className="absolute top-3 left-3 bg-[#8b2e5f] text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase">
-          Top Curator
+          {badge?.label ? <span>{badge.label}</span> : "Top Curated"}
+        </span>
+        <span className="absolute top-3 right-3 bg-white/90 text-[#8b2e5f] text-[10px] font-bold px-2 py-1 rounded-sm flex items-center gap-1">
+          <Star size={12} /> {rating}
         </span>
       </div>
       <div className="flex justify-between items-start">
@@ -16,16 +30,14 @@ const ServiceCard = ({ title, price, description, author, image }) => {
         </h3>
         <p className="text-lg font-bold text-[#1a1a1a]">{price}</p>
       </div>
-      <p className="text-sm text-gray-500 mt-2 line-clamp-2">
-        {description}
-      </p>
+      <p className="text-sm text-gray-500 mt-2 line-clamp-2">{description}</p>
       <div className="flex items-center gap-2 mt-4">
         <div className="w-8 h-8 rounded-full bg-green-100 text-green-800 flex items-center justify-center font-bold text-xs">
           EC
         </div>
         <div>
-            <p className="text-xs font-bold">{author}</p>
-            <p className="text-[10px] text-gray-400">Ph.D. Candidate, Yale</p>
+          <p className="text-xs font-bold">{creatorName}</p>
+          <p className="text-[10px] text-gray-400">Ph.D. Candidate, Yale</p>
         </div>
       </div>
     </div>

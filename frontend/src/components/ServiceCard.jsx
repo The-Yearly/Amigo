@@ -11,26 +11,23 @@ export default function ServiceCard({
   price,
   onClick,
 }) {
-  const badgeClass =
-    badge?.variant === "secondary"
-      ? "bg-secondary text-on-secondary"
-      : "bg-primary-container text-on-primary-container";
-
   return (
     <article
       onClick={onClick}
-      className="group bg-surface-container-lowest rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-sm hover:shadow-xl cursor-pointer"
+      tabIndex={0}
+      className="group bg-surface-container-lowest rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-md hover:shadow-2xl cursor-pointer border border-surface-container-low hover:border-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
     >
       {/* Hero image */}
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img src={imageSrc} alt={imageAlt} className="w-full h-full object-cover" />
-        {badge && (
-          <div className="absolute top-4 left-4">
-            <span className={`${badgeClass} text-[10px] uppercase tracking-widest font-bold py-1 px-3 rounded-full`}>
-              {badge.label}
-            </span>
-          </div>
-        )}
+        <img
+          src={imageSrc}
+          alt={imageAlt}
+          className="w-full h-full object-cover"
+        />
+
+        <span className="absolute top-3 left-3 bg-[#8b2e5f] text-white text-[10px] font-bold px-2 py-1 rounded-sm uppercase">
+          {badge?.label ? <span>{badge.label}</span> : "Top Curated"}
+        </span>
       </div>
 
       {/* Body */}
@@ -38,7 +35,11 @@ export default function ServiceCard({
         {/* Creator */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed shrink-0">
-            <img src={creatorImg} alt={creatorName} className="w-full h-full object-cover" />
+            <img
+              src={creatorImg}
+              alt={creatorName}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <p className="font-bold text-sm text-on-surface">{creatorName}</p>
@@ -59,13 +60,19 @@ export default function ServiceCard({
           >
             star
           </span>
-          <span className="font-bold text-sm">{Number(rating || 0).toFixed(1)}</span>
-          <span className="text-on-surface-variant text-sm">({reviewCount})</span>
+          <span className="font-bold text-sm">
+            {Number(rating || 0).toFixed(1)}
+          </span>
+          <span className="text-on-surface-variant text-sm">
+            ({reviewCount})
+          </span>
         </div>
 
         {/* Price row */}
         <div className="flex justify-between items-center pt-4 border-t border-surface-container-low">
-          <p className="text-on-surface-variant text-xs uppercase tracking-widest font-semibold">Starting At</p>
+          <p className="text-on-surface-variant text-xs uppercase tracking-widest font-semibold">
+            Starting At
+          </p>
           <p className="text-2xl font-extrabold text-primary">{price}</p>
         </div>
       </div>

@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const protect = (req, res, next) => {
     try {
+        console.log("Auth middleware hit. Cookies:", req.cookies);
         if (!req.cookies || !req.cookies.creds) {
             return res.status(401).json({ message: "No credentials found" });
         }

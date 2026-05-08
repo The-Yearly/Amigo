@@ -1,13 +1,15 @@
 // MessagesPage.jsx
 // Full messages / chat page. Composes all sub-components.
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import MessagesTopAppBar from "@/Components/Landing/Navbar";
 import ConversationItem from "@/components/ConversationItem";
 import ChatBubble from "@/components/ChatBubble";
 import MessageInput from "@/Components/Chat/MessageInput";
 import MobileNavPill from "@/components/MobileNavPill";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
+import Cookies from "js-cookie";
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
@@ -22,48 +24,95 @@ export default function MessagesPage() {
   const [conversations, setConversations] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const isChatAllowed = true; // later: check status
+  const [searchParams] = useSearchParams();
+  const chatIdFromUrl = searchParams.get("chat");
+  const currentUserId = JSON.parse(Cookies.get("creds")).uid;
+  console.log("Current user ID from cookies:", currentUserId);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/messages").then((res) => {
-      setConversations(res.data);
-      if (res.data.length > 0) {
-        setActiveChat(res.data[0].id);
-      }
-    });
+    axios
+      .get("http://localhost:5000/api/messages", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setConversations(res.data);
+        console.log("Fetched conversations:", res.data);
+        if (chatIdFromUrl) {
+          setActiveChat(chatIdFromUrl);
+        } else if (res.data.length > 0) {
+          setActiveChat(res.data[0].id);
+        }
+        console.log("conversations:", res.data);
+      });
   }, []);
 
-  useEffect(() => {
-    if (!activeChat) return;
-
-    axios
-      .get(`/api/messages/${activeChat}`)
-      .then((res) => setMessages(res.data));
-  }, [activeChat]);
-
   async function sendMessage(content) {
-    await axios.post("http://localhost:5000/api/messages", {
-      serviceRequestId: activeChat,
-      content,
-    });
-
-    // reload messages
-    const res = await axios.get(
-      `http://localhost:5000/api/messages/${activeChat}`,
+    await axios.post(
+      "http://localhost:5000/api/messages",
+      {
+        serviceRequestId: activeChat,
+        content,
+      },
+      {
+        withCredentials: true,
+      },
     );
-    setMessages(res.data);
+
+    fetchMessages();
+    const convRes = await axios.get("http://localhost:5000/api/messages", {
+      withCredentials: true,
+    });
+    setConversations(convRes.data);
   }
 
+  // 1. Fetching logic encapsulated
+  const fetchMessages = useCallback(async () => {
+    if (!activeChat) return;
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/api/messages/${activeChat}`,
+        {
+          withCredentials: true,
+        },
+      );
+      setMessages(res.data);
+      console.log("Fetched messages for chat", activeChat, res.data);
+    } catch (err) {
+      console.error("Failed to fetch messages:", err);
+    }
+  }, [activeChat]);
+
   useEffect(() => {
     if (!activeChat) return;
 
-    const interval = setInterval(() => {
-      axios
-        .get(`http://localhost:5000/api/messages/${activeChat}`)
-        .then((res) => setMessages(res.data));
-    }, 3000);
+    const markRead = async () => {
+      try {
+        await axios.patch(
+          `http://localhost:5000/api/messages/${activeChat}/read`,
+          {},
+          { withCredentials: true },
+        );
+        // Refresh the conversation list to remove the "NEW" badge immediately
+        const convRes = await axios.get("http://localhost:5000/api/messages", {
+          withCredentials: true,
+        });
+        setConversations(convRes.data);
+        console.log("Marked chat as read:", activeChat);
+      } catch (err) {
+        console.error("Error marking as read:", err);
+      }
+    };
 
-    return () => clearInterval(interval);
+    markRead();
   }, [activeChat]);
+
+  // 2. Single effect for Polling
+  useEffect(() => {
+    fetchMessages(); // Initial fetch
+
+    const interval = setInterval(fetchMessages, 3000);
+    return () => clearInterval(interval);
+  }, [fetchMessages]);
 
   async function handleSend() {
     const text = inputValue.trim();
@@ -74,15 +123,27 @@ export default function MessagesPage() {
     setInputValue("");
   }
 
-  const formattedMessages = messages.map((m) => ({
-    id: m.id,
-    sent: m.senderId === "mock-user-id", // temp
-    messages: [m.content],
-    time: new Date(m.createdAt).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
-  }));
+  const formattedMessages = messages.map((m) => {
+    // Add a console.log here to debug the comparison in your browser console
+    // console.log("Comparing:", m.senderId, "with:", currentUserId);
+    // console.log(
+    //   "Message senderId:",
+    //   m.senderId,
+    //   "Current userId:",
+    //   currentUserId,
+    // );
+
+    return {
+      id: m.id,
+      // Use toString() to ensure you aren't comparing a string to an objectId
+      sent: m.senderId?.toString() === currentUserId?.toString(),
+      messages: [m.content],
+      time: new Date(m.createdAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+  });
 
   const activeConversation = conversations.find((c) => c.id === activeChat);
 
@@ -121,7 +182,13 @@ export default function MessagesPage() {
                 <ConversationItem
                   key={conv.id}
                   name={conv.otherUser}
-                  preview={conv.title}
+                  preview={conv.preview} // Use conv.preview instead of conv.title for the last msg
+                  avatar={conv.avatarSrc}
+                  active={activeChat === conv.id}
+                  // CRITICAL: Pass these props to trigger the "NEW" UI
+                  isPending={conv.isPending}
+                  serviceLabel={conv.title}
+                  time={conv.time}
                   onClick={() => setActiveChat(conv.id)}
                 />
               ))}
@@ -175,12 +242,14 @@ export default function MessagesPage() {
             {formattedMessages.map((msg) => (
               <ChatBubble
                 key={msg.id}
-                sent={msg.sent}
+                sent={msg.sent} // This must be true for the message to move to the right
                 messages={msg.messages}
-                avatarSrc={msg.sent ? null : activeConversation?.avatarSrc}
-                avatarAlt={msg.sent ? null : activeConversation?.otherUser}
+                // Only pass the other user's avatar if you didn't send the message
+                avatarSrc={
+                  msg.sent ? USER_AVATAR : activeConversation?.avatarSrc
+                }
+                avatarAlt={msg.sent ? "Me" : activeConversation?.otherUser}
                 time={msg.time}
-                read={msg.read}
               />
             ))}
           </div>

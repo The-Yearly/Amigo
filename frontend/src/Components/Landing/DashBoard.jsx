@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ServiceCard from "./ServiceCard"; // Reusable component for displaying individual service listings
+import ServiceCard from "@/components/ServiceCard"; // Reusable component for displaying individual service listings
 import { ArrowRight, Truck, GraduationCap } from "lucide-react"; // Icon library for visual cues
 import axios from "axios";
 
@@ -19,7 +19,6 @@ const Dashboard = () => {
   ];
   const [data, setData] = useState(null);
   const [services, setServices] = useState([]);
-  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,15 +29,12 @@ const Dashboard = () => {
       axios.get("http://localhost:5000/api/services", {
         withCredentials: true,
       }),
-      axios.get("http://localhost:5000/api/dashboard/stats", {
-        withCredentials: true,
-      }),
     ])
-      .then(([dashboardRes, servicesRes, statsRes]) => {
+      .then(([dashboardRes, servicesRes]) => {
         console.log("Dashboard Data:", dashboardRes.data);
         setData(dashboardRes.data);
         setServices(servicesRes.data);
-        setStats(statsRes.data);
+        console.log("Services Data:", servicesRes.data);
       })
       .finally(() => setLoading(false));
   }, []);

@@ -4,6 +4,7 @@ import ActiveRequestItem from "@/Components/Services/ActiveRequestItem";
 import HistoryRow from "@/Components/Services/HistoryRow";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -40,20 +41,33 @@ export default function MyRequestsPage() {
   ];
 
   const [requests, setRequests] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/requests/my")
+      .get("http://localhost:5000/api/requests/my", {
+        withCredentials: true,
+      })
       .then((res) => setRequests(res.data));
   }, []);
 
   async function handleRequest(serviceId) {
-    await axios.post("http://localhost:5000/api/requests", {
-      serviceId,
-    });
+    await axios.post(
+      "http://localhost:5000/api/requests",
+      {
+        serviceId,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     alert("Request sent!");
   }
+
+  const activeRequests = requests.filter((r) => r.status !== "Completed");
+
+  const historyRequests = requests.filter((r) => r.status === "Completed");
 
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-secondary-fixed selection:text-on-secondary-fixed">
@@ -66,9 +80,6 @@ export default function MyRequestsPage() {
             <h1 className="font-display font-extrabold text-5xl md:text-6xl text-primary tracking-tight mb-4">
               My Requests
             </h1>
-            <button onClick={() => handleRequest(service.id)}>
-              Request Service
-            </button>
             <p className="text-on-surface-variant text-lg max-w-2xl leading-relaxed">
               Manage your service inquiries and track progress. Your curated
               history of campus collaborations and academic support.
@@ -82,16 +93,16 @@ export default function MyRequestsPage() {
                 Active Requests
               </h2>
               <span className="text-on-surface-variant font-label text-sm uppercase tracking-widest font-bold">
-                {ACTIVE_REQUESTS.length} Ongoing
+                {activeRequests.length} Ongoing
               </span>
             </div>
             <div className="space-y-6">
-              {requests.map((req) => (
+              {activeRequests.map((req) => (
                 <ActiveRequestItem
                   key={req.id}
                   {...req}
                   onViewDetails={() => console.log("view", req.id)}
-                  onOpenChat={() => console.log("chat", req.id)}
+                  onOpenChat={() => navigate(`/messages?chat=${req.id}`)}
                   onCancel={async () => {
                     await axios.patch(
                       `http://localhost:5000/api/requests/${req.id}/status`,
@@ -110,16 +121,21 @@ export default function MyRequestsPage() {
                 History
               </h2>
               <span className="text-on-surface-variant font-label text-sm uppercase tracking-widest font-bold">
-                12 Completed
+                {historyRequests.length} Completed
               </span>
             </div>
 
             <div className="bg-surface-container-low rounded-lg overflow-hidden shadow-md border border-outline-variant/10">
               <div className="divide-y divide-outline-variant/10">
-                {HISTORY_ROWS.map((row) => (
+                {historyRequests.map((req) => (
                   <HistoryRow
                     key={row.id}
-                    {...row}
+                    imageSrc={row.imageSrc}
+                    imageAlt={row.imageAlt}
+                    title={row.title}
+                    provider={`${row.provider} • ${new Date(row.date).toLocaleDateString()}`}
+                    price={row.price}
+                    rated={false}
                     onRebook={() => alert(`Rebook: ${row.title}`)}
                     onRate={() => alert(`Rate: ${row.title}`)}
                   />

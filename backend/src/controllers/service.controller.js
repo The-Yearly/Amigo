@@ -92,7 +92,6 @@ export const createService = asyncHandler(async (req, res) => {
 export const getMyServices = asyncHandler(async (req, res) => {
     try {
         console.log("Fetching services for user:", req.user);
-        console.log("Fetching services for user:", req.user);
         const services = await prisma.service.findMany({
             where: {
                 creatorId: req.user,

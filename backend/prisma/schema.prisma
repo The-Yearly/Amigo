@@ -78,6 +78,7 @@ model Message {
   id               String   @id @default(auto()) @map("_id") @db.ObjectId
   content          String
   createdAt        DateTime @default(now())
+  isRead           Boolean  @default(false)
 
   serviceRequestId String   @db.ObjectId
   serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
