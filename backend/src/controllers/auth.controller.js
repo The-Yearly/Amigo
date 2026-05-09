@@ -75,6 +75,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
                 department,
                 year,
                 isEmailVerified: true,
+                bio : ""
             },
         });
 

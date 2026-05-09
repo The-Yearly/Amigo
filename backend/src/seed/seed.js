@@ -19,6 +19,7 @@ async function main() {
                 name: "Swayam",
                 email: "swayam@test.com",
                 password: "hashedpassword",
+                bio:"",
                 department: "CSE",
                 year: "3",
                 profileImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e"
@@ -27,6 +28,7 @@ async function main() {
                 name: "Rahul",
                 email: "rahul@test.com",
                 password: "hashedpassword",
+                bio:"",
                 department: "ECE",
                 year: "2",
                 profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
@@ -35,6 +37,7 @@ async function main() {
                 name: "Priya",
                 email: "priya@test.com",
                 password: "hashedpassword",
+                bio:"",
                 department: "CSE",
                 year: "4",
                 profileImage: "https://images.unsplash.com/photo-1494790108377-be9c29b29330"

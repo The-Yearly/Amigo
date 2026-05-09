@@ -8,6 +8,8 @@ import requestRoutes from "./routes/request.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
+
 import cookieParser from "cookie-parser";
 
 
@@ -24,6 +26,8 @@ app.use("/api/services", serviceRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+
 
 
 

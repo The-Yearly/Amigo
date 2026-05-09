@@ -19,6 +19,9 @@ import RootLayout from "./layout.jsx";
 import ProtectedRoute from "./ProtectedRoute";
 import SignInPage from "./auth/SignInPage";
 import SignUpPage from "./auth/SignUpPage";
+import ProfilePage from "./Components/Profile/ProfilePage";
+import AdminProfile from "./admin/components/adminProfile";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -37,6 +40,7 @@ const router = createBrowserRouter([
           { path: "/my/requests", element: <MyRequestsPage /> },
           { path: "/services/:serviceId", element: <ServicePage /> },
           { path: "/messages", element: <MessagesPage /> },
+          { path: "/profile", element: <ProfilePage /> },
         ],
       },
     ],
@@ -46,6 +50,7 @@ const router = createBrowserRouter([
     path: "/signup",
     element: <SignUpPage />,
   },
+
   {
     path: "/login",
     element: <SignInPage />,
@@ -66,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: "permissions",
         element: <ManageAdmins />,
+      },
+      {
+        path: "adminProfile",
+        element: <AdminProfile />,
       },
       {
         path: "auditlogs",
