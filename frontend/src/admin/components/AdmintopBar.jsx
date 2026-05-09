@@ -2,6 +2,8 @@ import { Bell, Menu, Search, Settings, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { useContext } from "react";
 import { IsMobileContext } from "../mobileContext";
+import adminProfile from "./adminProfile";
+import { Link } from "react-router-dom";
 const nav = [
   {
     name: "Dashboard",
@@ -67,13 +69,15 @@ export const TopBar = ({ openSideBar }) => {
               <Settings />
             </motion.button>
           )}
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="p-3 hover:bg-gray-100 rounded-full"
-          >
-            <User />
-          </motion.button>
+          <Link to="/adminSettings/adminProfile">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-3 hover:bg-gray-100 rounded-full"
+            >
+              <User />
+            </motion.button>
+          </Link>
         </div>
       </div>
     </div>

@@ -8,23 +8,25 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  email         String   @unique
-  password      String
-  department    String?
-  year          String?
-  profileImage  String?
-  rating        Float    @default(0)
-  createdAt     DateTime @default(now())
-  isAdmin       Boolean @default(false)
-  admin         Admin?
-  isEmailVerified Boolean @default(false)
-  services      Service[]
-  requestsMade  ServiceRequest[] @relation("Requester")
-  requestsRecv  ServiceRequest[] @relation("Provider")
-  messagesSent  Message[] @relation("Sender")
-  messagesRecv  Message[] @relation("Receiver")
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String           @unique
+  password        String
+  bio             String         @default('')
+  department      String?
+  year            String?
+  profileImage    String?
+  rating          Float            @default(0)
+  createdAt       DateTime         @default(now())
+  isAdmin         Boolean          @default(false)
+  admin           Admin?
+  isEmailVerified Boolean          @default(false)
+  services        Service[]
+  requestsMade    ServiceRequest[] @relation("Requester")
+  requestsRecv    ServiceRequest[] @relation("Provider")
+  messagesSent    Message[]        @relation("Sender")
+  messagesRecv    Message[]        @relation("Receiver")
+  FlagRecord      FlagRecord[]
 }
 
 model Admin {
@@ -47,19 +49,19 @@ enum Stats {
   COMPLETED
 }
 
-  model FlagRecord {
-    id        String   @id @default(auto()) @map("_id") @db.ObjectId
-    type      Flag
-    time      DateTime @default(now())
-    status    Stats    @default(PENDING)
-    serviceId String?  @db.ObjectId
-    reason    String  @default("")
-    adminreason String @default("")
-    service   Service? @relation(fields: [serviceId], references: [id])
-    userId    String?  @db.ObjectId
-    user      User?    @relation(fields: [userId], references: [id])
-    logs      Log[]
-  }
+model FlagRecord {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  type        Flag
+  time        DateTime @default(now())
+  status      Stats    @default(PENDING)
+  serviceId   String?  @db.ObjectId
+  reason      String   @default("")
+  adminreason String   @default("")
+  service     Service? @relation(fields: [serviceId], references: [id])
+  userId      String?  @db.ObjectId
+  user        User?    @relation(fields: [userId], references: [id])
+  logs        Log[]
+}
 
 model Log {
   id         String @id @default(auto()) @map("_id") @db.ObjectId
@@ -106,10 +108,10 @@ model ServiceRequest {
 }
 
 model Message {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  content          String
-  createdAt        DateTime @default(now())
-  isRead           Boolean  @default(false)
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  isRead    Boolean  @default(false)
 
   serviceRequestId String         @db.ObjectId
   serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])

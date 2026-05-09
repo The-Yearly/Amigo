@@ -20,6 +20,9 @@ import ProtectedRoutes from "./lib/protectedRoutes";;
 import RootLayout from "./layout.jsx";
 import SignInPage from "./auth/SignInPage";
 import SignUpPage from "./auth/SignUpPage";
+import ProfilePage from "./Components/Profile/ProfilePage";
+import AdminProfile from "./admin/components/adminProfile";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -38,7 +41,23 @@ const router = createBrowserRouter([
           { path: "/my/requests", element: <MyRequestsPage /> },
           { path: "/services/:serviceId", element: <ServicePage /> },
           { path: "/messages", element: <MessagesPage /> },
-          {
+          { path: "/profile", element: <ProfilePage /> },
+        ],
+      },
+    ],
+  },
+
+  {
+    path: "/signup",
+    element: <SignUpPage />,
+  },
+
+  {
+    path: "/login",
+    element: <SignInPage />,
+  },
+
+            {
     path: "/adminSettings",
     element: <Layout />,
     children: [
@@ -55,12 +74,12 @@ const router = createBrowserRouter([
         element: <ManageAdmins />,
       },
       {
+        path: "adminProfile",
+        element: <AdminProfile />,
+      },
+      {
         path: "auditlogs",
         element: <AuditLog />,
-      },
-    ],
-  },
-        ],
       },
     ],
   },

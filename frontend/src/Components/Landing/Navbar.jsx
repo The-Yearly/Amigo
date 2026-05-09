@@ -45,9 +45,9 @@ const Navbar = () => {
         </button>
 
         {/* PROFILE */}
-        <Link to="/profile">
+        <Link to="/profile" className="hover:text-black ">
           <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-            <img src="user-avatar.jpg" alt="profile" />
+            <img src="user-avatar.jpg" />
           </div>
         </Link>
       </div>
