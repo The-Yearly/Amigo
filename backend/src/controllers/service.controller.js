@@ -46,22 +46,41 @@ export const getServices = asyncHandler(async (req, res) => {
 });
 
 // GET SINGLE SERVICE
+
 export const getServiceById = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  try {
+    const service = await prisma.service.findUnique({
+      where: { id: req.params.id },
+      include: {
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            bio: true,
+            rating: true,
+            profileImage: true,
+            department: true,
+            year: true,
+            email: true,
+          },
+        },
+        requests: {
+          include: {
+            review: true, // pull reviews attached to each request
+          },
+        },
+      },
+    });
 
-  const service = await prisma.service.findUnique({
-    where: { id },
-    include: {
-      creator: true,
-      requests: true,
-    },
-  });
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
 
-  if (!service) {
-    return res.status(404).json({ message: "Service not found" });
+    return res.json(service);
+  } catch (error) {
+    console.error("Error fetching service:", error);
+    return res.status(500).json({ message: "Server error" });
   }
-
-  res.json(service);
 });
 
 // CREATE SERVICE

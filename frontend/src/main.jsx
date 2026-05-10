@@ -25,6 +25,7 @@ import AdminProfile from "./admin/components/adminProfile";
 import EditServicePage from "./services/EditServicePage";
 import axios from "axios";
 import { redirect } from "react-router-dom";
+import Portfolio from "./services/CreatorProfile";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
           { path: "/services", element: <ExplorePage /> },
           { path: "/create-service", element: <CreateServicePage /> },
           { path: "/my/services", element: <MyServicesPage /> },
+          { path: "/portfolio/:creatorId", element: <Portfolio /> },
           {
             path: "/services/edit/:serviceId",
             element: <EditServicePage />,

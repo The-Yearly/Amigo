@@ -12,6 +12,7 @@
   "dependencies": {
     "@imagekit/react": "^5.0.2",
     "axios": "^1.15.2",
+    "bcryptjs": "^3.0.3",
     "framer-motion": "^12.38.0",
     "imagekitio-react": "^4.3.0",
     "js-cookie": "^3.0.5",
@@ -19,7 +20,8 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2",
-    "react-toastify": "^11.1.0"
+    "react-toastify": "^11.1.0",
+    "sweetalert2": "^11.26.24"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
