@@ -5,7 +5,10 @@ import MyServiceCard from "@/Components/Services/MyServiceCard";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
+});
 // ─── Pulsating Animation ──────────────────────────────────────────────────────
 
 const pulseStyles = `
@@ -72,12 +75,8 @@ export default function MyServicesPage() {
 
   useEffect(() => {
     Promise.all([
-      axios.get("http://localhost:5000/api/services/my", {
-        withCredentials: true,
-      }),
-      axios.get("http://localhost:5000/api/requests/provider", {
-        withCredentials: true,
-      }),
+      api.get("/api/services/my"),
+      api.get("/api/requests/provider"),
     ])
       .then(([sRes, rRes]) => {
         setServices(sRes.data);
@@ -96,7 +95,7 @@ export default function MyServicesPage() {
     : {};
 
   async function updateStatus(id, status) {
-    await axios.patch(`http://localhost:5000/api/requests/${id}/status`, {
+    await api.patch(`/api/requests/${id}/status`, {
       status,
     });
 

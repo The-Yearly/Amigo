@@ -13,9 +13,9 @@
 //   onDelete   – Delete button click handler
 
 const STATUS_STYLES = {
-  Active:      "bg-primary-container text-on-primary-container",
+  Active: "bg-primary-container text-on-primary-container",
   "In Progress": "bg-secondary-container text-on-secondary-container",
-  Completed:   "bg-surface-container-highest text-on-surface-variant",
+  Completed: "bg-surface-container-highest text-on-surface-variant",
 };
 
 export default function MyServiceCard({
@@ -42,7 +42,9 @@ export default function MyServiceCard({
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         <div className="absolute top-4 right-4">
-          <span className={`${badgeClass} px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest`}>
+          <span
+            className={`${badgeClass} px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest`}
+          >
             {status}
           </span>
         </div>
@@ -60,7 +62,9 @@ export default function MyServiceCard({
               {price}
             </span>
           </div>
-          <p className="text-on-surface-variant line-clamp-2 leading-relaxed">{description}</p>
+          <p className="text-on-surface-variant line-clamp-2 leading-relaxed">
+            {description}
+          </p>
         </div>
 
         {/* Stats row */}

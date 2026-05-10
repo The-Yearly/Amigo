@@ -1,9 +1,9 @@
 import express from "express";
 import {
-    createService,
-    getServices,
-    getServiceById,
-    getMyServices,
+  createService,
+  getServices,
+  getServiceById,
+  getMyServices,
 } from "../controllers/service.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";

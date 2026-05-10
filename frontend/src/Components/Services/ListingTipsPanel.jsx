@@ -18,7 +18,9 @@ export default function ListingTipsPanel() {
         >
           lightbulb
         </span>
-        <h3 className="font-display font-bold text-xl text-primary mb-4">Listing Tips</h3>
+        <h3 className="font-display font-bold text-xl text-primary mb-4">
+          Listing Tips
+        </h3>
         <ul className="space-y-6">
           {TIPS.map((tip, i) => (
             <li key={i} className="flex gap-3">
@@ -37,7 +39,10 @@ export default function ListingTipsPanel() {
         <p className="text-xs text-on-surface-variant mb-4">
           Contact our campus support team for assistance with your listing.
         </p>
-        <a href="#" className="text-primary font-bold text-xs underline decoration-secondary">
+        <a
+          href="#"
+          className="text-primary font-bold text-xs underline decoration-secondary"
+        >
           Visit Help Center
         </a>
       </div>

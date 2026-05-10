@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import { AuthProvider } from "./lib/authProvider";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
 import ServicePage from "./services/ServicePage";
@@ -15,14 +16,14 @@ import AuditLog from "./admin/auditlog/page";
 import CreateServicePage from "./services/CreateServicePage";
 import MessagesPage from "./messaging/MessagesPage";
 import SignUp from "./auth/page";
+import ProtectedRoutes from "./lib/protectedRoutes";;
 import RootLayout from "./layout.jsx";
-import ProtectedRoute from "./ProtectedRoute";
 import SignInPage from "./auth/SignInPage";
 import SignUpPage from "./auth/SignUpPage";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ProtectedRoute />,
+    element: <ProtectedRoutes />,
     children: [
       {
         path: "/",
@@ -37,21 +38,7 @@ const router = createBrowserRouter([
           { path: "/my/requests", element: <MyRequestsPage /> },
           { path: "/services/:serviceId", element: <ServicePage /> },
           { path: "/messages", element: <MessagesPage /> },
-        ],
-      },
-    ],
-  },
-
-  {
-    path: "/signup",
-    element: <SignUpPage />,
-  },
-  {
-    path: "/login",
-    element: <SignInPage />,
-  },
-
-  {
+          {
     path: "/adminSettings",
     element: <Layout />,
     children: [
@@ -73,10 +60,26 @@ const router = createBrowserRouter([
       },
     ],
   },
-]);
+        ],
+      },
+    ],
+  },
+
+  {
+    path: "/signup",
+    element: <SignUpPage />,
+  },
+  {
+    path: "/login",
+    element: <SignInPage />,
+  },
+]
+);
 
 createRoot(document.getElementById("root")).render(
-  // <StrictMode>
+  <StrictMode>
+    <AuthProvider>
   <RouterProvider router={router} />,
-  // </StrictMode>
+  </AuthProvider>
+  </StrictMode>
 );

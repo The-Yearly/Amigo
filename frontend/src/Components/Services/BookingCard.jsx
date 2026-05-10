@@ -36,7 +36,9 @@ export default function BookingCard({
           star
         </span>
         <span className="font-bold text-on-surface">{rating}</span>
-        <span className="text-tertiary text-sm">({reviewCount} student reviews)</span>
+        <span className="text-tertiary text-sm">
+          ({reviewCount} student reviews)
+        </span>
       </div>
 
       {/* Price block */}

@@ -49,7 +49,11 @@ export default function ServicePreviewCard({
           {/* Creator */}
           <div className="flex items-center gap-2 mb-3">
             <div className="w-6 h-6 rounded-full bg-primary-fixed overflow-hidden">
-              <img src={creatorImg} alt={creatorName} className="w-full h-full object-cover" />
+              <img
+                src={creatorImg}
+                alt={creatorName}
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-[10px] font-bold text-on-surface-variant font-label">
               {creatorName.toUpperCase()}
@@ -83,7 +87,9 @@ export default function ServicePreviewCard({
                 {price ? `$${price}` : "$0.00"}
               </span>
             </div>
-            <span className="material-symbols-outlined text-primary-container">arrow_forward</span>
+            <span className="material-symbols-outlined text-primary-container">
+              arrow_forward
+            </span>
           </div>
         </div>
       </div>
@@ -91,9 +97,12 @@ export default function ServicePreviewCard({
       {/* Amigo Protection badge */}
       <div className="bg-primary-container text-on-primary-container p-6 rounded-xl relative overflow-hidden">
         <div className="relative z-10">
-          <h4 className="font-display font-bold text-white mb-2">Amigo Protection</h4>
+          <h4 className="font-display font-bold text-white mb-2">
+            Amigo Protection
+          </h4>
           <p className="text-xs text-on-primary-container leading-relaxed">
-            Your payments are held in escrow until you and the client confirm the work is complete.
+            Your payments are held in escrow until you and the client confirm
+            the work is complete.
           </p>
         </div>
         <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-primary rounded-full blur-2xl opacity-50" />

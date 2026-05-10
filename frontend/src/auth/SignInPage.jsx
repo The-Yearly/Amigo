@@ -15,40 +15,73 @@ const HERO_IMG =
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+   const [isVerifying, setIsVerifying] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-        {
-          email,
-          password,
-        },
-      );
-
-      // same logic from your old component
-      const { token, user } = res.data;
-      const creds = { uid: user.id, token: token };
-
-      Cookies.set("creds", JSON.stringify(creds), { expires: 7 });
-
-      toast.success("Login successful!");
+      
+        const payload = {
+          email: email,
+          password: password,
+        };
+        const res = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+          payload,
+          { withCredentials: true } 
+        );
+              toast.success("Login successful!");
       toast.info("Redirecting...");
-
       setTimeout(() => {
-        navigate("/");
+            window.location.href = res.data.isAdmin
+      ? "/adminSettings"
+      : "/";
       }, 1000);
+        
+      
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed");
+      console.log(err)
+      toast.error(err.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
     }
   }
+
+  // async function handleSubmit(e) {
+  //   e.preventDefault();
+  //   setLoading(true);
+
+  //   try {
+  //     const res = await axios.post(
+  //       `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+  //       {
+  //         email,
+  //         password,
+  //       },
+  //     );
+
+  //     // same logic from your old component
+  //     const { token, user } = res.data;
+  //     const creds = { uid: user.id, token: token };
+
+  //     Cookies.set("creds", JSON.stringify(creds), { expires: 7 });
+
+  //     toast.success("Login successful!");
+  //     toast.info("Redirecting...");
+
+  //     setTimeout(() => {
+  //       navigate("/");
+  //     }, 1000);
+  //   } catch (err) {
+  //     console.log(err)
+  //     toast.error(err.response?.data?.message || "Login failed");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
 
   return (
     <div className="bg-surface font-body text-on-surface antialiased min-h-screen flex items-center justify-center p-6">
@@ -137,11 +170,12 @@ export default function SignInPage() {
                   arrow_forward
                 </span>
               </button>
+              
             </div>
           </form>
 
           {/* Footer links */}
-          <div className="mt-12 pt-8 border-t border-outline-variant/20 text-center">
+          <div onClick={()=>{setIsVerifying(false)}} className="mt-12 pt-8 border-t border-outline-variant/20 text-center">
             <p className="text-on-surface-variant text-sm">
               Don't have an account?
               <a

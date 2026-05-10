@@ -35,7 +35,11 @@ export default function ServiceCardWide({
       <div className="flex flex-col md:flex-row h-full">
         {/* Image */}
         <div className="relative w-full md:w-1/2 overflow-hidden">
-          <img src={imageSrc} alt={imageAlt} className="w-full h-full object-cover" />
+          <img
+            src={imageSrc}
+            alt={imageAlt}
+            className="w-full h-full object-cover"
+          />
         </div>
 
         {/* Content */}
@@ -43,7 +47,11 @@ export default function ServiceCardWide({
           {/* Creator */}
           <div className="flex items-center gap-3 mb-6">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary-fixed shrink-0">
-              <img src={creatorImg} alt={creatorName} className="w-full h-full object-cover" />
+              <img
+                src={creatorImg}
+                alt={creatorName}
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <p className="font-bold text-lg text-on-surface">{creatorName}</p>
@@ -69,7 +77,9 @@ export default function ServiceCardWide({
                 star
               </span>
               <span className="font-bold">{rating.toFixed(1)}</span>
-              <span className="text-on-surface-variant">({reviewCount} reviews)</span>
+              <span className="text-on-surface-variant">
+                ({reviewCount} reviews)
+              </span>
             </div>
             <p className="text-3xl font-extrabold text-primary">{price}</p>
           </div>

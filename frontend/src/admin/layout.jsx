@@ -1,12 +1,14 @@
 import { Outlet } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "./components/AdminsideBar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { IsMobileContext } from "./mobileContext";
 import { TopBar } from "./components/AdmintopBar";
+import { useAuth } from "@/lib/authProvider";
 export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { user, loading } = useAuth();
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 740);
@@ -17,6 +19,9 @@ export default function Layout() {
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
+  if(user.isAdmin===false){
+    window.location.href="/"
+  }else{
   return (
     <IsMobileContext.Provider value={isMobile}>
       <div className=" relative w-full bg-gray-100/30">
@@ -43,4 +48,5 @@ export default function Layout() {
       </div>
     </IsMobileContext.Provider>
   );
+}
 }

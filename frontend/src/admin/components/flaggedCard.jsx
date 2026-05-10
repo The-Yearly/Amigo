@@ -1,5 +1,5 @@
-import {motion} from "framer-motion"
-import {User, Briefcase } from "lucide-react";
+import { motion } from "framer-motion";
+import { User, Briefcase } from "lucide-react";
 export const FlaggedCard = ({ data }) => (
   <motion.div
     initial={{ opacity: 0, y: 10 }}
@@ -9,9 +9,9 @@ export const FlaggedCard = ({ data }) => (
     <div className="flex justify-between items-start mb-6">
       <div className="flex gap-4">
         <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center ${data.type === "Errand" ? "bg-[#003912] text-white" : " bg-[#efedf0] font-bold text-[#414940]"} text-xl`}
+          className={`w-12 h-12 rounded-xl flex items-center justify-center ${data.type === "ERRAND" ? "bg-[#003912] text-white" : " bg-[#efedf0] font-bold text-[#414940]"} text-xl`}
         >
-          {data.type === "Errand" ? (
+          {data.type === "ERRAND" ? (
             <Briefcase size={24} />
           ) : (
             <User size={28} />
@@ -20,23 +20,23 @@ export const FlaggedCard = ({ data }) => (
         <div>
           <h3 className="font-bold text-xl leading-tight">
             {" "}
-            {data.type === "Errand" ? <p>Errand</p> : <p>User</p>}
+            {data.type === "ERRAND" ? <p>Service</p> : <p>User</p>}
           </h3>
           <p className="text-sm text-[#414940] font-medium">
-            ID: <div className="font-mono">{data.reportId}</div>
+            ID: <div className="font-mono">{data.id}</div>
           </p>
         </div>
       </div>
 
       <div
-        className={`${data.status === "Pending" ? "bg-error-container text-on-error-container" : data.status === "Under Review" ? "bg-amber-300/20 text-amber-600" : "bg-green-300/20 text-green-600"}  text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-tighter`}
+        className={`${data.status === "PENDING" ? "bg-error-container text-on-error-container" : data.status === "UNDER_REVIEW" ? "bg-amber-300/20 text-amber-600" : "bg-green-300/20 text-green-600"}  text-[10px] font-black px-2.5 py-1 rounded-md uppercase tracking-tighter`}
       >
         {data.status}
       </div>
     </div>
 
     <div
-      className={`bg-[#f4f3f5] p-5 rounded-xl mb-6 border-l-4 ${data.type === "Errand" ? "border-[#1c7731]" : "border-[#984063]"}`}
+      className={`bg-[#f4f3f5] p-5 rounded-xl mb-6 border-l-4 ${data.type === "ERRAND" ? "border-[#1c7731]" : "border-[#984063]"}`}
     >
       <p className="text-sm italic text-[#414940] mb-2">Reason:</p>
       <p className="text-sm font-medium text-[#1a1c1e] leading-relaxed">
@@ -61,5 +61,3 @@ export const EmptyState = ({ label }) => (
     </p>
   </div>
 );
-
-

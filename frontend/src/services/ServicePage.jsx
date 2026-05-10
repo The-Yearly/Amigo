@@ -3,14 +3,118 @@ import BottomNavBar from "@/Components/Landing/Footer";
 import BookingCard from "@/Components/Services/BookingCard";
 import RequirementCard from "@/Components/Services/RequirementCard";
 import ReviewCard from "@/Components/Services/ReviewCard";
+import axios from "axios";
 import { ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
-
-
+import { useState,useEffect } from "react";
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function ServicePage() {
+const AVATAR_SRC =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAV_HEM2GFeH0UHpQL_e796s5ZOBlbqE7PThOMkCm6w9dnfKSyOayFLOTPBDDoQsjrdpHMYrfhpbm34zqaekNMBqCZ-OelJXPI5neA7EwaC3sus9-NfyqytdnnYrvqu1MUnVj8VPvEcoepN5ba5eOEi2i2D-bLRBvvfqdSYrh-MWT2_0MFS-4Pxv69B4Vwh4Pvo9_cZWKC9WvNE6XVtvS0TMZB981G9EqgQRH7dixf_Z9Qe6B-pvrce1gWDNjJWFfHap6Z4EqBmKdet";
 
+export const GALLERY_IMAGES = [
+
+  {
+    src: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b",
+    alt: "Graduate smiling portrait",
+    className: "w-full col-span-5",
+  },
+];
+
+export const BOOKING_FEATURES = [
+  {
+    icon: "schedule",
+    label: "90 minute guided session",
+  },
+  {
+    icon: "photo_camera",
+    label: "50+ edited HD photos included",
+  },
+  {
+    icon: "location_on",
+    label: "Multiple campus locations",
+  },
+  {
+    icon: "bolt",
+    label: "Instant booking confirmation",
+  },
+  {
+    icon: "download",
+    label: "Digital delivery within 48 hours",
+  },
+];
+
+export const REQUIREMENTS = [
+  {
+    icon: "checkroom",
+    title: "Graduation Outfit",
+    description:
+      "Please arrive wearing your graduation gown or formal attire for the best results.",
+  },
+  {
+    icon: "schedule",
+    title: "Be On Time",
+    description:
+      "Arrive at least 10 minutes early so we can start the session smoothly.",
+  },
+  {
+    icon: "wb_sunny",
+    title: "Weather Ready",
+    description:
+      "Outdoor shoots may be rescheduled in case of heavy rain or bad weather.",
+  },
+  {
+    icon: "groups",
+    title: "Friends & Family",
+    description:
+      "You may bring friends or family members for a few group shots during the session.",
+  },
+];
+export const REVIEWS = [
+  {
+    _id: "1",
+    name: "Sarah Chen",
+    rating: 5,
+    date: "2 weeks ago",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    review:
+      "Absolutely amazing experience. The photos turned out incredible and the poses felt super natural.",
+  },
+  {
+    _id: "2",
+    name: "Michael Torres",
+    rating: 5,
+    date: "1 month ago",
+    avatar:
+      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    review:
+      "Very professional and knew all the best campus locations. Delivery was fast too.",
+  },
+  {
+    _id: "3",
+    name: "Emily Johnson",
+    rating: 4.8,
+    date: "3 weeks ago",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+    review:
+      "Made me feel comfortable throughout the shoot. The edited pictures looked cinematic.",
+  },
+];
+export const MAP_SRC =
+  "https://images.unsplash.com/photo-1524661135-423995f22d0b";
+  export const CREATOR_SRC =
+  "https://images.unsplash.com/photo-1524661135-423995f22d0b";
+export const CREATOR = {
+  name: "Alex Rivero",
+  role: "Visual Arts Senior",
+  image:
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+  bio: `"I've shot over 300 graduation sessions in the last three years. My goal is to make you feel like the main character of your college story."`,
+  portfolioLink: "/portfolio/alex-rivero",
+};
+  export default function ServicePage() {
   const { id } = useParams();
   const [service, setService] = useState(null);
 
@@ -44,11 +148,11 @@ export default function ServicePage() {
         {/* Hero: Gallery + Booking Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
           {/* Image Gallery */}
-          <div className="lg:col-span-8 grid grid-cols-6 gap-4 h-[600px]">
+          <div className="lg:col-span-8 min-h-[200px] md:min-h-[600px]">
             {GALLERY_IMAGES.map((img) => (
               <div
                 key={img.alt}
-                className={`${img.className} overflow-hidden rounded-xl bg-surface-container shadow-sm border border-outline-variant/10`}
+                className={`w-full overflow-hidden rounded-xl bg-surface-container shadow-sm border border-outline-variant/10`}
               >
                 <img
                   src={img.src}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * WORKSPACESIDEBAR COMPONENT:
@@ -7,13 +7,22 @@ import React from 'react';
  */
 const WorkspaceSidebar = () => {
   // 1. DATA ARRAY:
-  // Storing tips in an array of objects makes the UI "Data-Driven." 
-  // In a viva, explain that this makes the code cleaner and easier to update 
+  // Storing tips in an array of objects makes the UI "Data-Driven."
+  // In a viva, explain that this makes the code cleaner and easier to update
   // than hardcoding three separate <div> blocks.
   const tips = [
-    { id: "01", text: "Use natural lighting in your gallery photos for a premium feel." },
-    { id: "02", text: "Keep your title concise but evocative of the value you provide." },
-    { id: "03", text: "Detailed descriptions help set clear expectations from the start." }
+    {
+      id: "01",
+      text: "Use natural lighting in your gallery photos for a premium feel.",
+    },
+    {
+      id: "02",
+      text: "Keep your title concise but evocative of the value you provide.",
+    },
+    {
+      id: "03",
+      text: "Detailed descriptions help set clear expectations from the start.",
+    },
   ];
 
   return (
@@ -21,7 +30,6 @@ const WorkspaceSidebar = () => {
        'sticky top-12' ensures that as the user fills out the ExpertiseForm, 
        these tips remain in their line of sight. Mention this as a UX (User Experience) choice. */
     <div className="sticky top-12">
-      
       {/* SECTION LABEL: Uses the Amigo accent color (#8b2e5f) for brand consistency */}
       <p className="text-[10px] font-bold text-[#8b2e5f] uppercase tracking-widest mb-4">
         Curator Workspace
@@ -36,8 +44,8 @@ const WorkspaceSidebar = () => {
 
       {/* SUPPORTING TEXT: Provides the "Why" behind the form */}
       <p className="text-gray-500 text-lg leading-relaxed mb-10">
-        Turn your creative talent into a gallery-ready service. 
-        High-quality visuals and clear descriptions attract the best clients.
+        Turn your creative talent into a gallery-ready service. High-quality
+        visuals and clear descriptions attract the best clients.
       </p>
 
       {/* 3. THE TIPS CARD:

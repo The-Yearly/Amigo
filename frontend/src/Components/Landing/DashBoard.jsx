@@ -210,8 +210,15 @@ const PulseItem = ({ icon, title, meta }) => (
       <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase">
         {meta}
       </p>
+      <p className="text-sm font-bold text-[#3E2723] dark:text-gray-200">
+        {title}
+      </p>
+      <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase">
+        {meta}
+      </p>
     </div>
   </div>
 );
 
 export default Dashboard;
+

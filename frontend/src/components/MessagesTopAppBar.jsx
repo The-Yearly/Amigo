@@ -13,7 +13,9 @@ export default function MessagesTopAppBar({ avatarSrc }) {
         <nav className="hidden md:flex items-center gap-6">
           <NavLink to="/">Home</NavLink>
           <NavLink to="/service">Services</NavLink>
-          <NavLink to="/messages" active>Chat</NavLink>
+          <NavLink to="/messages" active>
+            Chat
+          </NavLink>
         </nav>
       </div>
       <div className="flex items-center gap-4">
@@ -21,7 +23,11 @@ export default function MessagesTopAppBar({ avatarSrc }) {
           notifications
         </button>
         <div className="h-8 w-8 rounded-full overflow-hidden">
-          <img src={avatarSrc} alt="User avatar" className="h-full w-full object-cover" />
+          <img
+            src={avatarSrc}
+            alt="User avatar"
+            className="h-full w-full object-cover"
+          />
         </div>
       </div>
     </header>

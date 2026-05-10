@@ -1,41 +1,43 @@
 import jwt from "jsonwebtoken";
 
 export const protect = (req, res, next) => {
+  console.log("HJE",req.cookies)
+  if (req.cookies.token) {
+    const token = Buffer.from(req.cookies.token, "base64").toString("utf-8");
+    console.log(token, "He");
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
     try {
-        console.log("Auth middleware hit. Cookies:", req.cookies);
-        if (!req.cookies || !req.cookies.creds) {
-            return res.status(401).json({ message: "No credentials found" });
-        }
-        const creds = JSON.parse(req.cookies.creds);
-        console.log("Auth creds:", creds);
-
-        if (!creds || !creds.token) {
-            return res.status(401).json({ message: "Invalid credentials" });
-        }
-
-        const rawToken = Buffer.from(creds.token, "base64").toString("utf-8");
-        const decoded = jwt.verify(rawToken, process.env.JWT_SECRET);
-        req.user = decoded.userId; // Attach user info to request
-
-        console.log("Authenticated user:", req.user);
-
-
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
         next();
     } catch (err) {
-        console.error("Auth error:", err);
-        return res.status(401).json({ message: "Invalid or expired token" });
+      console.log(err)
+      res.status(401).json({ message: "Invalid or expired session" });
     }
+  } else {
+    res.status(401).json({ message: "Invalid or expired session" });
+  }
 };
 
-export const adminOnly = async (req, res, next) => {
-    const admin = await prisma.admin.findUnique({
-        where: { userId: req.user.id },
-    });
-
-    if (!admin) {
-        return res.status(403).json({ message: "Admin access required" });
+export const adminOnly = (req, res, next) => {
+  if (req.cookies.token) {
+    const token = Buffer.from(req.cookies.token, "base64").toString("utf-8");
+    console.log(token, "He");
+    if (!token) {
+      return res.status(401).json({ message: "Not authenticated" });
     }
-
-    req.admin = admin;
-    next();
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log(decoded, "Baby");
+      if (decoded.userId.isAdmin) {
+        next();
+      }
+    } catch (err) {
+      res.status(401).json({ message: "Invalid or expired session" });
+    }
+  } else {
+    res.status(401).json({ message: "Invalid or expired session" });
+  }
 };
+

@@ -11,7 +11,7 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import React, { useContext, useEffect } from "react";
 import { IsMobileContext } from "./mobileContext";
 export const dummyData = [
@@ -208,36 +208,37 @@ export default function AdminHome() {
             <ArrowDownUp />
             <p>Sort</p>
           </div>
-          {!isMobile &&
-          <motion.span
-            className="flex items-center space-x-2 text-sm font-bold cursor-pointer"
-            whileHover="hover"
-            initial="rest"
-            animate="rest"
-          >
-            <motion.p
-              variants={{
-                rest: { x: 0 },
-                hover: { x: 2 },
-              }}
-              transition={{ type: "spring", stiffness: 300 }}
+          {!isMobile && (
+            <motion.span
+              className="flex items-center space-x-2 text-sm font-bold cursor-pointer"
+              whileHover="hover"
+              initial="rest"
+              animate="rest"
             >
-              View All
-            </motion.p>
+              <motion.p
+                variants={{
+                  rest: { x: 0 },
+                  hover: { x: 2 },
+                }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                View All
+              </motion.p>
 
-            <motion.div
-              variants={{
-                rest: { x: 0, opacity: 0.7 },
-                hover: { x: 6, opacity: 1 },
-              }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <ArrowRight className="w-5 h-5" />
-            </motion.div>
-          </motion.span>}
-                  </div>
-                </div>
-                {!isMobile && (
+              <motion.div
+                variants={{
+                  rest: { x: 0, opacity: 0.7 },
+                  hover: { x: 6, opacity: 1 },
+                }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <ArrowRight className="w-5 h-5" />
+              </motion.div>
+            </motion.span>
+          )}
+        </div>
+      </div>
+      {!isMobile && (
         <React.Fragment>
           <p className="font-sans">REPORT ID</p>
           <p className="font-sans">TYPE</p>
@@ -271,8 +272,6 @@ export default function AdminHome() {
               </p>
             </React.Fragment>
           ))}
-
-
         </React.Fragment>
       )}
       {isMobile &&

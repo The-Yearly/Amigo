@@ -7,7 +7,11 @@
 
 import { useRef } from "react";
 
-export default function ImageUpload({ label = "Service Imagery", preview, onChange }) {
+export default function ImageUpload({
+  label = "Service Imagery",
+  preview,
+  onChange,
+}) {
   const inputRef = useRef(null);
 
   function handleFile(file) {
@@ -32,14 +36,22 @@ export default function ImageUpload({ label = "Service Imagery", preview, onChan
         className="w-full aspect-video bg-surface-container-high rounded-xl flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/40 group-hover:border-primary/40 transition-colors cursor-pointer overflow-hidden"
       >
         {preview ? (
-          <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+          <img
+            src={preview}
+            alt="Preview"
+            className="w-full h-full object-cover"
+          />
         ) : (
           <>
             <span className="material-symbols-outlined text-4xl text-outline mb-2">
               add_photo_alternate
             </span>
-            <p className="text-sm text-on-surface-variant">Drag and drop or click to upload</p>
-            <p className="text-xs text-outline mt-1">Recommended: 1600×900px JPG or PNG</p>
+            <p className="text-sm text-on-surface-variant">
+              Drag and drop or click to upload
+            </p>
+            <p className="text-xs text-outline mt-1">
+              Recommended: 1600×900px JPG or PNG
+            </p>
           </>
         )}
       </div>

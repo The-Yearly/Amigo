@@ -15,7 +15,9 @@ export default function ExploreFooter() {
       <div className="flex flex-col md:flex-row justify-between items-center px-12 py-16 gap-8 w-full max-w-[1920px] mx-auto">
         {/* Brand */}
         <div className="flex flex-col items-center md:items-start gap-4">
-          <span className="text-lg font-bold text-[#003912] font-display">Amigo</span>
+          <span className="text-lg font-bold text-[#003912] font-display">
+            Amigo
+          </span>
           <p className="font-['Inter'] text-sm tracking-wide text-[#414940] dark:text-[#c1c9bd] max-w-xs text-center md:text-left">
             © 2024 Amigo Campus Marketplace. All rights reserved.
           </p>

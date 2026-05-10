@@ -33,7 +33,11 @@ export default function RequestNavBar({ avatarSrc }) {
             Post a Request
           </button>
           <div className="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border-2 border-primary-fixed">
-            <img src={avatarSrc} alt="User avatar" className="w-full h-full object-cover" />
+            <img
+              src={avatarSrc}
+              alt="User avatar"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>

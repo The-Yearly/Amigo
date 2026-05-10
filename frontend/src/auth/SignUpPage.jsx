@@ -71,10 +71,10 @@ export default function SignUpPage() {
       return;
     }
 
-    if (!verifyEmail(form.email)) {
-      toast.error("Use a valid Amrita student email");
-      return;
-    }
+    // if (!verifyEmail(form.email)) {
+    //   toast.error("Use a valid Amrita student email");
+    //   return;
+    // }
 
     setLoading(true);
 
@@ -115,9 +115,7 @@ export default function SignUpPage() {
       );
 
       const { token, user } = res.data;
-      const creds = { uid: user.id, session: token };
 
-      Cookies.set("creds", JSON.stringify(creds), { expires: 7 });
 
       toast.success("Account verified!");
       toast.info("Redirecting...");

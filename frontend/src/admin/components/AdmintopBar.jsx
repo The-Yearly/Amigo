@@ -46,7 +46,7 @@ export const TopBar = ({ openSideBar }) => {
           <div className="relative flex items-center">
             <Search className="absolute left-3 text-gray-500" />
             <input
-              className="w-42 md:ml-0 md:w-82 h-10 md:h-12 pl-10 rounded-xl border-gray-300 border focus:outline-none bg-gray-400/10"
+              className="  md:ml-0 w-32 md:w-80 h-8 text-xs md:h-12 px-10 rounded-xl border-gray-300 border focus:outline-none bg-gray-400/10"
               placeholder="Search Reports"
             />
           </div>

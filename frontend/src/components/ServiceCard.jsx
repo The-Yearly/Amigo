@@ -40,6 +40,11 @@ export default function ServiceCard({
               alt={creatorName}
               className="w-full h-full object-cover"
             />
+            <img
+              src={creatorImg}
+              alt={creatorName}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div>
             <p className="font-bold text-sm text-on-surface">{creatorName}</p>
@@ -66,10 +71,19 @@ export default function ServiceCard({
           <span className="text-on-surface-variant text-sm">
             ({reviewCount})
           </span>
+          <span className="font-bold text-sm">
+            {Number(rating || 0).toFixed(1)}
+          </span>
+          <span className="text-on-surface-variant text-sm">
+            ({reviewCount})
+          </span>
         </div>
 
         {/* Price row */}
         <div className="flex justify-between items-center pt-4 border-t border-surface-container-low">
+          <p className="text-on-surface-variant text-xs uppercase tracking-widest font-semibold">
+            Starting At
+          </p>
           <p className="text-on-surface-variant text-xs uppercase tracking-widest font-semibold">
             Starting At
           </p>

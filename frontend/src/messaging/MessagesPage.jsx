@@ -1,7 +1,7 @@
 // MessagesPage.jsx
 // Full messages / chat page. Composes all sub-components.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import MessagesTopAppBar from "@/Components/Landing/Navbar";
 import ConversationItem from "@/components/ConversationItem";
 import ChatBubble from "@/components/ChatBubble";
@@ -9,7 +9,7 @@ import MessageInput from "@/Components/Chat/MessageInput";
 import MobileNavPill from "@/components/MobileNavPill";
 import axios from "axios";
 import { useSearchParams } from "react-router-dom";
-import Cookies from "js-cookie";
+import { AuthContext } from "@/lib/authProvider";
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
@@ -26,7 +26,9 @@ export default function MessagesPage() {
   const isChatAllowed = true; // later: check status
   const [searchParams] = useSearchParams();
   const chatIdFromUrl = searchParams.get("chat");
-  const currentUserId = JSON.parse(Cookies.get("creds")).uid;
+  const {user,loading}=useContext(AuthContext)
+  console.log(user,"TAke A Look At M<y")
+  const currentUserId = user.uid;
   console.log("Current user ID from cookies:", currentUserId);
 
   useEffect(() => {

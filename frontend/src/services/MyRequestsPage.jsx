@@ -5,7 +5,10 @@ import HistoryRow from "@/Components/Services/HistoryRow";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
+});
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function MyRequestsPage() {
@@ -44,7 +47,8 @@ export default function MyRequestsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
+    console.log("HE;l")
+    api
       .get("http://localhost:5000/api/requests/my", {
         withCredentials: true,
       })
@@ -52,7 +56,7 @@ export default function MyRequestsPage() {
   }, []);
 
   async function handleRequest(serviceId) {
-    await axios.post(
+    await api.post(
       "http://localhost:5000/api/requests",
       {
         serviceId,
@@ -104,7 +108,7 @@ export default function MyRequestsPage() {
                   onViewDetails={() => console.log("view", req.id)}
                   onOpenChat={() => navigate(`/messages?chat=${req.id}`)}
                   onCancel={async () => {
-                    await axios.patch(
+                    await api.patch(
                       `http://localhost:5000/api/requests/${req.id}/status`,
                       { status: "Cancelled" },
                     );
@@ -127,7 +131,7 @@ export default function MyRequestsPage() {
 
             <div className="bg-surface-container-low rounded-lg overflow-hidden shadow-md border border-outline-variant/10">
               <div className="divide-y divide-outline-variant/10">
-                {historyRequests.map((req) => (
+                {historyRequests.map((row) => (
                   <HistoryRow
                     key={row.id}
                     imageSrc={row.imageSrc}

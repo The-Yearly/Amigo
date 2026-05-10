@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import { Eye, EyeIcon as EyeClosed, ShieldCheck } from "lucide-react";
-import Cookies from "js-cookie";
+import { AxeIcon, Eye, EyeIcon as EyeClosed, ShieldCheck } from "lucide-react";
 
 export default function AuthPage() {
   const [data, setData] = useState({
@@ -21,6 +20,7 @@ export default function AuthPage() {
     const regex = /^am\.sc\.u4cse\d{5}@am\.students\.amrita\.edu$/;
     return regex.test(email);
   }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -60,8 +60,10 @@ export default function AuthPage() {
         const res = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
           payload,
+          { withCredentials: true } 
         );
         handlePostAuthSuccess(res.data);
+        
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Authentication failed");
@@ -91,17 +93,14 @@ export default function AuthPage() {
     }
   }
 
-  const handlePostAuthSuccess = (responseData) => {
-    const { token, user } = responseData;
-    const creds = { uid: user.id, session: token };
-
-    Cookies.set("creds", JSON.stringify(creds), { expires: 7 });
-
-    toast.info("Redirecting...");
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 1000);
-  };
+const handlePostAuthSuccess = async(responseData) => {
+  toast.info("Redirecting...");
+  setTimeout(() => {
+    window.location.href = responseData.isAdmin
+      ? "/adminSettings"
+      : "/";
+  }, 1000);
+};
 
   return (
     <>

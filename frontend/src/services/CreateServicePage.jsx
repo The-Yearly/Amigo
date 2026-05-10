@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ExploreNavBar from "@/Components/Landing/Navbar";
 import ExploreFooter from "@/Components/Landing/Footer";
 import ListingTipsPanel from "@/Components/Services/ListingTipsPanel";
 import ServicePreviewCard from "@/Components/Services/ServicePreviewCard";
 import ImageUpload from "@/Components/Services/ImageUpload";
 import FormField from "@/Components/Services/FormField";
+import {
+    upload,
+} from "@imagekit/react";
 import axios from "axios";
+import { AuthContext } from "@/lib/authProvider";
 
 const CATEGORIES = [
   "Photography",
@@ -25,14 +29,48 @@ export default function CreateServicePage() {
     description: "",
     image: "",
   });
+  const abortController = new AbortController();
   const [imagePreview, setImagePreview] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [Loading, setLoading] = useState(false);
+  const [image,setImage]=useState(undefined)
+  const {user,loading}=useContext(AuthContext)
 
-  function set(field) {
+    function set(field) {
     return (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
   }
 
+     const handleUpload = async () => {
+  if (!image) {
+    alert("Select image first");
+    return;
+  }
+
+  try {
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/uploadImage`
+    );
+
+    const response = await upload({
+      file: image,
+      fileName: image.name,
+      publicKey: data.publicKey,
+      signature: data.signature,
+      token: data.token,
+      expire: data.expire,
+    });
+
+    
+
+    return response.url;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+
+  
   function handleImageChange(file) {
+    setImage(file)
     const url = URL.createObjectURL(file);
 
     setImagePreview(url);
@@ -45,19 +83,40 @@ export default function CreateServicePage() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefault();
-    if (!form.title || !form.price) {
-      alert("Title and price required");
-      return;
-    }
-    setLoading(true);
+  e.preventDefault();
 
-    await axios.post("http://localhost:5000/api/services", form);
-
-    alert("Service created!");
-    setLoading(false);
+  if (!form.title || !form.price) {
+    alert("Title and price required");
+    return;
   }
 
+  try {
+    setLoading(true);
+
+    const imageUrl = await handleUpload();
+
+    const updatedForm = {
+      ...form,
+      image: imageUrl,
+      id:user.uid
+    };
+
+    console.log(updatedForm);
+
+    await axios.post(
+      "http://localhost:5000/api/services",
+      updatedForm,
+      { withCredentials: true }
+    );
+
+    alert("Service created!");
+  } catch (err) {
+    console.log(err);
+    alert("Failed to create service");
+  } finally {
+    setLoading(false);
+  }
+}
   return (
     <div className="bg-surface font-body text-on-surface antialiased">
       <ExploreNavBar />
@@ -146,7 +205,7 @@ export default function CreateServicePage() {
                     type="submit"
                     className="bg-primary-gradient text-white px-10 py-4 rounded-xl font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
                   >
-                    {loading ? "Publishing..." : "Publish Service"}
+                    {Loading ? "Publishing..." : "Publish Service"}
                   </button>
                 </div>
               </form>

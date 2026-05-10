@@ -32,7 +32,11 @@ export default function ActiveRequestItem({
     <div className="bg-surface-container-lowest rounded-lg p-8 flex flex-col md:flex-row items-center gap-8 hover:scale-[1.01] transition-transform duration-300 group shadow-md hover:shadow-lg border border-outline-variant/10">
       {/* Thumbnail */}
       <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0">
-        <img src={imageSrc} alt={imageAlt} className="w-full h-full object-cover" />
+        <img
+          src={imageSrc}
+          alt={imageAlt}
+          className="w-full h-full object-cover"
+        />
       </div>
 
       {/* Content grid */}
@@ -40,14 +44,20 @@ export default function ActiveRequestItem({
         {/* Col 1: title + provider */}
         <div className="space-y-1">
           <StatusBadge status={status} />
-          <h3 className="font-headline font-bold text-xl text-on-surface">{title}</h3>
-          <p className="text-on-surface-variant font-medium">Provider: {provider}</p>
+          <h3 className="font-headline font-bold text-xl text-on-surface">
+            {title}
+          </h3>
+          <p className="text-on-surface-variant font-medium">
+            Provider: {provider}
+          </p>
         </div>
 
         {/* Col 2: date + price */}
         <div className="flex flex-col justify-center">
           <div className="flex items-center gap-2 text-on-surface-variant mb-1">
-            <span className="material-symbols-outlined text-sm">calendar_today</span>
+            <span className="material-symbols-outlined text-sm">
+              calendar_today
+            </span>
             <span className="text-sm font-medium">{date}</span>
           </div>
           <div className="flex items-center gap-2 text-primary font-bold">
@@ -70,7 +80,9 @@ export default function ActiveRequestItem({
               onClick={onOpenChat}
               className="px-5 py-2.5 rounded-lg bg-surface-container-high text-on-surface font-bold flex items-center gap-2 shadow-sm border border-outline-variant/20 hover:bg-secondary-container hover:text-secondary hover:shadow-md active:scale-95 transition-all font-label"
             >
-              <span className="material-symbols-outlined text-[18px]">chat_bubble</span>
+              <span className="material-symbols-outlined text-[18px]">
+                chat_bubble
+              </span>
               Open Chat
             </button>
           )}

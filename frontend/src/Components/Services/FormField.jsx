@@ -36,7 +36,11 @@ export default function FormField({
       </label>
 
       {as === "select" && (
-        <select className={`${BASE} appearance-none`} value={value} onChange={onChange}>
+        <select
+          className={`${BASE} appearance-none`}
+          value={value}
+          onChange={onChange}
+        >
           {options.map((opt) => (
             <option key={opt}>{opt}</option>
           ))}

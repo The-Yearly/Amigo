@@ -26,20 +26,28 @@ export default function HistoryRow({
     <div className="p-8 flex flex-col md:flex-row items-center gap-8 hover:bg-surface-container/50 transition-colors border-b border-outline-variant/10 last:border-b-0">
       {/* Thumbnail */}
       <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 opacity-80">
-        <img src={imageSrc} alt={imageAlt} className="w-full h-full object-cover grayscale-[30%]" />
+        <img
+          src={imageSrc}
+          alt={imageAlt}
+          className="w-full h-full object-cover grayscale-[30%]"
+        />
       </div>
 
       {/* Grid */}
       <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
         {/* Col 1: title + provider */}
         <div>
-          <h3 className="font-headline font-bold text-lg text-on-surface">{title}</h3>
+          <h3 className="font-headline font-bold text-lg text-on-surface">
+            {title}
+          </h3>
           <p className="text-on-surface-variant text-sm">{provider}</p>
         </div>
 
         {/* Col 2: status */}
         <div className="flex flex-col justify-center">
-          <span className="text-sm font-semibold text-on-surface-variant mb-1">Status</span>
+          <span className="text-sm font-semibold text-on-surface-variant mb-1">
+            Status
+          </span>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-outline-variant" />
             <span className="text-sm font-bold text-on-surface-variant uppercase tracking-tighter">

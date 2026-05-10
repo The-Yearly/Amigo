@@ -10,23 +10,29 @@
 //              accent  = primary-container (dark green), centered
 //   wide       – bool, spans 2 cols on md+
 
-export default function StatCard({ label, value, badge, variant = "default", wide = false }) {
+export default function StatCard({
+  label,
+  value,
+  badge,
+  variant = "default",
+  wide = false,
+}) {
   const bgClass = {
     default: "bg-surface-container-lowest",
-    muted:   "bg-surface-container",
-    accent:  "bg-primary-container",
+    muted: "bg-surface-container",
+    accent: "bg-primary-container",
   }[variant];
 
   const labelClass = {
     default: "text-on-surface-variant",
-    muted:   "text-on-surface-variant",
-    accent:  "text-on-primary-fixed-variant",
+    muted: "text-on-surface-variant",
+    accent: "text-on-primary-fixed-variant",
   }[variant];
 
   const valueClass = {
     default: "text-primary",
-    muted:   "text-primary",
-    accent:  "text-on-primary-container",
+    muted: "text-primary",
+    accent: "text-on-primary-container",
   }[variant];
 
   const centered = variant !== "default";
@@ -41,11 +47,17 @@ export default function StatCard({ label, value, badge, variant = "default", wid
         cursor-default shadow-md border border-outline-variant/10 hover:shadow-lg transition-shadow
       `}
     >
-      <span className={`${labelClass} font-label font-semibold text-sm uppercase tracking-widest`}>
+      <span
+        className={`${labelClass} font-label font-semibold text-sm uppercase tracking-widest`}
+      >
         {label}
       </span>
-      <div className={`mt-4 flex items-baseline gap-4 ${centered ? "justify-center" : ""}`}>
-        <span className={`text-5xl font-display font-extrabold ${valueClass}`}>{value}</span>
+      <div
+        className={`mt-4 flex items-baseline gap-4 ${centered ? "justify-center" : ""}`}
+      >
+        <span className={`text-5xl font-display font-extrabold ${valueClass}`}>
+          {value}
+        </span>
         {badge && (
           <span className="text-secondary font-bold text-sm bg-secondary-container px-3 py-1 rounded-full">
             {badge}
