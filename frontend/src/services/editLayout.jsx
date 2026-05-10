@@ -6,7 +6,7 @@ import { IsMobileContext } from "./mobileContext";
 import { TopBar } from "./components/AdmintopBar";
 import { useAuth } from "@/lib/authProvider";
 export default function Layout() {
-  const {user,loading}=useAuth()
+  const { user, loading } = useAuth();
   if (loading) {
     return <div>Loading...</div>;
   }

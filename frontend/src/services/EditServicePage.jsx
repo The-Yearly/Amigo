@@ -1,4 +1,4 @@
-import { useContext,  useEffect,  useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ExploreNavBar from "@/Components/Landing/Navbar";
 import ExploreFooter from "@/Components/Landing/Footer";
 import ListingTipsPanel from "@/Components/Services/ListingTipsPanel";
@@ -9,7 +9,7 @@ import { upload } from "@imagekit/react";
 import axios from "axios";
 import { AuthContext } from "@/lib/authProvider";
 import { useParams } from "react-router-dom";
-import {toast,ToastContainer} from "react-toastify"
+import { toast, ToastContainer } from "react-toastify";
 const CATEGORIES = [
   "Photography",
   "Tutoring",
@@ -28,7 +28,7 @@ export default function EditServicePage() {
     description: "",
     image: "",
   });
-  const {serviceId}=useParams()
+  const { serviceId } = useParams();
   const [imagePreview, setImagePreview] = useState(null);
   const [Loading, setLoading] = useState(false);
   const [image, setImage] = useState(undefined);
@@ -36,22 +36,31 @@ export default function EditServicePage() {
   function set(field) {
     return (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
   }
-  useEffect(()=>{
-    const fetchData=async()=>{
-      const res=await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/services/`+serviceId)
-      const data=res.data
-      setForm({title:data.title,category:data.category,description:data.description,price:data.price,image:data.image,location:data.location})
-      setImagePreview(data.image)
-      console.log(data.image,"s")
-    }
-    fetchData()
-  },[])
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/services/` + serviceId,
+      );
+      const data = res.data;
+      setForm({
+        title: data.title,
+        category: data.category,
+        description: data.description,
+        price: data.price,
+        image: data.image,
+        location: data.location,
+      });
+      setImagePreview(data.image);
+      console.log(data.image, "s");
+    };
+    fetchData();
+  }, []);
   const handleUpload = async () => {
     if (!image) {
       toast("Select image first");
       return;
     }
-    
+
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/uploadImage`,
@@ -94,19 +103,23 @@ export default function EditServicePage() {
 
     try {
       setLoading(true);
-      let imageUrl
-      if(image){
-         imageUrl = await handleUpload();
+      let imageUrl;
+      if (image) {
+        imageUrl = await handleUpload();
       }
       const updatedForm = {
         ...form,
-        eid:serviceId,
-        image:  imageUrl||form.image,
+        eid: serviceId,
+        image: imageUrl || form.image,
         id: user.uid,
       };
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/services/edit`, updatedForm, {
-        withCredentials: true,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/services/edit`,
+        updatedForm,
+        {
+          withCredentials: true,
+        },
+      );
       toast("Service created!");
     } catch (err) {
       console.log(err);
@@ -117,7 +130,7 @@ export default function EditServicePage() {
   }
   return (
     <div className="bg-surface font-body text-on-surface antialiased">
-      <ToastContainer/>
+      <ToastContainer />
       <ExploreNavBar />
 
       <main className="pt-32 pb-24 px-6 md:px-12 max-w-[1440px] mx-auto">
@@ -196,7 +209,7 @@ export default function EditServicePage() {
                 <div className="pt-6 flex items-center justify-between">
                   <button
                     type="button"
-                    onClick={()=>window.location.href="/"}
+                    onClick={() => (window.location.href = "/")}
                     className="bg-secondary-container text-on-secondary-container px-5 py-3 rounded-lg font-bold shadow-sm border border-secondary-container/20 hover:shadow-md transition-all"
                   >
                     Cancel

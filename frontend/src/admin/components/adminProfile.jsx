@@ -1,30 +1,26 @@
 import React from "react";
-import { useState,useContext ,useEffect} from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "@/lib/authProvider";
-import {
-  Mail,
-  Shield,
-  Clock,
-  Key,
-  Settings,
-  Activity,
-} from "lucide-react";
+import { Mail, Shield, Clock, Key, Settings, Activity } from "lucide-react";
 
 const AdminProfile = () => {
   const [admin, setAdmin] = useState(null);
   const [load, setLoading] = useState(true);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [newPassword, setNewPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
   const { user, loading } = useContext(AuthContext);
 
   // 1. Fetch Admin Data on Load
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/profile/' + user.uid, {
-          withCredentials: true
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/admin/profile/" + user.uid,
+          {
+            withCredentials: true,
+          },
+        );
         setAdmin(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -40,12 +36,13 @@ const AdminProfile = () => {
     if (!newPassword) return alert("Please enter a new password");
 
     try {
-      await axios.put('http://localhost:5000/api/admin/update-profile',
+      await axios.put(
+        "http://localhost:5000/api/admin/update-profile",
         { newPassword },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       alert("Password updated successfully!");
-      setNewPassword('');
+      setNewPassword("");
       setIsChangingPassword(false);
     } catch (error) {
       console.error("Update failed:", error);
@@ -53,10 +50,16 @@ const AdminProfile = () => {
     }
   };
 
-  if (load) return <div className="p-12 text-center font-bold">Loading Profile...</div>;
-  if (!admin) return <div className="p-12 text-center text-red-500">Admin session not found.</div>;
+  if (load)
+    return <div className="p-12 text-center font-bold">Loading Profile...</div>;
+  if (!admin)
+    return (
+      <div className="p-12 text-center text-red-500">
+        Admin session not found.
+      </div>
+    );
 
-  const isSuperAdmin = admin.role === 'Super Admin';
+  const isSuperAdmin = admin.role === "Super Admin";
 
   return (
     <div className="flex min-h-screen bg-[#F9F9F4] font-sans text-[#1A2E1A]">
@@ -72,19 +75,23 @@ const AdminProfile = () => {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
           {/* Profile Details */}
           <div className="lg:col-span-2 space-y-8">
             <section className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 flex items-center gap-8">
               <div className="relative">
                 <div className="w-32 h-32 rounded-2xl bg-gray-100 overflow-hidden border border-gray-100">
                   <img
-                    src={admin.profileImage || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300"}
+                    src={
+                      admin.profileImage ||
+                      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300"
+                    }
                     alt="Admin Avatar"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className={`absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-4 border-white ${isSuperAdmin ? 'bg-[#8B3D52]' : 'bg-slate-400'}`} />
+                <div
+                  className={`absolute -bottom-2 -right-2 w-6 h-6 rounded-full border-4 border-white ${isSuperAdmin ? "bg-[#8B3D52]" : "bg-slate-400"}`}
+                />
               </div>
 
               <div className="flex-1">
@@ -94,8 +101,13 @@ const AdminProfile = () => {
                       {admin.name}
                     </h3>
                     <div className="mt-2 flex items-center gap-3">
-                      <span className={`text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm ${isSuperAdmin ? 'bg-[#8B3D52] text-white' : 'bg-[#E2E8F0] text-[#475569]'
-                        }`}>
+                      <span
+                        className={`text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm ${
+                          isSuperAdmin
+                            ? "bg-[#8B3D52] text-white"
+                            : "bg-[#E2E8F0] text-[#475569]"
+                        }`}
+                      >
                         {admin.role}
                       </span>
                       <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tighter">
@@ -109,16 +121,31 @@ const AdminProfile = () => {
                 </div>
                 <div className="mt-6 p-4 bg-[#F9F9F4] rounded-xl border border-gray-100">
                   <p className="text-gray-600 text-sm leading-relaxed">
-                    <strong className="text-[#1A2E1A] block mb-1">Bio / Permission Scope:</strong>
-                    {admin.bio || (isSuperAdmin ? admin.permissionScope : 'Standard administrative access.')}
+                    <strong className="text-[#1A2E1A] block mb-1">
+                      Bio / Permission Scope:
+                    </strong>
+                    {admin.bio ||
+                      (isSuperAdmin
+                        ? admin.permissionScope
+                        : "Standard administrative access.")}
                   </p>
                 </div>
               </div>
             </section>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <MetricCard icon={<Activity size={20} />} label="Actions Today" value="42" color="blue" />
-              <MetricCard icon={<Clock size={20} />} label="Last Activity" value={admin.lastLogin} color="orange" />
+              <MetricCard
+                icon={<Activity size={20} />}
+                label="Actions Today"
+                value="42"
+                color="blue"
+              />
+              <MetricCard
+                icon={<Clock size={20} />}
+                label="Last Activity"
+                value={admin.lastLogin}
+                color="orange"
+              />
             </div>
           </div>
 
@@ -191,7 +218,9 @@ const MetricCard = ({ icon, label, value, color }) => {
     <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
       <div className="flex items-center gap-4 mb-4">
         <div className={`${colorMap[color]} p-3 rounded-xl`}>{icon}</div>
-        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{label}</span>
+        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          {label}
+        </span>
       </div>
       <h4 className="text-3xl font-bold text-[#1A2E1A]">{value}</h4>
     </div>

@@ -79,7 +79,8 @@ export default function MyServicesPage() {
   const { user, loading } = useContext(AuthContext);
   useEffect(() => {
     // Only fetching the services created by the logged-in user
-    api.get("/api/services/my")
+    api
+      .get("/api/services/my")
       .then((res) => {
         setServices(res.data);
       })
@@ -103,7 +104,8 @@ export default function MyServicesPage() {
                 My Services
               </h1>
               <p className="text-on-surface-variant max-w-xl text-lg leading-relaxed">
-                Manage your active listings and curate your campus portfolio from one editorial command center.
+                Manage your active listings and curate your campus portfolio
+                from one editorial command center.
               </p>
             </div>
             <Link to="/create-service">
@@ -144,8 +146,12 @@ export default function MyServicesPage() {
                 <div key={service.id}>
                   <MyServiceCard
                     {...service}
-                    onView={() => window.location.href="/services/"+service.id}
-                    onEdit={() =>  window.location.href="/services/edit/"+service.id}
+                    onView={() =>
+                      (window.location.href = "/services/" + service.id)
+                    }
+                    onEdit={() =>
+                      (window.location.href = "/services/edit/" + service.id)
+                    }
                     onDelete={() => console.log("delete", service.id)}
                   />
                 </div>

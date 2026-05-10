@@ -163,28 +163,23 @@ export const removeAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-
 export const fetchProfile = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const user = await prisma.user.findFirst({
     where: {
       id: id,
-    }
+    },
   });
   if (!user) {
     res.status(404).json({ message: "User Not Found" });
-  }
-  else {
+  } else {
     res.status(200).json({ data: user });
   }
-})
-
-
-
+});
 
 export const updateProfile = asyncHandler(async (req, res) => {
   const { name, bio, profileImage, newPassword, department } = req.body;
-  console.log(req.user)
+  console.log(req.user);
   // Get ID from the middleware hand-off (req.user.id)
   const adminId = req.user.uid;
 
@@ -192,7 +187,7 @@ export const updateProfile = asyncHandler(async (req, res) => {
     name,
     bio,
     profileImage,
-    department
+    department,
   };
 
   // Hash the password with bcrypt (same as signup)
@@ -201,16 +196,15 @@ export const updateProfile = asyncHandler(async (req, res) => {
   }
 
   const updatedUser = await prisma.user.update({
-    where: { id: adminId },   // now a string
+    where: { id: adminId }, // now a string
     data: updateData,
   });
 
   res.status(200).json({
     message: "Profile updated successfully",
-    data: { name: updatedUser.name, email: updatedUser.email }
+    data: { name: updatedUser.name, email: updatedUser.email },
   });
 });
-
 
 export const getFlagged = asyncHandler(async (req, res) => {
   try {

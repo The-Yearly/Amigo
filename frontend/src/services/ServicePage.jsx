@@ -111,7 +111,7 @@ export const CREATOR = {
 };
 export default function ServicePage() {
   const { serviceId } = useParams();
-  console.log(serviceId)
+  console.log(serviceId);
   const [service, setService] = useState(null);
 
   useEffect(() => {

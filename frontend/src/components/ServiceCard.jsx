@@ -15,7 +15,7 @@ export default function ServiceCard({
 }) {
   return (
     <article
-      onClick={()=>window.location.href="/services/"+id}
+      onClick={() => (window.location.href = "/services/" + id)}
       tabIndex={0}
       className="group bg-surface-container-lowest rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-md hover:shadow-2xl cursor-pointer border border-surface-container-low hover:border-primary/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
     >

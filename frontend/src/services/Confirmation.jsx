@@ -5,7 +5,7 @@ const ConfirmationPage = () => {
   return (
     <div className="min-h-screen bg-white font-sans text-[#1a1a1a]">
       <ExploreNavBar />
-      
+
       <main className="max-w-4xl mx-auto px-6 py-20 text-center">
         {/* Success Header */}
         <div className="mb-12">
@@ -16,7 +16,8 @@ const ConfirmationPage = () => {
             Request Received
           </h1>
           <p className="text-lg text-gray-600 max-w-lg mx-auto">
-            Your request for **Professional Graduation Portraits** has been sent to Elena Sterling. You’ll receive a response within 24 hours.
+            Your request for **Professional Graduation Portraits** has been sent
+            to Elena Sterling. You’ll receive a response within 24 hours.
           </p>
         </div>
 
@@ -27,21 +28,27 @@ const ConfirmationPage = () => {
             <div className="flex items-start gap-4">
               <Camera className="text-gray-400 mt-1" size={20} />
               <div>
-                <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Service</p>
-                <p className="font-medium text-lg">Graduation Portrait Session</p>
+                <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">
+                  Service
+                </p>
+                <p className="font-medium text-lg">
+                  Graduation Portrait Session
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-4">
               <Clock className="text-gray-400 mt-1" size={20} />
               <div>
-                <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">Duration</p>
+                <p className="text-sm text-gray-500 uppercase tracking-wider font-semibold">
+                  Duration
+                </p>
                 <p className="font-medium text-lg">90 – 180 Minutes</p>
               </div>
             </div>
           </div>
-          
+
           <hr className="my-8 border-gray-200" />
-          
+
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-500">Estimated Total</p>
@@ -55,7 +62,12 @@ const ConfirmationPage = () => {
 
         {/* Next Steps */}
         <div className="text-sm text-gray-500">
-          <p>Need to make a change? <span className="underline cursor-pointer">Message the Curator</span></p>
+          <p>
+            Need to make a change?{" "}
+            <span className="underline cursor-pointer">
+              Message the Curator
+            </span>
+          </p>
         </div>
       </main>
     </div>

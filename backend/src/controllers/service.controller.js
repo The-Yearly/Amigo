@@ -83,7 +83,6 @@ export const createService = asyncHandler(async (req, res) => {
   res.status(201).json(service);
 });
 
-
 export const getMyServices = asyncHandler(async (req, res) => {
   try {
     const userId = req.user.uid;
@@ -130,7 +129,8 @@ export const getMyServices = asyncHandler(async (req, res) => {
 });
 
 export const editService = asyncHandler(async (req, res) => {
-  const { title, description, category, price, image, location, eid, id } =req.body;
+  const { title, description, category, price, image, location, eid, id } =
+    req.body;
   const userId = req.user.uid;
   const service = await prisma.service.findFirst({
     where: {
@@ -140,7 +140,7 @@ export const editService = asyncHandler(async (req, res) => {
   if (!service) {
     return res.status(404).json({ message: "Post not found" });
   }
-  console.log(service.creatorId,userId)
+  console.log(service.creatorId, userId);
   if (service.creatorId !== userId) {
     res.status(403).json({
       message: "Access denied. You can only edit your own posts.",
@@ -159,6 +159,6 @@ export const editService = asyncHandler(async (req, res) => {
       title: title,
     },
   });
-  
+
   res.status(201).json(service);
 });

@@ -22,11 +22,10 @@ export const protect = (req, res, next) => {
   }
 };
 
-
 export const adminOnly = (req, res, next) => {
-  console.log("")
+  console.log("");
   if (req.cookies.token) {
-    console.log(req.cookies, "SAd")
+    console.log(req.cookies, "SAd");
     const token = Buffer.from(req.cookies.token, "base64").toString("utf-8");
     console.log(token, "He");
     if (!token) {
@@ -46,4 +45,3 @@ export const adminOnly = (req, res, next) => {
     res.status(401).json({ message: "Invalid or expired session" });
   }
 };
-

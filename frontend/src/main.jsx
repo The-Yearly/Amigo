@@ -41,23 +41,30 @@ const router = createBrowserRouter([
           { path: "/create-service", element: <CreateServicePage /> },
           { path: "/my/services", element: <MyServicesPage /> },
           {
-  path: "/services/edit/:serviceId",
-  element: <EditServicePage />,
-  loader: async ({ params }) => {
-    const { data: user } = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/me`,
-      { withCredentials: true }
-    ).catch(() => { throw redirect("/") });
+            path: "/services/edit/:serviceId",
+            element: <EditServicePage />,
+            loader: async ({ params }) => {
+              const { data: user } = await axios
+                .get(`${import.meta.env.VITE_BACKEND_URL}/api/me`, {
+                  withCredentials: true,
+                })
+                .catch(() => {
+                  throw redirect("/");
+                });
 
-    const { data: service } = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/services/${params.serviceId}`,
-      { withCredentials: true }
-    ).catch(() => {throw redirect("/")});
+              const { data: service } = await axios
+                .get(
+                  `${import.meta.env.VITE_BACKEND_URL}/api/services/${params.serviceId}`,
+                  { withCredentials: true },
+                )
+                .catch(() => {
+                  throw redirect("/");
+                });
 
-    if (service.creatorId !== user.uid)throw redirect("/")
-    return service;
-  },
-},
+              if (service.creatorId !== user.uid) throw redirect("/");
+              return service;
+            },
+          },
           { path: "/my/requests", element: <MyRequestsPage /> },
           { path: "/services/:serviceId", element: <ServicePage /> },
           { path: "/messages", element: <MessagesPage /> },
@@ -114,7 +121,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>  
+  <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />,
     </AuthProvider>

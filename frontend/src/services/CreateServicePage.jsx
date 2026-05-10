@@ -1,4 +1,4 @@
-import { useContext,useEffect ,useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ExploreNavBar from "@/Components/Landing/Navbar";
 import ExploreFooter from "@/Components/Landing/Footer";
 import ListingTipsPanel from "@/Components/Services/ListingTipsPanel";
@@ -33,11 +33,11 @@ export default function CreateServicePage() {
   const [Loading, setLoading] = useState(false);
   const [image, setImage] = useState(undefined);
   const { user, loading } = useContext(AuthContext);
-  useEffect(()=>{
-    if(localStorage.getItem("Draft")){
-      setForm(JSON.parse(localStorage.getItem("Draft")))
+  useEffect(() => {
+    if (localStorage.getItem("Draft")) {
+      setForm(JSON.parse(localStorage.getItem("Draft")));
     }
-    },[])
+  }, []);
   const saveDraft = () => {
     localStorage.setItem("Draft", JSON.stringify(form));
   };

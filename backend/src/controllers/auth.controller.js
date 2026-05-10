@@ -129,7 +129,7 @@ export const login = asyncHandler(async (req, res) => {
     },
   });
   if (!user) {
-    console.log(user, "ASd")
+    console.log(user, "ASd");
     return res.status(401).json({ message: "User Not Found" });
   }
   const isMatch = await bcrypt.compare(password, user.password);

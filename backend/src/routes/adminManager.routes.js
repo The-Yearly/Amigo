@@ -9,7 +9,7 @@ import {
   addAdmin,
   removeAdmin,
   getFlagged,
-  updateProfile
+  updateProfile,
 } from "../controllers/adminManager.controller.js";
 import { adminOnly } from "../middleware/auth.middleware.js";
 const router = express.Router();
@@ -21,5 +21,5 @@ router.post("/addAdmin", adminOnly, addAdmin);
 router.delete("/removeAdmin/:id", adminOnly, removeAdmin);
 router.get("/getFlagged", adminOnly, getFlagged);
 router.put("/update-profile", adminOnly, updateProfile);
-router.get("/profile/:id", adminOnly, fetchProfile)
+router.get("/profile/:id", adminOnly, fetchProfile);
 export default router;
