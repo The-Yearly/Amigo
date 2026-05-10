@@ -110,12 +110,13 @@ export const CREATOR = {
   portfolioLink: "/portfolio/alex-rivero",
 };
 export default function ServicePage() {
-  const { id } = useParams();
+  const { serviceId } = useParams();
+  console.log(serviceId)
   const [service, setService] = useState(null);
 
   useEffect(() => {
-    axios.get(`/api/services/${id}`).then((res) => setService(res.data));
-  }, [id]);
+    axios.get(`/api/services/${serviceId}`).then((res) => setService(res.data));
+  }, [serviceId]);
   return (
     <div className="bg-surface text-on-surface antialiased ">
       <TopAppBar avatarSrc={AVATAR_SRC} />

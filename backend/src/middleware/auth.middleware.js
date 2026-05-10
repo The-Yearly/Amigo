@@ -24,7 +24,9 @@ export const protect = (req, res, next) => {
 
 
 export const adminOnly = (req, res, next) => {
+  console.log("")
   if (req.cookies.token) {
+    console.log(req.cookies, "SAd")
     const token = Buffer.from(req.cookies.token, "base64").toString("utf-8");
     console.log(token, "He");
     if (!token) {

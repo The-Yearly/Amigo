@@ -11,6 +11,7 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 });
+
 // ─── Pulsating Animation ──────────────────────────────────────────────────────
 
 const pulseStyles = `
@@ -51,7 +52,7 @@ function MyServiceCardSkeleton() {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function MyServicesPage() {
-  //dummy stats
+  // Dummy stats - Keeping these as requested by your layout
   const STATS = [
     {
       label: "Revenue Growth",
@@ -71,42 +72,22 @@ export default function MyServicesPage() {
       variant: "accent",
     },
   ];
+
   const [services, setServices] = useState([]);
   const [requests, setRequests] = useState([]);
   const [load, setLoading] = useState(true);
   const { user, loading } = useContext(AuthContext);
   useEffect(() => {
-    Promise.all([
-      api.get("/api/services/my"),
-      api.get("/api/requests/provider"),
-    ])
-      .then(([sRes, rRes]) => {
-        setServices(sRes.data);
-        setRequests(rRes.data);
-        console.log("requests", rRes.data);
+    // Only fetching the services created by the logged-in user
+    api.get("/api/services/my")
+      .then((res) => {
+        setServices(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching services:", err);
       })
       .finally(() => setLoading(false));
   }, []);
-
-  const requestsByService = Array.isArray(requests)
-    ? requests.reduce((acc, r) => {
-        if (!acc[r.serviceId]) acc[r.serviceId] = [];
-        acc[r.serviceId].push(r);
-        return acc;
-      }, {})
-    : {};
-
-  async function updateStatus(id, status) {
-    await api.patch(`/api/requests/${id}/status`, {
-      status,
-    });
-
-    // refresh UI optimistically
-    setRequests((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status } : r)),
-    );
-    console.log(`Request ${id} updated to ${status}`);
-  }
 
   return (
     <div className="bg-surface text-on-surface font-body antialiased">
@@ -122,8 +103,7 @@ export default function MyServicesPage() {
                 My Services
               </h1>
               <p className="text-on-surface-variant max-w-xl text-lg leading-relaxed">
-                Manage your active listings, track student requests, and curate
-                your campus portfolio from one editorial command center.
+                Manage your active listings and curate your campus portfolio from one editorial command center.
               </p>
             </div>
             <Link to="/create-service">
@@ -168,47 +148,6 @@ export default function MyServicesPage() {
                     onEdit={() =>  window.location.href="/services/edit/"+service.id}
                     onDelete={() => console.log("delete", service.id)}
                   />
-                  <div className="mt-4 space-y-3">
-                    {(requestsByService[service.id] || []).length === 0 ? (
-                      <p className="text-sm text-tertiary/60">
-                        No requests yet
-                      </p>
-                    ) : (
-                      (requestsByService[service.id] || []).map((req) => (
-                        <div
-                          key={req.id}
-                          className="p-4 border-2 border-primary rounded-lg shadow-md flex justify-between items-center bg-surface-container hover:shadow-lg transition-shadow"
-                        >
-                          <div>
-                            <p className="font-semibold text-on-surface">
-                              {req.requesterName}
-                            </p>
-                            <p className="text-xs text-tertiary font-medium uppercase tracking-wide">
-                              {req.status}
-                            </p>
-                          </div>
-
-                          {req.status === "Pending" && (
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => updateStatus(req.id, "Accepted")}
-                                className="px-4 py-2 bg-gradient-to-tr from-primary to-primary-container text-on-primary rounded-lg font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all text-sm"
-                              >
-                                Accept
-                              </button>
-
-                              <button
-                                onClick={() => updateStatus(req.id, "Rejected")}
-                                className="px-4 py-2 bg-error/20 text-error rounded-lg font-semibold shadow-md hover:shadow-lg active:scale-95 transition-all text-sm border border-error/30"
-                              >
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      ))
-                    )}
-                  </div>
                 </div>
               ))
             )}

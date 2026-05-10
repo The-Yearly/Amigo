@@ -111,8 +111,9 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: email },
     select: {
       id: true,
       isAdmin: true,
@@ -128,6 +129,7 @@ export const login = asyncHandler(async (req, res) => {
     },
   });
   if (!user) {
+    console.log(user, "ASd")
     return res.status(401).json({ message: "User Not Found" });
   }
   const isMatch = await bcrypt.compare(password, user.password);

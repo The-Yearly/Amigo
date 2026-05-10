@@ -5,9 +5,11 @@ import {
   managePermissions,
   searchAdmins,
   fetchUsers,
+  fetchProfile,
   addAdmin,
   removeAdmin,
   getFlagged,
+  updateProfile
 } from "../controllers/adminManager.controller.js";
 import { adminOnly } from "../middleware/auth.middleware.js";
 const router = express.Router();
@@ -18,4 +20,6 @@ router.get("/getAllUsers", adminOnly, fetchUsers);
 router.post("/addAdmin", adminOnly, addAdmin);
 router.delete("/removeAdmin/:id", adminOnly, removeAdmin);
 router.get("/getFlagged", adminOnly, getFlagged);
+router.put("/update-profile", adminOnly, updateProfile);
+router.get("/profile/:id", adminOnly, fetchProfile)
 export default router;
