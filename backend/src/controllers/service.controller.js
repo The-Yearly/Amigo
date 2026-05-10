@@ -83,13 +83,16 @@ export const createService = asyncHandler(async (req, res) => {
   res.status(201).json(service);
 });
 
+
 export const getMyServices = asyncHandler(async (req, res) => {
   console.log("Girl Like Upo")
+  console.log(req.user.id)
     try {
         console.log("Fetching services for user:", req.user);
         const services = await prisma.service.findMany({
             where: {
-                creatorId: req.user,
+                creatorId: req.user.id,
+                
             },
             include: {
                 requests: true,

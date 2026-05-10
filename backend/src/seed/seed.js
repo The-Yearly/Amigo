@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("🌱 Seeding started...");
+    console.log("🌱 Seeding started...");
 
     // 🧹 CLEAR DATABASE
     await prisma.message.deleteMany();
@@ -23,7 +23,7 @@ async function main() {
             name: "Swayam Agrahari",
             email: "am.sc.u4cse23073@am.students.amrita.edu",
             password: hashedPassword,
-                bio:"",
+            bio: "",
             department: "CSE",
             year: "3",
             rating: 4.9,
@@ -38,7 +38,7 @@ async function main() {
             name: "Rahul Sharma",
             email: "am.sc.u4cse23074@am.students.amrita.edu",
             password: hashedPassword,
-                bio:"",
+            bio: "",
             department: "ECE",
             year: "2",
             rating: 4.5,
@@ -53,7 +53,7 @@ async function main() {
             name: "Priya Nair",
             email: "priya@test.com",
             password: hashedPassword,
-                bio:"",
+            bio: "",
             department: "CSE",
             year: "4",
             rating: 4.8,
@@ -71,6 +71,7 @@ async function main() {
             canAdd: true,
             canKick: true,
             canOverride: true,
+            
         },
     });
 
@@ -221,10 +222,10 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+    .catch((e) => {
+        console.error(e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

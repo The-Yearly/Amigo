@@ -9,8 +9,6 @@ export const AuthProvider = ({ children }) => {
       try {
         console.log("JHI")
         const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/me`,{withCredentials: true});
-        console.log(response.data)
-        console.log("Ss")
         setUser(response.data);
       } catch (err) {
         console.log("Sss")

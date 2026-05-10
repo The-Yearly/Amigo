@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import bcrypt from "bcrypt";
 export const fetchAdmins = asyncHandler(async (req, res) => {
   console.log("Sj")
   const admins = await prisma.user.findMany({
@@ -161,6 +162,55 @@ export const removeAdmin = asyncHandler(async (req, res) => {
     res.json({ message: err });
   }
 });
+
+
+export const fetchProfile = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const user = await prisma.user.findFirst({
+    where: {
+      id: id,
+    }
+  });
+  if (!user) {
+    res.status(404).json({ message: "User Not Found" });
+  }
+  else {
+    res.status(200).json({ data: user });
+  }
+})
+
+
+
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { name, bio, profileImage, newPassword, department } = req.body;
+
+  // Get ID from the middleware hand-off (req.user.id)
+  const adminId = req.user.id;
+
+  const updateData = {
+    name,
+    bio,
+    profileImage,
+    department
+  };
+
+  // Hash the password with bcrypt (same as signup)
+  if (newPassword) {
+    updateData.password = await bcrypt.hash(newPassword, 10);
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: adminId },   // now a string
+    data: updateData,
+  });
+
+  res.status(200).json({
+    message: "Profile updated successfully",
+    data: { name: updatedUser.name, email: updatedUser.email }
+  });
+});
+
 
 export const getFlagged = asyncHandler(async (req, res) => {
   try {

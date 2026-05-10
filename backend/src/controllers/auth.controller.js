@@ -5,14 +5,14 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "../lib/sendMail.js";
 
 const generateEncodedToken = (userId) => {
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    return Buffer.from(token).toString("base64");
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  return Buffer.from(token).toString("base64");
 };
 
 function getRandomInt(min, max) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 }
 
 export const signup = asyncHandler(async (req, res) => {
@@ -109,8 +109,9 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: { email: email },
     select: {
       id: true,
       isAdmin: true,
@@ -126,6 +127,7 @@ export const login = asyncHandler(async (req, res) => {
     },
   });
   if (!user) {
+    console.log(user, "ASd")
     return res.status(401).json({ message: "User Not Found" });
   }
   const isMatch = await bcrypt.compare(password, user.password);

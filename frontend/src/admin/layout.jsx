@@ -9,6 +9,7 @@ export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { user, loading } = useAuth();
+  console.log("HSIj",user)
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 740);
@@ -19,9 +20,15 @@ export default function Layout() {
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
-  if(user.isAdmin===false){
-    window.location.href="/"
-  }else{
+  if (loading) {
+  return <div>Loading...</div>;
+}
+
+if (!user || !user.isAdmin) {
+  window.location.href = "/";
+  return null;
+}
+else{
   return (
     <IsMobileContext.Provider value={isMobile}>
       <div className=" relative w-full bg-gray-100/30">
