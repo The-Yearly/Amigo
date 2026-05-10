@@ -26,8 +26,8 @@ export default function MessagesPage() {
   const isChatAllowed = true; // later: check status
   const [searchParams] = useSearchParams();
   const chatIdFromUrl = searchParams.get("chat");
-  const {user,loading}=useContext(AuthContext)
-  console.log(user,"TAke A Look At M<y")
+  const { user, loading } = useContext(AuthContext);
+  console.log(user, "TAke A Look At M<y");
   const currentUserId = user.uid;
   console.log("Current user ID from cookies:", currentUserId);
 

@@ -3,8 +3,10 @@ import ExploreFooter from "@/Components/Landing/Footer";
 import StatCard from "@/Components/Services/StatCard";
 import MyServiceCard from "@/Components/Services/MyServiceCard";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { AuthContext } from "@/lib/authProvider";
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
@@ -71,8 +73,8 @@ export default function MyServicesPage() {
   ];
   const [services, setServices] = useState([]);
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+  const [load, setLoading] = useState(true);
+  const { user, loading } = useContext(AuthContext);
   useEffect(() => {
     Promise.all([
       api.get("/api/services/my"),
@@ -136,7 +138,7 @@ export default function MyServicesPage() {
 
           {/* Stats bento */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-            {loading ? (
+            {load ? (
               <>
                 {[...Array(4)].map((_, i) => (
                   <StatCardSkeleton key={i} />
@@ -149,7 +151,7 @@ export default function MyServicesPage() {
 
           {/* Listings grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {loading ? (
+            {load ? (
               <>
                 {[...Array(6)].map((_, i) => (
                   <div key={i}>
@@ -162,8 +164,8 @@ export default function MyServicesPage() {
                 <div key={service.id}>
                   <MyServiceCard
                     {...service}
-                    onView={() => console.log("view", service.id)}
-                    onEdit={() => console.log("edit", service.id)}
+                    onView={() => window.location.href="/services/"+service.id}
+                    onEdit={() =>  window.location.href="/services/edit/"+service.id}
                     onDelete={() => console.log("delete", service.id)}
                   />
                   <div className="mt-4 space-y-3">

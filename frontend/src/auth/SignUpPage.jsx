@@ -116,7 +116,6 @@ export default function SignUpPage() {
 
       const { token, user } = res.data;
 
-
       toast.success("Account verified!");
       toast.info("Redirecting...");
 

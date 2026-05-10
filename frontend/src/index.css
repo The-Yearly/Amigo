@@ -5,9 +5,9 @@
    ============================================================ */
 
 /* ── 1. Google Fonts (must come before everything else) ────── */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -15,99 +15,98 @@
 
 /* ── 3. Design-system tokens ───────────────────────────────── */
 @theme {
-
   /* ── Colors ─────────────────────────────────────────────── */
 
   /* Primary — "Iconic Green" (anchor of trust) */
-  --color-primary:                  #002107;
-  --color-on-primary:               #ffffff;
-  --color-primary-container:        #003912;
-  --color-on-primary-container:     #6fa572;
-  --color-primary-fixed:            #b7f1b8;
-  --color-primary-fixed-dim:        #9cd49d;
-  --color-on-primary-fixed:         #002108;
+  --color-primary: #002107;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #003912;
+  --color-on-primary-container: #6fa572;
+  --color-primary-fixed: #b7f1b8;
+  --color-primary-fixed-dim: #9cd49d;
+  --color-on-primary-fixed: #002108;
   --color-on-primary-fixed-variant: #1d5127;
-  --color-inverse-primary:          #9cd49d;
+  --color-inverse-primary: #9cd49d;
 
   /* Secondary — "Digital Berry" (editorial energy & high-intent CTAs) */
-  --color-secondary:                #984063;
-  --color-on-secondary:             #ffffff;
-  --color-secondary-container:      #fd93b9;
-  --color-on-secondary-container:   #78274a;
-  --color-secondary-fixed:          #ffd9e3;
-  --color-secondary-fixed-dim:      #ffb0ca;
-  --color-on-secondary-fixed:       #3e001f;
+  --color-secondary: #984063;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #fd93b9;
+  --color-on-secondary-container: #78274a;
+  --color-secondary-fixed: #ffd9e3;
+  --color-secondary-fixed-dim: #ffb0ca;
+  --color-on-secondary-fixed: #3e001f;
   --color-on-secondary-fixed-variant: #7a294c;
 
   /* Tertiary */
-  --color-tertiary:                 #1a1b1f;
-  --color-on-tertiary:              #ffffff;
-  --color-tertiary-container:       #2f3034;
-  --color-on-tertiary-container:    #97989c;
-  --color-tertiary-fixed:           #e3e2e7;
-  --color-tertiary-fixed-dim:       #c6c6cb;
-  --color-on-tertiary-fixed:        #1a1b1f;
+  --color-tertiary: #1a1b1f;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #2f3034;
+  --color-on-tertiary-container: #97989c;
+  --color-tertiary-fixed: #e3e2e7;
+  --color-tertiary-fixed-dim: #c6c6cb;
+  --color-on-tertiary-fixed: #1a1b1f;
   --color-on-tertiary-fixed-variant: #46474b;
 
   /* Error */
-  --color-error:                    #ba1a1a;
-  --color-on-error:                 #ffffff;
-  --color-error-container:          #ffdad6;
-  --color-on-error-container:       #93000a;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
 
   /* Surface hierarchy — tonal layering, no-line rule */
   /* Level 1 — base page background */
-  --color-background:               #faf9fb;
-  --color-on-background:            #1a1c1e;
-  --color-surface:                  #faf9fb;
-  --color-on-surface:               #1a1c1e;   /* never #000000 per design rules */
-  --color-surface-bright:           #faf9fb;
-  --color-surface-dim:              #dbd9dc;
+  --color-background: #faf9fb;
+  --color-on-background: #1a1c1e;
+  --color-surface: #faf9fb;
+  --color-on-surface: #1a1c1e; /* never #000000 per design rules */
+  --color-surface-bright: #faf9fb;
+  --color-surface-dim: #dbd9dc;
 
   /* Level 2 — inlay / secondary content areas */
-  --color-surface-container-low:    #f4f3f5;
-  --color-surface-container:        #efedf0;
-  --color-surface-container-high:   #e9e8ea;   /* input field bg */
+  --color-surface-container-low: #f4f3f5;
+  --color-surface-container: #efedf0;
+  --color-surface-container-high: #e9e8ea; /* input field bg */
 
   /* Level 3 — elevated interactive cards (white on grey = natural lift) */
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-highest:#e3e2e4;
+  --color-surface-container-highest: #e3e2e4;
 
   /* On-surface variants */
-  --color-on-surface-variant:       #414940;
-  --color-surface-variant:          #e3e2e4;
-  --color-inverse-surface:          #2f3032;
-  --color-inverse-on-surface:       #f2f0f3;
+  --color-on-surface-variant: #414940;
+  --color-surface-variant: #e3e2e4;
+  --color-inverse-surface: #2f3032;
+  --color-inverse-on-surface: #f2f0f3;
 
   /* Surface tint */
-  --color-surface-tint:             #36693c;
+  --color-surface-tint: #36693c;
 
   /* Outline — ghost border rule: use at 20% opacity when a boundary is required */
-  --color-outline:                  #71796f;
-  --color-outline-variant:          #c1c9bd;
+  --color-outline: #71796f;
+  --color-outline-variant: #c1c9bd;
 
   /* ── Border radius ───────────────────────────────────────── */
   /* Every interactive element must have at least DEFAULT (0.25rem) */
-  --radius-DEFAULT: 0.125rem;   /* base — matches original config */
-  --radius-lg:      0.25rem;
-  --radius-xl:      0.5rem;
-  --radius-full:    0.75rem;    /* pill shape for badges & chips */
+  --radius-DEFAULT: 0.125rem; /* base — matches original config */
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem; /* pill shape for badges & chips */
 
   /* ── Typography ─────────────────────────────────────────── */
   /* Display & Headlines — "Voice" of the brand (Plus Jakarta Sans) */
-  --font-display:  'Plus Jakarta Sans', sans-serif;
-  --font-headline: 'Plus Jakarta Sans', sans-serif;
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-headline: "Plus Jakarta Sans", sans-serif;
   /* Titles & Body — "Engine" of the brand (Inter) */
-  --font-body:     'Inter', sans-serif;
-  --font-label:    'Inter', sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
 }
 
 /* ── 4. Base resets ────────────────────────────────────────── */
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #faf9fb;         /* surface — Level 1 */
-  color: #1a1c1e;                    /* on-surface (never pure black) */
+  font-family: "Inter", sans-serif;
+  background-color: #faf9fb; /* surface — Level 1 */
+  color: #1a1c1e; /* on-surface (never pure black) */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -167,7 +166,7 @@ body {
   Content bleeds through on scroll, maintains sense of place.
 */
 .glass-nav {
-  background: rgba(250, 249, 251, 0.70);
+  background: rgba(250, 249, 251, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -177,17 +176,21 @@ body {
   surface_container_lowest at 80% + blur(12px).
 */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.80);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
 
 /* ── 9. Scrollbar styling ───────────────────────────────────── */
 
-.custom-scrollbar::-webkit-scrollbar       { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #c1c9bd;   /* outline-variant */
+  background: #c1c9bd; /* outline-variant */
   border-radius: 10px;
 }
 
@@ -198,16 +201,16 @@ body {
   The scale difference creates the "designed, not templated" feel.
 */
 .display-lg {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 3.5rem;        /* 56px */
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 3.5rem; /* 56px */
   font-weight: 800;
-  letter-spacing: -0.02em;  /* tight tracking — editorial rule */
+  letter-spacing: -0.02em; /* tight tracking — editorial rule */
   line-height: 1.1;
 }
 
 .display-md {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 2.5rem;        /* 40px */
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 2.5rem; /* 40px */
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.15;
@@ -216,6 +219,6 @@ body {
 /* ── 11. Selection highlight ────────────────────────────────── */
 
 ::selection {
-  background-color: #b7f1b8;   /* primary-fixed */
-  color: #002108;              /* on-primary-fixed */
+  background-color: #b7f1b8; /* primary-fixed */
+  color: #002108; /* on-primary-fixed */
 }

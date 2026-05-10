@@ -1,7 +1,7 @@
 import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 export const fetchAdmins = asyncHandler(async (req, res) => {
-  console.log("Sj")
+  console.log("Sj");
   const admins = await prisma.user.findMany({
     where: {
       isAdmin: true,

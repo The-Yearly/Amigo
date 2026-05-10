@@ -4,10 +4,10 @@ import path from "node:path";
 
 export default defineConfig({
   plugins: [react()],
-  server:{
-     proxy: {
-      '/api': 'http://localhost:5000'
-    }
+  server: {
+    proxy: {
+      "/api": "http://localhost:5000",
+    },
   },
   resolve: {
     alias: {

@@ -15,7 +15,7 @@ const HERO_IMG =
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-   const [isVerifying, setIsVerifying] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -23,27 +23,22 @@ export default function SignInPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      
-        const payload = {
-          email: email,
-          password: password,
-        };
-        const res = await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-          payload,
-          { withCredentials: true } 
-        );
-              toast.success("Login successful!");
+      const payload = {
+        email: email,
+        password: password,
+      };
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        payload,
+        { withCredentials: true },
+      );
+      toast.success("Login successful!");
       toast.info("Redirecting...");
       setTimeout(() => {
-            window.location.href = res.data.isAdmin
-      ? "/adminSettings"
-      : "/";
+        window.location.href = res.data.isAdmin ? "/adminSettings" : "/";
       }, 1000);
-        
-      
     } catch (err) {
-      console.log(err)
+      console.log(err);
       toast.error(err.response?.data?.message || "Authentication failed");
     } finally {
       setLoading(false);
@@ -170,12 +165,16 @@ export default function SignInPage() {
                   arrow_forward
                 </span>
               </button>
-              
             </div>
           </form>
 
           {/* Footer links */}
-          <div onClick={()=>{setIsVerifying(false)}} className="mt-12 pt-8 border-t border-outline-variant/20 text-center">
+          <div
+            onClick={() => {
+              setIsVerifying(false);
+            }}
+            className="mt-12 pt-8 border-t border-outline-variant/20 text-center"
+          >
             <p className="text-on-surface-variant text-sm">
               Don't have an account?
               <a

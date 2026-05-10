@@ -5,14 +5,16 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "../lib/sendMail.js";
 
 const generateEncodedToken = (userId) => {
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    return Buffer.from(token).toString("base64");
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+  return Buffer.from(token).toString("base64");
 };
 
 function getRandomInt(min, max) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
 }
 
 export const signup = asyncHandler(async (req, res) => {

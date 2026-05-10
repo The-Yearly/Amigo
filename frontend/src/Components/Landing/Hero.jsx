@@ -65,7 +65,7 @@ const Hero = () => {
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-[#8b2e5f]">
-              ${stats?.earnings?.toFixed(2) || 0.00}
+              ${stats?.earnings?.toFixed(2) || 0.0}
             </p>
             <p className="text-xs text-gray-500">Monthly Earnings</p>
           </div>

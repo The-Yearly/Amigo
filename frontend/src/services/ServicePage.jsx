@@ -6,14 +6,13 @@ import ReviewCard from "@/Components/Services/ReviewCard";
 import axios from "axios";
 import { ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 // ─── Component ───────────────────────────────────────────────────────────────
 
 const AVATAR_SRC =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAV_HEM2GFeH0UHpQL_e796s5ZOBlbqE7PThOMkCm6w9dnfKSyOayFLOTPBDDoQsjrdpHMYrfhpbm34zqaekNMBqCZ-OelJXPI5neA7EwaC3sus9-NfyqytdnnYrvqu1MUnVj8VPvEcoepN5ba5eOEi2i2D-bLRBvvfqdSYrh-MWT2_0MFS-4Pxv69B4Vwh4Pvo9_cZWKC9WvNE6XVtvS0TMZB981G9EqgQRH7dixf_Z9Qe6B-pvrce1gWDNjJWFfHap6Z4EqBmKdet";
 
 export const GALLERY_IMAGES = [
-
   {
     src: "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b",
     alt: "Graduate smiling portrait",
@@ -76,8 +75,7 @@ export const REVIEWS = [
     name: "Sarah Chen",
     rating: 5,
     date: "2 weeks ago",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330",
     review:
       "Absolutely amazing experience. The photos turned out incredible and the poses felt super natural.",
   },
@@ -86,8 +84,7 @@ export const REVIEWS = [
     name: "Michael Torres",
     rating: 5,
     date: "1 month ago",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
     review:
       "Very professional and knew all the best campus locations. Delivery was fast too.",
   },
@@ -96,25 +93,23 @@ export const REVIEWS = [
     name: "Emily Johnson",
     rating: 4.8,
     date: "3 weeks ago",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80",
     review:
       "Made me feel comfortable throughout the shoot. The edited pictures looked cinematic.",
   },
 ];
 export const MAP_SRC =
   "https://images.unsplash.com/photo-1524661135-423995f22d0b";
-  export const CREATOR_SRC =
+export const CREATOR_SRC =
   "https://images.unsplash.com/photo-1524661135-423995f22d0b";
 export const CREATOR = {
   name: "Alex Rivero",
   role: "Visual Arts Senior",
-  image:
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+  image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
   bio: `"I've shot over 300 graduation sessions in the last three years. My goal is to make you feel like the main character of your college story."`,
   portfolioLink: "/portfolio/alex-rivero",
 };
-  export default function ServicePage() {
+export default function ServicePage() {
   const { id } = useParams();
   const [service, setService] = useState(null);
 

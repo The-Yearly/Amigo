@@ -22,13 +22,17 @@ export const AdminRow = ({
   savePermissions,
 }) => {
   const isMobile = useContext(IsMobileContext);
-  const {user,loading}=useAuth()
-  console.log(user,admin)
-  console.log(user,"S")
+  const { user, loading } = useAuth();
+  console.log(user, admin);
+  console.log(user, "S");
   return (
     <div className="group">
       <motion.div
-        onClick={(user?.isSuperAdmin && user.uid!=admin.id) ? onToggleExpand : undefined}
+        onClick={
+          user?.isSuperAdmin && user.uid != admin.id
+            ? onToggleExpand
+            : undefined
+        }
         className={`grid grid-cols-12 items-center md:px-8 md:py-6 bg-white cursor-pointer transition-all duration-500 relative z-10 ${
           isExpanded
             ? "rounded-t-3xl shadow-sm"
@@ -67,22 +71,23 @@ export const AdminRow = ({
           <motion.div animate={{ rotate: isExpanded ? 180 : 0 }}>
             <ChevronDown size={20} className="text-[#dadad5]" />
           </motion.div>
-          {(user.canKick && user.uid!=admin.id)&&
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setConfirmModal({
-                ...confirmModal,
-                isOpen: true,
-                user: admin,
-                action: "remove",
-              });
-            }}
-            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all opacity-100 "
-            title="Remove admin"
-          >
-            <Trash2 size={18} />
-          </button>}
+          {user.canKick && user.uid != admin.id && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirmModal({
+                  ...confirmModal,
+                  isOpen: true,
+                  user: admin,
+                  action: "remove",
+                });
+              }}
+              className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all opacity-100 "
+              title="Remove admin"
+            >
+              <Trash2 size={18} />
+            </button>
+          )}
         </div>
       </motion.div>
 

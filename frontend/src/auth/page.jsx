@@ -21,7 +21,6 @@ export default function AuthPage() {
     return regex.test(email);
   }
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
@@ -60,10 +59,9 @@ export default function AuthPage() {
         const res = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
           payload,
-          { withCredentials: true } 
+          { withCredentials: true },
         );
         handlePostAuthSuccess(res.data);
-        
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "Authentication failed");
@@ -93,14 +91,12 @@ export default function AuthPage() {
     }
   }
 
-const handlePostAuthSuccess = async(responseData) => {
-  toast.info("Redirecting...");
-  setTimeout(() => {
-    window.location.href = responseData.isAdmin
-      ? "/adminSettings"
-      : "/";
-  }, 1000);
-};
+  const handlePostAuthSuccess = async (responseData) => {
+    toast.info("Redirecting...");
+    setTimeout(() => {
+      window.location.href = responseData.isAdmin ? "/adminSettings" : "/";
+    }, 1000);
+  };
 
   return (
     <>

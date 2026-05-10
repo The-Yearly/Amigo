@@ -6,20 +6,7 @@ import { IsMobileContext } from "./mobileContext";
 import { TopBar } from "./components/AdmintopBar";
 import { useAuth } from "@/lib/authProvider";
 export default function Layout() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const { user, loading } = useAuth();
-  console.log("HSIj", user);
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 740);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, []);
+  const {user,loading}=useAuth()
   if (loading) {
     return <div>Loading...</div>;
   }

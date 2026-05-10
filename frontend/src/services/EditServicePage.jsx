@@ -1,4 +1,4 @@
-import { useContext,useEffect ,useState } from "react";
+import { useContext,  useEffect,  useState } from "react";
 import ExploreNavBar from "@/Components/Landing/Navbar";
 import ExploreFooter from "@/Components/Landing/Footer";
 import ListingTipsPanel from "@/Components/Services/ListingTipsPanel";
@@ -8,8 +8,8 @@ import FormField from "@/Components/Services/FormField";
 import { upload } from "@imagekit/react";
 import axios from "axios";
 import { AuthContext } from "@/lib/authProvider";
-import { ToastContainer, toast } from "react-toastify";
-
+import { useParams } from "react-router-dom";
+import {toast,ToastContainer} from "react-toastify"
 const CATEGORIES = [
   "Photography",
   "Tutoring",
@@ -19,7 +19,7 @@ const CATEGORIES = [
   "Other",
 ];
 
-export default function CreateServicePage() {
+export default function EditServicePage() {
   const [form, setForm] = useState({
     title: "",
     category: CATEGORIES[0],
@@ -28,29 +28,30 @@ export default function CreateServicePage() {
     description: "",
     image: "",
   });
-  const abortController = new AbortController();
+  const {serviceId}=useParams()
   const [imagePreview, setImagePreview] = useState(null);
   const [Loading, setLoading] = useState(false);
   const [image, setImage] = useState(undefined);
   const { user, loading } = useContext(AuthContext);
-  useEffect(()=>{
-    if(localStorage.getItem("Draft")){
-      setForm(JSON.parse(localStorage.getItem("Draft")))
-    }
-    },[])
-  const saveDraft = () => {
-    localStorage.setItem("Draft", JSON.stringify(form));
-  };
   function set(field) {
     return (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
   }
-
+  useEffect(()=>{
+    const fetchData=async()=>{
+      const res=await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/services/`+serviceId)
+      const data=res.data
+      setForm({title:data.title,category:data.category,description:data.description,price:data.price,image:data.image,location:data.location})
+      setImagePreview(data.image)
+      console.log(data.image,"s")
+    }
+    fetchData()
+  },[])
   const handleUpload = async () => {
     if (!image) {
-      toast.warn("Select image first");
+      toast("Select image first");
       return;
     }
-
+    
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/uploadImage`,
@@ -74,7 +75,6 @@ export default function CreateServicePage() {
   function handleImageChange(file) {
     setImage(file);
     const url = URL.createObjectURL(file);
-
     setImagePreview(url);
 
     // TEMP: store preview URL (later → cloud upload)
@@ -88,57 +88,47 @@ export default function CreateServicePage() {
     e.preventDefault();
 
     if (!form.title || !form.price) {
-      toast.warn("Title and price required");
+      toast("Title and price required");
       return;
     }
 
     try {
       setLoading(true);
-
-      const imageUrl = await handleUpload();
-
+      let imageUrl
+      if(image){
+         imageUrl = await handleUpload();
+      }
       const updatedForm = {
         ...form,
-        image: imageUrl,
+        eid:serviceId,
+        image:  imageUrl||form.image,
         id: user.uid,
       };
-
-      console.log(updatedForm);
-
-      await axios.post("http://localhost:5000/api/services", updatedForm, {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/services/edit`, updatedForm, {
         withCredentials: true,
       });
-
-      toast.success("Service created!");
-      setForm({
-        title: "",
-        category: CATEGORIES[0],
-        price: "",
-        location: "",
-        description: "",
-        image: "",
-      });
-      setImagePreview("");
+      toast("Service created!");
     } catch (err) {
       console.log(err);
-      toast.error("Failed to create service");
+      toast("Failed to create service");
     } finally {
       setLoading(false);
     }
   }
   return (
     <div className="bg-surface font-body text-on-surface antialiased">
+      <ToastContainer/>
       <ExploreNavBar />
-      <ToastContainer />
+
       <main className="pt-32 pb-24 px-6 md:px-12 max-w-[1440px] mx-auto">
         {/* Page header */}
         <div className="mb-16">
           <h1 className="text-6xl font-bold font-display tracking-tight text-primary mb-4">
-            New Service Listing
+            Edit Service Listing
           </h1>
           <p className="text-on-surface-variant max-w-xl text-lg leading-relaxed">
-            Design your offering with care. Our marketplace thrives on the
-            talent and unique perspectives of our campus curators.
+            Edit your s with care. Our marketplace thrives on the talent and
+            unique perspectives of our campus curators.
           </p>
         </div>
 
@@ -206,17 +196,17 @@ export default function CreateServicePage() {
                 <div className="pt-6 flex items-center justify-between">
                   <button
                     type="button"
-                    onClick={saveDraft}
+                    onClick={()=>window.location.href="/"}
                     className="bg-secondary-container text-on-secondary-container px-5 py-3 rounded-lg font-bold shadow-sm border border-secondary-container/20 hover:shadow-md transition-all"
                   >
-                    Save Draft
+                    Cancel
                   </button>
                   <button
                     type="submit"
-                    disabled={Loading}
+                    disabled={loading}
                     className="bg-primary-gradient text-white px-10 py-4 rounded-xl font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all"
                   >
-                    {Loading ? "Publishing..." : "Publish Service"}
+                    {Loading ? "Saving..." : "Save"}
                   </button>
                 </div>
               </form>

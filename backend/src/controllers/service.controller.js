@@ -66,8 +66,8 @@ export const getServiceById = asyncHandler(async (req, res) => {
 
 // CREATE SERVICE
 export const createService = asyncHandler(async (req, res) => {
-  const { title, description, category, price, image, location,id } = req.body;
-  console.log(req.body)
+  const { title, description, category, price, image, location, id } = req.body;
+  console.log(req.body);
   const service = await prisma.service.create({
     data: {
       title,
@@ -76,7 +76,7 @@ export const createService = asyncHandler(async (req, res) => {
       price: Number(price),
       image,
       location,
-      creatorId:id
+      creatorId: id,
     },
   });
 
@@ -84,18 +84,18 @@ export const createService = asyncHandler(async (req, res) => {
 });
 
 export const getMyServices = asyncHandler(async (req, res) => {
-  console.log("Girl Like Upo")
-    try {
-        console.log("Fetching services for user:", req.user);
-        const services = await prisma.service.findMany({
-            where: {
-                creatorId: req.user,
-            },
-            include: {
-                requests: true,
-            },
-        });
-
+  try {
+    const userId = req.user.uid;
+    console.log(req.user, "HEllo");
+    const services = await prisma.service.findMany({
+      where: {
+        creatorId: userId,
+      },
+      include: {
+        requests: true,
+      },
+    });
+    console.log(services, userId, "S");
     const formatted = services.map((s) => ({
       id: s.id,
       imageSrc: s.image || "https://via.placeholder.com/400",
@@ -126,4 +126,38 @@ export const getMyServices = asyncHandler(async (req, res) => {
     console.error("Error fetching user's services:", error);
     res.status(500).json({ message: "Failed to fetch services" });
   }
+});
+
+export const editService = asyncHandler(async (req, res) => {
+  const { title, description, category, price, image, location, eid, id } =req.body;
+  const userId = req.user.uid;
+  const service = await prisma.service.findFirst({
+    where: {
+      id: eid,
+    },
+  });
+  if (!service) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  console.log(service.creatorId,userId)
+  if (service.creatorId !== userId) {
+    res.status(403).json({
+      message: "Access denied. You can only edit your own posts.",
+    });
+  }
+  const updatedServce = await prisma.service.update({
+    where: {
+      id: eid,
+    },
+    data: {
+      category: category,
+      description: description,
+      image: image,
+      location: location,
+      price: price,
+      title: title,
+    },
+  });
+  
+  res.status(201).json(service);
 });

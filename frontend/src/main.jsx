@@ -16,13 +16,15 @@ import AuditLog from "./admin/auditlog/page";
 import CreateServicePage from "./services/CreateServicePage";
 import MessagesPage from "./messaging/MessagesPage";
 import SignUp from "./auth/page";
-import ProtectedRoutes from "./lib/protectedRoutes";;
+import ProtectedRoutes from "./lib/protectedRoutes";
 import RootLayout from "./layout.jsx";
 import SignInPage from "./auth/SignInPage";
 import SignUpPage from "./auth/SignUpPage";
 import ProfilePage from "./Components/Profile/ProfilePage";
 import AdminProfile from "./admin/components/adminProfile";
-
+import EditServicePage from "./services/EditServicePage";
+import axios from "axios";
+import { redirect } from "react-router-dom";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -38,10 +40,54 @@ const router = createBrowserRouter([
           { path: "/services", element: <ExplorePage /> },
           { path: "/create-service", element: <CreateServicePage /> },
           { path: "/my/services", element: <MyServicesPage /> },
+          {
+  path: "/services/edit/:serviceId",
+  element: <EditServicePage />,
+  loader: async ({ params }) => {
+    const { data: user } = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/me`,
+      { withCredentials: true }
+    ).catch(() => { throw redirect("/") });
+
+    const { data: service } = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/services/${params.serviceId}`,
+      { withCredentials: true }
+    ).catch(() => {throw redirect("/")});
+
+    if (service.creatorId !== user.uid)throw redirect("/")
+    return service;
+  },
+},
           { path: "/my/requests", element: <MyRequestsPage /> },
           { path: "/services/:serviceId", element: <ServicePage /> },
           { path: "/messages", element: <MessagesPage /> },
           { path: "/profile", element: <ProfilePage /> },
+          {
+            path: "/adminSettings",
+            element: <Layout />,
+            children: [
+              {
+                index: true,
+                element: <AdminHome />,
+              },
+              {
+                path: "flagged",
+                element: <AdminFlagged />,
+              },
+              {
+                path: "permissions",
+                element: <ManageAdmins />,
+              },
+              {
+                path: "adminProfile",
+                element: <AdminProfile />,
+              },
+              {
+                path: "auditlogs",
+                element: <AuditLog />,
+              },
+            ],
+          },
         ],
       },
     ],
@@ -57,33 +103,6 @@ const router = createBrowserRouter([
     element: <SignInPage />,
   },
 
-            {
-    path: "/adminSettings",
-    element: <Layout />,
-    children: [
-      {
-        index: true,
-        element: <AdminHome />,
-      },
-      {
-        path: "flagged",
-        element: <AdminFlagged />,
-      },
-      {
-        path: "permissions",
-        element: <ManageAdmins />,
-      },
-      {
-        path: "adminProfile",
-        element: <AdminProfile />,
-      },
-      {
-        path: "auditlogs",
-        element: <AuditLog />,
-      },
-    ],
-  },
-
   {
     path: "/signup",
     element: <SignUpPage />,
@@ -92,13 +111,12 @@ const router = createBrowserRouter([
     path: "/login",
     element: <SignInPage />,
   },
-]
-);
+]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-  <RouterProvider router={router} />,
-  </AuthProvider>
-  </StrictMode>
+      <RouterProvider router={router} />,
+    </AuthProvider>
+  </StrictMode>,
 );

@@ -4,7 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // CREATE REQUEST
 export const createRequest = asyncHandler(async (req, res) => {
   const { serviceId } = req.body;
-  
+
   const service = await prisma.service.findUnique({
     where: { id: serviceId },
   });
@@ -27,7 +27,7 @@ export const createRequest = asyncHandler(async (req, res) => {
 
 export const getMyRequests = asyncHandler(async (req, res) => {
   console.log("Fetching requests for user:", req.user);
-  console.log(req.user,"Cause")
+  console.log(req.user, "Cause");
   const requests = await prisma.serviceRequest.findMany({
     where: {
       requesterId: req.user,
@@ -67,32 +67,31 @@ export const updateRequestStatus = asyncHandler(async (req, res) => {
   res.json(updated);
 });
 
-
 export const getProviderRequests = asyncHandler(async (req, res) => {
-  console.log("Daylight")
-    const requests = await prisma.serviceRequest.findMany({
-        where: {
-            providerId: req.user,
-        },
-        include: {
-            service: true,
-            requester: true,
-        },
-        orderBy: {
-            createdAt: "desc",
-        },
-    });
+  console.log("Daylight");
+  const requests = await prisma.serviceRequest.findMany({
+    where: {
+      providerId: req.user.uid,
+    },
+    include: {
+      service: true,
+      requester: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 
-    const formatted = requests.map((r) => ({
-        id: r.id,
-        serviceId: r.serviceId,
-        serviceTitle: r.service.title,
-        requesterName: r.requester.name,
-        requesterId: r.requester.id,
-        status: r.status,
-        price: `₹${r.service.price}`,
-        date: r.createdAt,
-    }));
+  const formatted = requests.map((r) => ({
+    id: r.id,
+    serviceId: r.serviceId,
+    serviceTitle: r.service.title,
+    requesterName: r.requester.name,
+    requesterId: r.requester.id,
+    status: r.status,
+    price: `₹${r.service.price}`,
+    date: r.createdAt,
+  }));
 
-    res.json(formatted);
+  res.json(formatted);
 });

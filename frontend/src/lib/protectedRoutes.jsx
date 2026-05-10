@@ -3,7 +3,7 @@ import { useAuth } from "./authProvider";
 
 const ProtectedRoutes = () => {
   const { user, loading } = useAuth();
-  console.log(user)
+  console.log(user);
   if (loading) {
     return <div>Loading...</div>;
   }

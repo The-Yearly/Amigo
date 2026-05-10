@@ -19,7 +19,7 @@ const api = axios.create({
 export default function ManageAdmins() {
   const [expandedId, setExpandedId] = useState(null);
   const isMobile = useContext(IsMobileContext);
-  const {user,loading}=useAuth()
+  const { user, loading } = useAuth();
   const [permissions, setPermissions] = useState({});
   const [intialPerm, setIntialPerm] = useState({});
   const [search, setSearch] = useState("");
@@ -35,7 +35,7 @@ export default function ManageAdmins() {
     user: null,
     action: "add",
   });
- 
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setBouncedSearch(search);
@@ -155,10 +155,9 @@ export default function ManageAdmins() {
     if (!confirmModal.user) return;
 
     try {
-      await api.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/admin/addAdmin`,
-        { userIds: [confirmModal.user.id] },
-      );
+      await api.post(`${import.meta.env.VITE_BACKEND_URL}/api/admin/addAdmin`, {
+        userIds: [confirmModal.user.id],
+      });
       const res = await api.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/getAdmins`,
       );
@@ -192,9 +191,9 @@ export default function ManageAdmins() {
           confirmModal.user.id,
       );
       const res = await api.get(
-  `${import.meta.env.VITE_BACKEND_URL}/api/admin/getAdmins`,
-  { withCredentials: true }
-);
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/getAdmins`,
+        { withCredentials: true },
+      );
       const adminData = res.data.data;
       setAdmins(adminData);
       const permsMap = {};
@@ -324,20 +323,20 @@ export default function ManageAdmins() {
               .map((User) => {
                 const isAdmin = admins.some((admin) => admin.id === User.id);
                 return (
-                  
                   <div
                     key={User.id}
-                    onClick={() =>{
-                      if (user.canAdd||user.canKick){
-                      setConfirmModal({
-                        ...confirmModal,
-                        isOpen: true,
-                        action: isAdmin ? "remove" : "add",
-                        user: User,
-                      })}}
-                    }
+                    onClick={() => {
+                      if (user.canAdd || user.canKick) {
+                        setConfirmModal({
+                          ...confirmModal,
+                          isOpen: true,
+                          action: isAdmin ? "remove" : "add",
+                          user: User,
+                        });
+                      }
+                    }}
                     className={`bg-white rounded-xl justify-center  md:p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4 border transition-all cursor-pointer group ${
-                      isAdmin && user.canKick && user.uid!=User.id
+                      isAdmin && user.canKick && user.uid != User.id
                         ? "border-green-200 hover:border-red-300 hover:bg-red-50"
                         : "border-[#e0e2dc] hover:border-[#002107] hover:bg-[#f5f5f0]"
                     }`}
@@ -356,7 +355,27 @@ export default function ManageAdmins() {
                         <span className="text-xs font-bold uppercase tracking-wide px-2 md:px-3 py-1 bg-green-100 text-green-700 rounded-full whitespace-nowrap">
                           Admin
                         </span>
-                        {user.canKick && user.uid!=User.id&&
+                        {user.canKick && user.uid != User.id && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setConfirmModal({
+                                ...confirmModal,
+                                isOpen: true,
+                                user: User,
+                                action: "remove",
+                                user: User,
+                              });
+                            }}
+                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all"
+                            title="Remove admin"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
+                      </div>
+                    ) : (
+                      user.canAdd && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -364,34 +383,16 @@ export default function ManageAdmins() {
                               ...confirmModal,
                               isOpen: true,
                               user: User,
-                              action: "remove",
+                              action: "add",
                               user: User,
                             });
                           }}
-                          className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all"
-                          title="Remove admin"
+                          className="self-end md:self-auto p-2 text-green-600 hover:bg-green-100 rounded-lg transition-all"
+                          title="Make admin"
                         >
-                          <Trash2 size={18} />
-                        </button>}
-                      </div>
-                    ) : (
-                      user.canAdd&&
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setConfirmModal({
-                            ...confirmModal,
-                            isOpen: true,
-                            user: User,
-                            action: "add",
-                            user: User,
-                          });
-                        }}
-                        className="self-end md:self-auto p-2 text-green-600 hover:bg-green-100 rounded-lg transition-all"
-                        title="Make admin"
-                      >
-                        <Plus size={18} />
-                      </button>
+                          <Plus size={18} />
+                        </button>
+                      )
                     )}
                   </div>
                 );
@@ -401,30 +402,32 @@ export default function ManageAdmins() {
       )}
 
       {confirmModal.isOpen &&
-      ((confirmModal.action==="remove" && user.canKick && user.uid!=confirmModal.user.id)||(confirmModal.action=="add" && user.canAdd))&&
-      (
-        <ConfirmModal
-          isOpen={confirmModal.isOpen}
-          data={confirmModal.user}
-          config={{
-            title:
-              confirmModal.action === "add" ? "Add Admin" : "Remove Admin?",
-            message:
+        ((confirmModal.action === "remove" &&
+          user.canKick &&
+          user.uid != confirmModal.user.id) ||
+          (confirmModal.action == "add" && user.canAdd)) && (
+          <ConfirmModal
+            isOpen={confirmModal.isOpen}
+            data={confirmModal.user}
+            config={{
+              title:
+                confirmModal.action === "add" ? "Add Admin" : "Remove Admin?",
+              message:
+                confirmModal.action === "add"
+                  ? `Do you want to add ${confirmModal.user.name} as Admin`
+                  : "This action cannot be undone.",
+              confirmText:
+                confirmModal.action === "add" ? "Add Admin" : "Remove Admin",
+              confirmColor: confirmModal.action === "add" ? "green" : "red",
+            }}
+            onConfirm={() =>
               confirmModal.action === "add"
-                ? `Do you want to add ${confirmModal.user.name} as Admin`
-                : "This action cannot be undone.",
-            confirmText:
-              confirmModal.action === "add" ? "Add Admin" : "Remove Admin",
-            confirmColor: confirmModal.action === "add" ? "green" : "red",
-          }}
-          onConfirm={() =>
-            confirmModal.action === "add"
-              ? handleAddAdmin()
-              : handleRemoveAdmin()
-          }
-          onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
-        />
-      )}
+                ? handleAddAdmin()
+                : handleRemoveAdmin()
+            }
+            onCancel={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+          />
+        )}
     </div>
   );
 }

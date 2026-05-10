@@ -7,21 +7,23 @@ import axios from "axios";
 
 export default function AdminFlagged() {
   const [selectedStatus, setSelectedStatus] = useState("PENDING");
-  const [getFlagged,setFlagged]=useState([])
-  useEffect(()=>{const fetchData=async()=>{
-    const res=await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/getFlagged`,{withCredentials:true})
-    setFlagged(res.data.data)
-    console.log(res.data.data)
-  }
-  fetchData()
-  },[])
+  const [getFlagged, setFlagged] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/getFlagged`,
+        { withCredentials: true },
+      );
+      setFlagged(res.data.data);
+      console.log(res.data.data);
+    };
+    fetchData();
+  }, []);
   const filteredData = getFlagged.filter(
     (item) => item.status === selectedStatus,
   );
   const errandsList = filteredData.filter((item) => item.type === "ERRAND");
-  const profilesList = filteredData.filter(
-    (item) => item.type === "USER",
-  );
+  const profilesList = filteredData.filter((item) => item.type === "USER");
   const isMobile = useContext(IsMobileContext);
   return (
     <div className="min-h-screen bg-[#fafaf4] px-6 py-3 md:px-12 md:py-16 font-inter text-[#1a1c1e]">

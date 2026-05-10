@@ -2,9 +2,10 @@ import RequestNavBar from "@/Components/Landing/Navbar";
 import ExploreFooter from "@/Components/Landing/Footer";
 import ActiveRequestItem from "@/Components/Services/ActiveRequestItem";
 import HistoryRow from "@/Components/Services/HistoryRow";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@/lib/authProvider";
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
@@ -44,12 +45,13 @@ export default function MyRequestsPage() {
   ];
 
   const [requests, setRequests] = useState([]);
+  const { user, loading } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("HE;l")
+    console.log("HE;l");
     api
-      .get("http://localhost:5000/api/requests/my", {
+      .get("http://localhost:5000/api/requests/my/" + user.uid, {
         withCredentials: true,
       })
       .then((res) => setRequests(res.data));

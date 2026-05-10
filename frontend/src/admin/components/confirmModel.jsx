@@ -69,7 +69,7 @@ export default function ConfirmModal({
   };
 
   const colors = colorMap[finalConfig.confirmColor] || colorMap.blue;
-  
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
       <div className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">

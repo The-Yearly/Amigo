@@ -12,8 +12,8 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 
 import adminRoutes from "./routes/adminManager.routes.js";
-import jwt from "jsonwebtoken"
-import ImageKit from 'imagekit'
+import jwt from "jsonwebtoken";
+import ImageKit from "imagekit";
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -53,7 +53,7 @@ app.get("/api/me", (req, res) => {
     }
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
-      console.log(decoded.userId)
+      console.log(decoded.userId);
       res.json({
         uid: decoded.userId.id,
         isAdmin: decoded.userId.isAdmin,
@@ -63,7 +63,7 @@ app.get("/api/me", (req, res) => {
         canOverride: decoded.userId.canOverride || false,
       });
     } catch (err) {
-      console.log(err,"s")
+      console.log(err, "s");
       res.status(401).json({ message: "Invalid or expired session" });
     }
   } else {
@@ -71,23 +71,21 @@ app.get("/api/me", (req, res) => {
   }
 });
 
-
-app.use("/api/uploadImage",(req,res)=>{
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
-});
-const result = imagekit.getAuthenticationParameters();
- res.send({
+app.use("/api/uploadImage", (req, res) => {
+  const imagekit = new ImageKit({
+    publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+    privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+    urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT,
+  });
+  const result = imagekit.getAuthenticationParameters();
+  res.send({
     token: result.token,
     expire: result.expire,
     signature: result.signature,
     publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
   });
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-

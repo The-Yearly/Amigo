@@ -3,29 +3,29 @@ import Navbar from "../Landing/Navbar";
 import axios from "axios";
 import { AuthContext } from "@/lib/authProvider";
 import { toast } from "react-toastify";
-import {
-    upload,
-} from "@imagekit/react";
+import { upload } from "@imagekit/react";
 const Dashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef(null);
   const [image, setImageFile] = useState(null);
   const [profile, setProfile] = useState(null);
-  const {user,loading}=useContext(AuthContext)
+  const { user, loading } = useContext(AuthContext);
   useEffect(() => {
-    const fetchData=async()=>{
-    const res=await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile/`+user.uid)
-    const data=res.data
-    {
-     setProfile({
-        name: data.name,
-        role: data.department,
-        bio: data.bio,
-        image:
-          data.profileImage
-      })}
+    const fetchData = async () => {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/user/profile/` + user.uid,
+      );
+      const data = res.data;
+      {
+        setProfile({
+          name: data.name,
+          role: data.department,
+          bio: data.bio,
+          image: data.profileImage,
+        });
       }
-      fetchData()
+    };
+    fetchData();
   }, []);
 
   if (!profile) {
@@ -43,54 +43,53 @@ const Dashboard = () => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async() => {
-    try{
-      console.log(profile.image)
-      if(image){
-      const { data } = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/uploadImage`
-    );
+  const handleSave = async () => {
+    try {
+      console.log(profile.image);
+      if (image) {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/uploadImage`,
+        );
         const response = await upload({
           file: image,
-          fileName:image.name,
+          fileName: image.name,
           publicKey: data.publicKey,
           signature: data.signature,
           token: data.token,
           expire: data.expire,
         });
-          setProfile({...profile,image:response.url})
+        setProfile({ ...profile, image: response.url });
       }
-    
-    const res=await axios.put(`${import.meta.env.VITE_BACKEND_URL}/api/user/update`,
-      {
-        id:user.uid,
-        name: profile.name,
-        department: profile.role,
-        bio: profile.bio,
-        profileImage: profile.image,
-      },
-    {withCredentials:true})
 
-      
-      const data=res.data
-        setProfile({
-          name: data.name,
-          role: data.department,
-          bio: data.bio,
-          image: data.profileImage,
-        });
-        setIsEditing(false);
-      }
-    
-    catch(e){
-      console.log(e)
-      toast.warn("Failed To Update")
+      const res = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/user/update`,
+        {
+          id: user.uid,
+          name: profile.name,
+          department: profile.role,
+          bio: profile.bio,
+          profileImage: profile.image,
+        },
+        { withCredentials: true },
+      );
+
+      const data = res.data;
+      setProfile({
+        name: data.name,
+        role: data.department,
+        bio: data.bio,
+        image: data.profileImage,
+      });
+      setIsEditing(false);
+    } catch (e) {
+      console.log(e);
+      toast.warn("Failed To Update");
     }
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-     setImageFile(file);
+    setImageFile(file);
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {

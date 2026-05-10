@@ -221,4 +221,3 @@ const PulseItem = ({ icon, title, meta }) => (
 );
 
 export default Dashboard;
-
