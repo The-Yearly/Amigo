@@ -10,28 +10,49 @@ const Dashboard = () => {
   const [image, setImageFile] = useState(null);
   const [profile, setProfile] = useState(null);
   const { user, loading } = useContext(AuthContext);
+  const [services, setServices] = useState([]);
+
   useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/services`)
+      .then((res) => {
+        console.log("API data:", res.data);
+        setServices(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    // Inside your useEffect for fetchData
     const fetchData = async () => {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/user/profile/` + user.uid,
-      );
-      const data = res.data;
-      {
+      if (!user?.uid) return;
+
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/user/profile/${user.uid}`,
+        );
+        const data = res.data;
+
         setProfile({
           name: data.name,
           role: data.department,
           bio: data.bio,
           image: data.profileImage,
         });
+
+        // Add this line to store the user's specific services
+        setServices(data.services || []);
+      } catch (err) {
+        console.error("Profile load error:", err);
       }
     };
+
     fetchData();
-  }, []);
+  }, [user]); // Added user to dependency array
 
   if (!profile) {
     return (
       <div className="bg-gray-50 min-h-screen font-sans pb-20">
-       
         <main className="max-w-6xl mx-auto px-4 mt-12">
           <p>Loading profile...</p>
         </main>
@@ -105,7 +126,6 @@ const Dashboard = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans pb-20">
-      
       <main className="max-w-6xl mx-auto px-4 mt-12">
         {/* Profile Header */}
         <section className="flex flex-col md:flex-row gap-8 items-start mb-12">
@@ -227,53 +247,57 @@ const Dashboard = () => {
             <div className="bg-pink-300/50 p-4 rounded-xl text-2xl">👥</div>
           </div>
         </section>
-
-        {/* Services & Reviews */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2">
-            <h3 className="text-2xl font-bold mb-6">Active Services</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ServiceCard
-                title="Editorial Layout Design"
-                price="$45/hr"
-                tags={["DESIGN", "PUBLISHING"]}
-              />
-              <ServiceCard
-                title="Academic Brand Voice"
-                price="$0.15/word"
-                tags={["COPYWRITING", "STRATEGY"]}
-              />
-            </div>
+        {/* Services Section */}
+        <section className="mt-12">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-bold text-gray-900">My Services</h3>
+            <button className="text-sm font-bold text-pink-600 hover:text-pink-700">
+              + Create New Service
+            </button>
           </div>
 
-          <div className="lg:col-span-1">
-            <h3 className="text-2xl font-bold mb-6">Recent Reviews</h3>
-            <div className="space-y-4">
-              <ReviewCard
-                name="Sarah Jenkins"
-                role="VP COMMUNICATIONS"
-                text="Marcus transformed our newsletter from a boring PDF into a masterpiece."
-              />
-              <ReviewCard
-                name="Leo Chen"
-                role="FOUNDER, CAMPUS GRUB"
-                text="Exceptional eye for detail. Helped us secure our first round of funding."
-              />
+          {services.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {services.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  title={service.title}
+                  price={`$${service.price}`}
+                  // Since your schema uses category/description,
+                  // we pass them as tags for the existing ServiceCard component
+                  tags={[service.category || "Service", "Active"]}
+                  image={service.image}
+                />
+              ))}
             </div>
-          </div>
-        </div>
+          ) : (
+            <div className="text-center py-12 bg-white rounded-xl border-2 border-dashed border-gray-200">
+              <p className="text-gray-500">
+                You haven't listed any services yet.
+              </p>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );
 };
 
-const ServiceCard = ({ title, price, tags }) => (
+const ServiceCard = ({ title, price, tags, image }) => (
   <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition cursor-pointer">
-    <div className="h-40 bg-gray-900 relative" />
+    <div className="h-40 bg-gray-200 relative">
+      {image ? (
+        <img src={image} alt={title} className="w-full h-full object-cover" />
+      ) : (
+        <div className="w-full h-full bg-gray-900 flex items-center justify-center text-white text-xs">
+          No Image
+        </div>
+      )}
+    </div>
     <div className="p-6">
       <div className="flex justify-between items-start">
         <h4 className="font-bold text-lg mb-2">{title}</h4>
-        <span className="text-[10px] font-bold bg-gray-100 px-2 py-1 rounded">
+        <span className="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-1 rounded">
           {price}
         </span>
       </div>

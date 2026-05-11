@@ -4,7 +4,7 @@ import BookingCard from "@/Components/Services/BookingCard";
 import RequirementCard from "@/Components/Services/RequirementCard";
 import ReviewCard from "@/Components/Services/ReviewCard";
 import axios from "axios";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Flag } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -13,28 +13,85 @@ import { useAuth } from "@/lib/authProvider";
 export default function ServicePage() {
   const { serviceId } = useParams();
   const [service, setService] = useState(null);
-  console.log(serviceId,useParams(),"Sds")
-  const {user,loading}=useAuth()
-  console.log(user,service,"Payphone")
-  const book=async()=>{
-    const res=await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/requests/newRequest`,{serviceId:serviceId,requesterId:user.uid,providerId:service.creatorId},{withCredentials:true})
-    c
-  }
+
+  console.log(serviceId, useParams(), "Sds");
+  
+  const { user, loading } = useAuth();
+  console.log(user, service, "Payphone");
+
+  const book = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/requests/newRequest`,
+        {
+          serviceId: serviceId,
+          requesterId: user.uid,
+          providerId: service.creatorId,
+        },
+        { withCredentials: true },
+      );
+      alert("Booking request sent successfully!");
+    } catch (err) {
+      console.error("Booking error:", err);
+      alert("Error creating booking request");
+    }
+  };
+
+  console.log(service, "Service Data Check");
+
+  // Flag the service (ERRAND type)
+  const flagService = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/flag`,
+        {
+          serviceId: serviceId, // Flag the service
+          reason: "Inappropriate or suspicious service",
+        },
+        { withCredentials: true },
+      );
+      alert(res.data.message);
+    } catch (err) {
+      console.error("Flag error:", err);
+      alert(err.response?.data?.message || "Error flagging service");
+    }
+  };
+
+  // Flag the user (USER type)
+  const flagUser = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/flag`,
+        {
+          reportedUserId: service.creatorId, // Flag the user
+          reason: "Inappropriate or suspicious user behavior",
+        },
+        { withCredentials: true },
+      );
+      alert(res.data.message);
+    } catch (err) {
+      console.error("Flag error:", err);
+      alert(err.response?.data?.message || "Error flagging user");
+    }
+  };
+
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/services/${serviceId}`).then((res) => {
-      setService(res.data);
-      console.log(res.data,"huh")
-    });
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/services/${serviceId}`)
+      .then((res) => {
+        setService(res.data);
+        console.log(res.data, "huh");
+      });
   }, [serviceId]);
 
   if (!service) {
     return <div className="p-12 text-center font-bold">Loading service...</div>;
   }
+
   console.log("Creator Data Check:", service.creator);
+
   return (
     <div className="bg-surface text-on-surface antialiased">
-   
-
       <main className="pt-20 md:pt-24 pb-32 max-w-7xl mx-auto px-4 md:px-6">
         {/* Breadcrumb & Status */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -54,7 +111,9 @@ export default function ServicePage() {
         {/* Hero: Gallery + Booking Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 mb-12 md:mb-16">
           {/* Image Gallery */}
-          <div className={`${user.uid!==service.creatorId?"lg:col-span-8":"lg:col-span-12"}`}>
+          <div
+            className={`${user.uid !== service.creatorId ? "lg:col-span-8" : "lg:col-span-12"}`}
+          >
             <div className="w-full aspect-[4/3] md:aspect-auto md:h-[600px] overflow-hidden rounded-xl bg-surface-container shadow-sm border border-outline-variant/10">
               <img
                 src={service.image}
@@ -62,22 +121,31 @@ export default function ServicePage() {
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
               />
             </div>
+            
+            {/* Report Button - Flag the SERVICE */}
+            <button
+              className="flex items-center gap-2 text-red-500 hover:text-red-600 mt-3 transition-colors"
+              onClick={flagService}
+            >
+              <Flag size={16} />
+              Report Service
+            </button>
           </div>
 
           {/* Booking Card - Reordered on mobile if needed, but keeping original structure */}
-          {user.uid!==service.creatorId&&
-          <div className="lg:col-span-4">
-            <BookingCard
-              title={service.title}
-              rating={service.creator?.rating || 0}
-              reviewCount={service.reviews?.length || 0}
-              price={`$${service.price}`}
-              duration={service.estimatedTime}
-              features={service.features || []}
-              onBook={book}
-            />
-          
-          </div>}
+          {user.uid !== service.creatorId && (
+            <div className="lg:col-span-4">
+              <BookingCard
+                title={service.title}
+                rating={service.creator?.rating || 0}
+                reviewCount={service.reviews?.length || 0}
+                price={`$${service.price}`}
+                duration={service.estimatedTime}
+                features={service.features || []}
+                onBook={book}
+              />
+            </div>
+          )}
         </div>
 
         {/* Details Grid */}
@@ -89,6 +157,7 @@ export default function ServicePage() {
               <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-on-surface">
                 Service Description
               </h2>
+
               <div className="prose prose-stone max-w-none text-tertiary leading-relaxed text-sm md:text-base">
                 <p>{service.description}</p>
               </div>
@@ -150,14 +219,22 @@ export default function ServicePage() {
               <p className="text-xs text-tertiary leading-relaxed mb-6">
                 {service.creator?.bio}
               </p>
-              
-              {/* Change this line in ServicePage.jsx */}
+
               <Link
                 to={`/portfolio/${service.creator?._id || service.creator?.id || service.creator?.uid}`}
                 className="block w-full py-2 border border-outline-variant text-on-surface rounded-full text-sm font-bold hover:bg-surface-container-highest transition-colors text-center"
               >
                 View Portfolio
               </Link>
+
+              {/* Report User Button */}
+              <button
+                onClick={flagUser}
+                className="flex items-center justify-center gap-2 w-full mt-3 py-2 text-red-500 hover:text-red-600 text-sm font-medium transition-colors"
+              >
+                <Flag size={14} />
+                Report User
+              </button>
             </div>
           </div>
         </div>

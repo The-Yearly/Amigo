@@ -10,6 +10,7 @@ import messageRoutes from "./routes/message.routes.js";
 import { errorHandler } from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import flagRoutes from "./routes/flag.routes.js";
 
 import adminRoutes from "./routes/adminManager.routes.js";
 import jwt from "jsonwebtoken";
@@ -30,6 +31,7 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/flag", flagRoutes);
 
 app.use("/api/messages", messageRoutes);
 app.use("/api/admin", adminRoutes);
