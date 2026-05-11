@@ -3,6 +3,7 @@ import {
   createRequest,
   getMyRequests,
   getProviderRequests,
+  newRequest,
   updateRequestStatus,
 } from "../controllers/request.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
@@ -13,5 +14,5 @@ router.post("/", protect, createRequest);
 router.get("/my", protect, getMyRequests);
 router.get("/provider", protect, getProviderRequests);
 router.patch("/:id/status", protect, updateRequestStatus);
-
+router.post("/newRequest",protect,newRequest)
 export default router;

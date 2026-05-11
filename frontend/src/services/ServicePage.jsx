@@ -8,15 +8,22 @@ import { ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { useAuth } from "@/lib/authProvider";
 
 export default function ServicePage() {
   const { serviceId } = useParams();
   const [service, setService] = useState(null);
   console.log(serviceId,useParams(),"Sds")
+  const {user,loading}=useAuth()
+  console.log(user,service,"Payphone")
+  const book=async()=>{
+    const res=await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/requests/newRequest`,{serviceId:serviceId,requesterId:user.uid,providerId:service.creatorId},{withCredentials:true})
+    c
+  }
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/services/${serviceId}`).then((res) => {
       setService(res.data);
+      console.log(res.data,"huh")
     });
   }, [serviceId]);
 
@@ -47,7 +54,7 @@ export default function ServicePage() {
         {/* Hero: Gallery + Booking Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 mb-12 md:mb-16">
           {/* Image Gallery */}
-          <div className="lg:col-span-8">
+          <div className={`${user.uid!==service.creatorId?"lg:col-span-8":"lg:col-span-12"}`}>
             <div className="w-full aspect-[4/3] md:aspect-auto md:h-[600px] overflow-hidden rounded-xl bg-surface-container shadow-sm border border-outline-variant/10">
               <img
                 src={service.image}
@@ -58,6 +65,7 @@ export default function ServicePage() {
           </div>
 
           {/* Booking Card - Reordered on mobile if needed, but keeping original structure */}
+          {user.uid!==service.creatorId&&
           <div className="lg:col-span-4">
             <BookingCard
               title={service.title}
@@ -66,9 +74,10 @@ export default function ServicePage() {
               price={`$${service.price}`}
               duration={service.estimatedTime}
               features={service.features || []}
-              onBook={() => alert("Booking flow triggered!")}
+              onBook={book}
             />
-          </div>
+          
+          </div>}
         </div>
 
         {/* Details Grid */}

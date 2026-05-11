@@ -3,7 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const sendMessage = asyncHandler(async (req, res) => {
   const { serviceRequestId, content } = req.body;
-
+  console.log("kjskjdkl")
+  console.log(serviceRequestId,content,"Parthiv")
   const request = await prisma.serviceRequest.findUnique({
     where: { id: serviceRequestId },
   });
@@ -20,7 +21,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
     data: {
       content,
       serviceRequestId,
-      senderId: req.user,
+      senderId: req.user.uid,
       receiverId,
     },
   });
@@ -49,7 +50,7 @@ export const getMessages = asyncHandler(async (req, res) => {
 export const getConversations = asyncHandler(async (req, res) => {
   const requests = await prisma.serviceRequest.findMany({
     where: {
-      OR: [{ requesterId: req.user }, { providerId: req.user }],
+      OR: [{ requesterId: req.user.userId }, { providerId: req.user.userID }],
       status: { in: ["Accepted", "InProgress"] },
     },
     include: {
@@ -92,11 +93,10 @@ export const getConversations = asyncHandler(async (req, res) => {
 
 export const markAsRead = asyncHandler(async (req, res) => {
   const { serviceRequestId } = req.params;
-
   await prisma.message.updateMany({
     where: {
       serviceRequestId,
-      receiverId: req.user,
+      receiverId: req.user.uid,
       isRead: false,
     },
     data: {

@@ -27,7 +27,7 @@ export default function MessagesPage() {
   const [searchParams] = useSearchParams();
   const chatIdFromUrl = searchParams.get("chat");
   const { user, loading } = useContext(AuthContext);
-  console.log(user, "TAke A Look At M<y");
+  console.log(user, "TAke A Look At My");
   const currentUserId = user.uid;
   console.log("Current user ID from cookies:", currentUserId);
 
@@ -49,6 +49,7 @@ export default function MessagesPage() {
   }, []);
 
   async function sendMessage(content) {
+    
     await axios.post(
       "http://localhost:5000/api/messages",
       {
@@ -148,7 +149,7 @@ export default function MessagesPage() {
   });
 
   const activeConversation = conversations.find((c) => c.id === activeChat);
-
+  console.log(activeConversation,"Saji")
   return (
     <div className="bg-surface text-on-surface h-screen overflow-hidden flex flex-col">
       <MessagesTopAppBar avatarSrc={USER_AVATAR} />
@@ -216,7 +217,7 @@ export default function MessagesPage() {
                   {activeConversation?.otherUser || "Select a chat"}
                 </h2>
                 <p className="text-[10px] font-semibold text-tertiary uppercase tracking-widest">
-                  Online • Local Groomer
+                 
                 </p>
               </div>
             </div>

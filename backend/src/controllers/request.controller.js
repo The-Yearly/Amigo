@@ -30,11 +30,12 @@ export const getMyRequests = asyncHandler(async (req, res) => {
   console.log(req.user, "Cause");
   const requests = await prisma.serviceRequest.findMany({
     where: {
-      requesterId: req.user,
+      requesterId: req.user.uid,
     },
     include: {
       service: true,
       provider: true,
+      
     },
     orderBy: {
       createdAt: "desc",
@@ -48,6 +49,7 @@ export const getMyRequests = asyncHandler(async (req, res) => {
     status: r.status,
     title: r.service.title,
     provider: r.provider.name,
+    service:r.service.id,
     date: r.createdAt,
     price: `₹${r.service.price}`,
   }));
@@ -68,7 +70,7 @@ export const updateRequestStatus = asyncHandler(async (req, res) => {
 });
 
 export const getProviderRequests = asyncHandler(async (req, res) => {
-  console.log("Daylight");
+
   const requests = await prisma.serviceRequest.findMany({
     where: {
       providerId: req.user.uid,
@@ -94,4 +96,24 @@ export const getProviderRequests = asyncHandler(async (req, res) => {
   }));
 
   res.json(formatted);
+});
+
+
+
+export const newRequest = asyncHandler(async (req, res) => {
+  const data = req.body;
+    const resp = await prisma.serviceRequest.create({
+    data: {
+      status: "Pending",
+      service: {
+        connect: { id: data.serviceId }
+      },
+      requester: {
+        connect: { id: data.requesterId }
+      },
+      provider: {
+        connect: { id: data.providerId }
+      }
+    }})
+  res.json({message:"Requested For Service"})
 });

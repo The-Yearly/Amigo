@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bell, MessageSquare, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion"; 
+import { useAuth } from "@/lib/authProvider";
+import axios from "axios";import { motion } from "framer-motion"; 
 import { LogOut } from "lucide-react";
 const Navbar = () => {
+  const [image,useImage]=useState("")
+  const {user,loading}=useAuth()
+  useEffect(()=>{const fetchData=async()=>{
+    const res=await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile/${user.uid}`)
+    useImage(res.data.profileImage)
+}
+  fetchData()})
   const handleLogout = async () => {
     try {
       await fetch('/api/logout', { method: 'POST' });
@@ -57,7 +65,7 @@ const Navbar = () => {
         {/* PROFILE */}
         <Link to="/profile" className="hover:text-black ">
           <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
-            <img src="user-avatar.jpg" />
+            <img src={image} />
           </div>
         </Link>
         {/* LOGOUT BUTTON */}

@@ -31,7 +31,7 @@ export default function MyServiceCard({
   onDelete,
 }) {
   const badgeClass = STATUS_STYLES[status] ?? STATUS_STYLES.Active;
-
+  
   return (
     <div className="group bg-surface-container-lowest rounded-lg overflow-hidden hover:scale-[1.02] transition-all duration-300 shadow-md hover:shadow-lg border border-outline-variant/10">
       {/* Hero image */}

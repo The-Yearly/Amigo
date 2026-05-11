@@ -21,7 +21,7 @@ model User {
   isAdmin         Boolean          @default(false)
   admin           Admin?
   isEmailVerified Boolean          @default(false)
-  ban             Boolean          @default(false)
+  ban             Boolean?           @default(false)
   services        Service[]
   requestsMade    ServiceRequest[] @relation("Requester")
   requestsRecv    ServiceRequest[] @relation("Provider")
@@ -82,7 +82,7 @@ model Service {
   location      String?
   estimatedTime String?
   createdAt     DateTime @default(now())
-  hide          Boolean  @default(false)
+  hide          Boolean? @default(false)
   creatorId     String   @db.ObjectId
   creator       User     @relation(fields: [creatorId], references: [id])
 
