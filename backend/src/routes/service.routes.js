@@ -6,6 +6,7 @@ import {
   getMyServices,
   editService,
   deleteService,
+  myserviceStats
 } from "../controllers/service.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
@@ -17,6 +18,7 @@ router.post("/", protect, createService);
 router.post("/edit", protect, editService);
 router.delete("/delete/:id", protect, deleteService);
 router.get("/my", protect, getMyServices);
+router.get("/my/stats", protect, myserviceStats);
 router.get("/:id", getServiceById);
 
 export default router;

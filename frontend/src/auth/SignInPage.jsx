@@ -32,6 +32,10 @@ export default function SignInPage() {
         payload,
         { withCredentials: true },
       );
+      if (res.status !== 200) {
+        throw new Error("Authentication failed");
+      }
+      
       toast.success("Login successful!");
       toast.info("Redirecting...");
       setTimeout(() => {
@@ -44,39 +48,6 @@ export default function SignInPage() {
       setLoading(false);
     }
   }
-
-  // async function handleSubmit(e) {
-  //   e.preventDefault();
-  //   setLoading(true);
-
-  //   try {
-  //     const res = await axios.post(
-  //       `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-  //       {
-  //         email,
-  //         password,
-  //       },
-  //     );
-
-  //     // same logic from your old component
-  //     const { token, user } = res.data;
-  //     const creds = { uid: user.id, token: token };
-
-  //     Cookies.set("creds", JSON.stringify(creds), { expires: 7 });
-
-  //     toast.success("Login successful!");
-  //     toast.info("Redirecting...");
-
-  //     setTimeout(() => {
-  //       navigate("/");
-  //     }, 1000);
-  //   } catch (err) {
-  //     console.log(err)
-  //     toast.error(err.response?.data?.message || "Login failed");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
 
   return (
     <div className="bg-surface font-body text-on-surface antialiased min-h-screen flex items-center justify-center p-6">

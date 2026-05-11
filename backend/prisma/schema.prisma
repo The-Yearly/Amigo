@@ -21,6 +21,8 @@ model User {
   isAdmin         Boolean          @default(false)
   admin           Admin?
   isEmailVerified Boolean          @default(false)
+  resetPasswordToken   String?
+  resetPasswordExpiry  DateTime?
   ban             Boolean?           @default(false)
 
   services        Service[]

@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import Navbar from "../Landing/Navbar";
 import axios from "axios";
 import { AuthContext } from "@/lib/authProvider";
 import { toast } from "react-toastify";

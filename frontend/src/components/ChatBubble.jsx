@@ -19,16 +19,23 @@ export default function ChatBubble({
   if (sent) {
     return (
       <div className="flex flex-row-reverse gap-4 max-w-[80%] ml-auto">
-        <div className="space-y-1 items-end flex flex-col">
+        <div className="space-y-1 items-end flex flex-col ">
           {messages.map((msg, i) => (
             <div
               key={i}
-              className="bg-primary px-4 py-3 rounded-2xl rounded-br-none text-on-primary shadow-lg shadow-primary/10"
+              className="
+            bg-zinc-100 dark:bg-zinc-800
+            border border-zinc-300 dark:border-zinc-700
+            px-4 py-2
+            rounded-2xl rounded-bl-md
+            shadow-sm
+            max-w-fit
+          "
             >
               <p className="text-sm">{msg}</p>
             </div>
           ))}
-          <div className="flex items-center gap-1.5 mt-1">
+          <div className="flex items-center gap-1.5 mt-1 ">
             <span className="text-[10px] text-tertiary">{time}</span>
             {read && (
               <span
@@ -45,22 +52,32 @@ export default function ChatBubble({
   }
 
   return (
-    <div className="flex gap-4 max-w-[80%]">
+    <div className="flex items-start gap-4 max-w-[80%] ">
       <img
         src={avatarSrc}
         alt={avatarAlt}
-        className="h-8 w-8 rounded-full object-cover self-end mb-1 shrink-0"
+        className="h-8 w-8 rounded-full object-cover shrink-0"
       />
-      <div className="space-y-1">
+
+      <div className="">
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className="bg-surface-container-low px-4 py-3 rounded-2xl rounded-bl-none"
-          >
-            <p className="text-sm text-on-surface">{msg}</p>
+          <div key={i} className="flex flex-col">
+            <div
+              className="
+            bg-zinc-100 dark:bg-zinc-800
+            border border-zinc-300 dark:border-zinc-700
+            px-4 py-2
+            rounded-2xl rounded-bl-md
+            shadow-sm
+            max-w-fit
+          "
+            >
+              <p className="text-sm text-zinc-900 dark:text-zinc-100">{msg}</p>
+            </div>
+
+            <span className="text-[10px] text-tertiary ml-4 mt-1">{time}</span>
           </div>
         ))}
-        <span className="text-[10px] text-tertiary ml-1">{time}</span>
       </div>
     </div>
   );

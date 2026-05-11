@@ -37,7 +37,7 @@ export const getServices = asyncHandler(async (req, res) => {
       title: s.title,
       rating,
       reviewCount: reviews.length,
-      category:s.category,
+      category: s.category,
 
       // format here so frontend stays dumb
       price: `₹${s.price}`,
@@ -186,8 +186,7 @@ export const editService = asyncHandler(async (req, res) => {
 
 export const deleteService = asyncHandler(async (req, res) => {
   const userId = req.user.uid;
-  const eid=req.params.id
-  console.log("ME Here",eid,userId)
+  const eid = req.params.id;
   const service = await prisma.service.findFirst({
     where: {
       id: eid,
@@ -209,5 +208,46 @@ export const deleteService = asyncHandler(async (req, res) => {
 
   return res.status(200).json({
     message: "Service deleted successfully",
+  });
+});
+
+export const myserviceStats = asyncHandler(async (req, res) => {
+  const userId = req.user.uid;
+  const services = await prisma.service.findMany({
+    where: {
+      creatorId: userId,
+    },
+    include: {
+      requests: true,
+    },
+  });
+
+  const totalRevenue = services.reduce((acc, service) => {
+    const completedRequests = service.requests.filter(
+      (r) => r.status === "Completed",
+    );
+    return acc + completedRequests.length * service.price;
+  }, 0);
+
+  const activeRequests = services.reduce((acc, service) => {
+    const activeReqs = service.requests.filter(
+      (r) => r.status === "Accepted" || r.status === "InProgress",
+    );
+    return acc + activeReqs.length;
+  }, 0);
+
+  const successRate =
+    services.reduce((acc, service) => {
+      const completedReqs = service.requests.filter(
+        (r) => r.status === "Completed",
+      );
+      return acc + completedReqs.length;
+    }, 0) /
+    (services.reduce((acc, service) => acc + service.requests.length, 0) || 1);
+
+  res.json({
+    totalRevenue: `₹${totalRevenue}`,
+    activeRequests,
+    successRate: `${(successRate * 100).toFixed(2)}%`,
   });
 });

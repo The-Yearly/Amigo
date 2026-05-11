@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/authProvider";
 import axios from "axios";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 
 const Navbar = () => {

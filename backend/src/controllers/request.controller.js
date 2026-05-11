@@ -26,8 +26,6 @@ export const createRequest = asyncHandler(async (req, res) => {
 });
 
 export const getMyRequests = asyncHandler(async (req, res) => {
-  console.log("Fetching requests for user:", req.user.uid);
-  console.log(req.user.uid, "Cause");
   const requests = await prisma.serviceRequest.findMany({
     where: {
       requesterId: req.user.uid,
@@ -35,7 +33,7 @@ export const getMyRequests = asyncHandler(async (req, res) => {
     include: {
       service: true,
       provider: true,
-      
+
     },
     orderBy: {
       createdAt: "desc",
@@ -49,7 +47,7 @@ export const getMyRequests = asyncHandler(async (req, res) => {
     status: r.status,
     title: r.service.title,
     provider: r.provider.name,
-    service:r.service.id,
+    service: r.service.id,
     date: r.createdAt,
     price: `₹${r.service.price}`,
   }));
@@ -102,7 +100,27 @@ export const getProviderRequests = asyncHandler(async (req, res) => {
 
 export const newRequest = asyncHandler(async (req, res) => {
   const data = req.body;
-    const resp = await prisma.serviceRequest.create({
+  const service = await prisma.service.findUnique({
+    where: { id: data.serviceId },
+  });
+
+  if (!service) {
+    return res.status(404).json({ message: "Service not found" });
+  }
+
+  const existingRequest = await prisma.serviceRequest.findFirst({
+    where: {
+      serviceId: data.serviceId,
+      requesterId: data.requesterId,
+      providerId: data.providerId,
+      status: "Pending",
+    },
+  });
+
+  if (existingRequest) {
+    return res.status(201).json({ message: "You already have a pending request for this service." });
+  }
+  const resp = await prisma.serviceRequest.create({
     data: {
       status: "Pending",
       service: {
@@ -114,8 +132,9 @@ export const newRequest = asyncHandler(async (req, res) => {
       provider: {
         connect: { id: data.providerId }
       }
-    }})
-  res.json({message:"Requested For Service"})
+    }
+  });
+  res.json({ message: "Requested For Service" });
 });
 
 

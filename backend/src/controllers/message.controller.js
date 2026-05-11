@@ -3,8 +3,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const sendMessage = asyncHandler(async (req, res) => {
   const { serviceRequestId, content } = req.body;
-  console.log("kjskjdkl")
-  console.log(serviceRequestId,content,"Parthiv")
   const request = await prisma.serviceRequest.findUnique({
     where: { id: serviceRequestId },
   });
@@ -41,6 +39,7 @@ export const getMessages = asyncHandler(async (req, res) => {
       content: true,
       senderId: true,
       createdAt: true,
+      isRead: true,
     },
   });
 
@@ -59,6 +58,18 @@ export const getConversations = asyncHandler(async (req, res) => {
       provider: true,
       messages: {
         orderBy: { createdAt: "desc" },
+      },
+      provider: {
+        select: {
+          name: true,
+          profileImage: true,
+        },
+      },
+      requester: {
+        select: {
+          name: true,
+          profileImage: true,
+        },
       },
     },
   });
@@ -81,12 +92,69 @@ export const getConversations = asyncHandler(async (req, res) => {
       preview: r.messages[0]?.content || "Start a conversation",
       time: r.messages[0]
         ? new Date(r.messages[0].createdAt).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
+          hour: "2-digit",
+          minute: "2-digit",
+        })
         : "",
     };
   });
+
+  res.json(formatted);
+});
+
+export const getConversationById = asyncHandler(async (req, res) => {
+  const { serviceRequestId } = req.params;
+  console.log("req.user:", req.user);
+
+  const r = await prisma.serviceRequest.findUnique({
+    where: { id: serviceRequestId },
+    include: {
+      service: true,
+      requester: true,
+      provider: true,
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
+      provider: {
+        select: {
+          name: true,
+          profileImage: true,
+        },
+      },
+      requester: {
+        select: {
+          name: true,
+          profileImage: true,
+        },
+      },
+    },
+  });
+
+  if (!r) return res.status(404).json({ message: "Conversation not found" });
+
+  const isRequester = req.user.uid === r.requesterId;
+
+
+  const hasUnread = r.messages.some(
+    (m) => m.receiverId === req.user.uid && !m.isRead
+  );
+
+  const formatted = {
+    id: r.id,
+    title: r.service?.title,
+    otherUser: isRequester ? r.provider?.name : r.requester?.name,
+    avatarSrc: isRequester ? r.provider?.profileImage : r.requester?.profileImage,
+    isPending: hasUnread,
+    preview: r.messages[0]?.content || "Start a conversation",
+    time: r.messages[0]
+      ? new Date(r.messages[0].createdAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      : "",
+  };
+
 
   res.json(formatted);
 });

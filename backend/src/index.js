@@ -45,27 +45,24 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.post('/api/logout', (req, res) => {
-  res.clearCookie('token', { 
-    path: '/', 
+  res.clearCookie('token', {
+    path: '/',
     // These must match exactly how the cookie was created
-    httpOnly: true, 
-    secure: true, 
-    sameSite: 'None' 
+    httpOnly: true,
+    secure: true,
+    sameSite: 'None'
   });
   res.status(200).json({ message: "Logged out" });
 });
 
 app.get("/api/me", (req, res) => {
-  console.log("Rer", req.cookies.token);
   if (req.cookies.token) {
     const token = Buffer.from(req.cookies.token, "base64").toString("utf-8");
-    console.log(token, "nla");
     if (!token) {
       return res.status(401).json({ message: "Not authenticated" });
     }
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
-      console.log(decoded.userId);
       res.json({
         uid: decoded.userId.id,
         isAdmin: decoded.userId.isAdmin,

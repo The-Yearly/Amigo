@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ServiceCard from "@/components/ServiceCard"; // Reusable component for displaying individual service listings
 import { ArrowRight, Truck, GraduationCap } from "lucide-react"; // Icon library for visual cues
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 /**
  * DASHBOARD COMPONENT:
@@ -19,7 +20,9 @@ const Dashboard = () => {
   ];
   const [data, setData] = useState(null);
   const [services, setServices] = useState([]);
+  const [recentServices, setRecentServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([
@@ -29,12 +32,17 @@ const Dashboard = () => {
       axios.get("http://localhost:5000/api/services", {
         withCredentials: true,
       }),
+      axios.get("http://localhost:5000/api/dashboard/recent-services", {
+        withCredentials: true,
+      }),
     ])
-      .then(([dashboardRes, servicesRes]) => {
+      .then(([dashboardRes, servicesRes, recentServicesRes]) => {
         console.log("Dashboard Data:", dashboardRes.data);
         setData(dashboardRes.data);
         setServices(servicesRes.data);
+        setRecentServices(recentServicesRes.data);
         console.log("Services Data:", servicesRes.data);
+        console.log("Recent Services Data:", recentServicesRes.data);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -45,6 +53,17 @@ const Dashboard = () => {
         <div className="h-3 w-20 bg-surface-container-highest rounded mb-4 animate-intense-pulse"></div>
         <div className="h-6 w-40 bg-surface-container-highest rounded mb-2 animate-intense-pulse"></div>
         <div className="h-3 w-32 bg-surface-container-highest rounded animate-intense-pulse"></div>
+      </div>
+    );
+  }
+  function PulseItemSkeleton() {
+    return (
+      <div className="flex gap-4">
+        <div className="bg-[#FFCCBC] dark:bg-[#4A2C22] p-2 rounded-full h-8 w-8 animate-intense-pulse"></div>
+        <div className="flex-1 space-y-2">
+          <div className="h-4 bg-surface-container-highest rounded w-3/4 animate-intense-pulse"></div>
+          <div className="h-3 bg-surface-container-highest rounded w-1/2 animate-intense-pulse"></div>
+        </div>
       </div>
     );
   }
@@ -61,6 +80,10 @@ const Dashboard = () => {
         </div>
       </div>
     );
+  }
+
+  function handleNavigate() {
+    navigate("/services");
   }
 
   // Animation styles for intense pulsating
@@ -129,12 +152,15 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
               <>
-                {[...Array(6)].map((_, i) => (
+                {[...Array(3)].map((_, i) => (
                   <ServiceCardSkeleton key={i} />
                 ))}
               </>
             ) : (
-              services.map((card) => <ServiceCard key={card.id} {...card} />)
+              //limit services to 3 for the dashboard view
+              services
+                .slice(0, 3)
+                .map((card) => <ServiceCard key={card.id} {...card} />)
             )}
           </div>
         </div>
@@ -150,20 +176,38 @@ const Dashboard = () => {
 
             {/* Feed Items: Uses the PulseItem sub-component defined below */}
             <div className="space-y-4">
-              <PulseItem
-                icon={<Truck size={18} />}
-                title="Needed: Dorm Move-out help"
-                meta="Just now • North Campus"
-              />
-              <PulseItem
-                icon={<GraduationCap size={18} />}
-                title="Looking for: CS101 Tutor"
-                meta="12m ago • Engineering Wing"
-              />
+              {loading ? (
+                <>
+                  <PulseItemSkeleton />
+                  <PulseItemSkeleton />
+                </>
+              ) : (
+                recentServices.map((req) => (
+                  <PulseItem
+                    key={req.id}
+                    icon={
+                      req.category === "Move-in Assist" ? (
+                        <Truck size={20} />
+                      ) : req.category === "Tutoring" ? (
+                        <GraduationCap size={20} />
+                      ) : (
+                        <ArrowRight size={20} />
+                      )
+                    }
+                    title={req.title}
+                    meta={`${new Date(req.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })} · ${req.location}`}
+                  />
+                ))
+              )}
             </div>
 
-            {/* PRIMARY ACTION BUTTON: For users to create their own requests */}
-            <button className="w-full py-3 bg-white dark:bg-[#3E2723] rounded-full font-bold text-[#3E2723] dark:text-white shadow-sm hover:opacity-90 transition-opacity">
+            <button
+              className="w-full py-3 bg-white dark:bg-[#3E2723] rounded-full font-bold text-[#3E2723] dark:text-white shadow-sm hover:opacity-90 transition-opacity"
+              onClick={handleNavigate}
+            >
               Post a Request
             </button>
           </div>
@@ -205,16 +249,11 @@ const PulseItem = ({ icon, title, meta }) => (
     </div>
     <div>
       <p className="text-sm font-bold text-[#3E2723] dark:text-gray-200">
-        {title}
+        {title ? title : "New request posted"}{" "}
+        {/* Fallback title if none provided */}
       </p>
       <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase">
-        {meta}
-      </p>
-      <p className="text-sm font-bold text-[#3E2723] dark:text-gray-200">
-        {title}
-      </p>
-      <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase">
-        {meta}
+        {meta ? meta : "No location specified"}
       </p>
     </div>
   </div>

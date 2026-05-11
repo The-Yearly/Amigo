@@ -36,7 +36,7 @@ const createLog = async (
 };
 
 export const fetchAdmins = asyncHandler(async (req, res) => {
-  console.log("Sj");
+
   const admins = await prisma.user.findMany({
     where: {
       isAdmin: true,

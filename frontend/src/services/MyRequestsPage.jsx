@@ -1,4 +1,3 @@
-import RequestNavBar from "@/Components/Landing/Navbar";
 import ExploreFooter from "@/Components/Landing/Footer";
 import ActiveRequestItem from "@/Components/Services/ActiveRequestItem";
 import HistoryRow from "@/Components/Services/HistoryRow";
@@ -21,33 +20,20 @@ export default function MyRequestsPage() {
   useEffect(() => {
     console.log("HE;l");
     api
-      .get("http://localhost:5000/api/requests/my/" , {
+      .get("http://localhost:5000/api/requests/my/", {
         withCredentials: true,
       })
       .then((res) => setRequests(res.data));
   }, []);
 
-  async function handleRequest(serviceId) {
-    await api.post(
-      "http://localhost:5000/api/requests",
-      {
-        serviceId,
-      },
-      {
-        withCredentials: true,
-      },
-    );
-
-    alert("Request sent!");
-  }
-
   const activeRequests = requests.filter((r) => r.status !== "Completed");
-  console.log(activeRequests)
-  const historyRequests = requests.filter((r) => r.status === "Completed"||r.status === "Cancelled");
-  console.log(activeRequests)
+  console.log(activeRequests);
+  const historyRequests = requests.filter(
+    (r) => r.status === "Completed" || r.status === "Cancelled",
+  );
+  console.log(activeRequests);
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-secondary-fixed selection:text-on-secondary-fixed">
-
       <main className="pt-24 pb-24 px-6 md:px-12">
         <div className="max-w-[1400px] mx-auto">
           {/* Page header */}
@@ -76,7 +62,7 @@ export default function MyRequestsPage() {
                 <ActiveRequestItem
                   key={req.id}
                   {...req}
-                  onViewDetails={() =>navigate(`/services/${req.service}`)}
+                  onViewDetails={() => navigate(`/services/${req.service}`)}
                   onOpenChat={() => navigate(`/messages?chat=${req.id}`)}
                   onCancel={async () => {
                     await api.patch(
@@ -117,8 +103,6 @@ export default function MyRequestsPage() {
                 ))}
               </div>
             </div>
-
-          
           </section>
         </div>
       </main>

@@ -11,11 +11,10 @@ export const AuthProvider = ({ children }) => {
           `${import.meta.env.VITE_BACKEND_URL}/api/me`,
           { withCredentials: true },
         );
-        console.log(response.data);
         setUser(response.data);
       } catch (err) {
-        console.log("Sss");
         setUser(null);
+        console.error("Failed to fetch user data:", err);
       } finally {
         setLoading(false);
       }

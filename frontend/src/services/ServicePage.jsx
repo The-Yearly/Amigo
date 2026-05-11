@@ -1,14 +1,12 @@
-import TopAppBar from "@/Components/Landing/Navbar";
 import BottomNavBar from "@/Components/Landing/Footer";
 import BookingCard from "@/Components/Services/BookingCard";
-import RequirementCard from "@/Components/Services/RequirementCard";
-import ReviewCard from "@/Components/Services/ReviewCard";
 import axios from "axios";
 import { ChevronRight, Flag } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/authProvider";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function ServicePage() {
   const { serviceId } = useParams();
@@ -16,11 +14,12 @@ export default function ServicePage() {
 
   console.log(serviceId, useParams(), "Sds");
   
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   console.log(user, service, "Payphone");
 
   const book = async () => {
     try {
+      setBookingLoading(true);
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/requests/newRequest`,
         {
@@ -30,10 +29,21 @@ export default function ServicePage() {
         },
         { withCredentials: true },
       );
-      alert("Booking request sent successfully!");
-    } catch (err) {
-      console.error("Booking error:", err);
-      alert("Error creating booking request");
+      if (res.status === 201) {
+        console.log("in hereee");
+        toast.error("You already have a pending request for this service.");
+      } else if (res.status === 404) {
+        toast.error("Service not found.");
+      } else {
+        toast.success("Session booked successfully!");
+      }
+    } catch (error) {
+      console.error("Booking failed:", error);
+
+      toast.error("Failed to book the service. Please try again.");
+    } finally {
+      setBookingLoading(false);
+      // toast.success("Service booked successfully!");
     }
   };
 
@@ -82,6 +92,12 @@ export default function ServicePage() {
         setService(res.data);
         console.log(res.data, "huh");
       });
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/services/${serviceId}`)
+      .then((res) => {
+        setService(res.data);
+        console.log(res.data, "huh");
+      });
   }, [serviceId]);
 
   if (!service) {
@@ -92,6 +108,7 @@ export default function ServicePage() {
 
   return (
     <div className="bg-surface text-on-surface antialiased">
+      <ToastContainer position="top-right" autoClose={3000} />
       <main className="pt-20 md:pt-24 pb-32 max-w-7xl mx-auto px-4 md:px-6">
         {/* Breadcrumb & Status */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -111,6 +128,9 @@ export default function ServicePage() {
         {/* Hero: Gallery + Booking Card */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 mb-12 md:mb-16">
           {/* Image Gallery */}
+          <div
+            className={`${user.uid !== service.creatorId ? "lg:col-span-8" : "lg:col-span-12"}`}
+          >
           <div
             className={`${user.uid !== service.creatorId ? "lg:col-span-8" : "lg:col-span-12"}`}
           >
@@ -143,6 +163,7 @@ export default function ServicePage() {
                 duration={service.estimatedTime}
                 features={service.features || []}
                 onBook={book}
+                loading={bookingLoading}
               />
             </div>
           )}
@@ -164,7 +185,7 @@ export default function ServicePage() {
             </section>
 
             {/* Reviews */}
-            <section>
+            {/* <section>
               <div className="flex items-center justify-between mb-6 md:mb-8">
                 <h2 className="text-xl md:text-2xl font-bold text-on-surface">
                   Student Reviews
@@ -178,7 +199,7 @@ export default function ServicePage() {
                   <ReviewCard key={review._id} {...review} />
                 ))}
               </div>
-            </section>
+            </section> */}
           </div>
 
           {/* Right: Metadata Sidebar */}
@@ -220,6 +241,7 @@ export default function ServicePage() {
                 {service.creator?.bio}
               </p>
 
+              {/* Change this line in ServicePage.jsx */}
               <Link
                 to={`/portfolio/${service.creator?._id || service.creator?.id || service.creator?.uid}`}
                 className="block w-full py-2 border border-outline-variant text-on-surface rounded-full text-sm font-bold hover:bg-surface-container-highest transition-colors text-center"

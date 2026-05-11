@@ -29,6 +29,9 @@ import Portfolio from "./services/CreatorProfile";
 import ReviewFlaggedErrand from "./admin/flagged/reviewFlaggedErrand";
 import ReviewFlaggedUser from "./admin/flagged/reviewFlaggedUser";
 import IncomingRequestsPage from "./services/IncomingRequestsPage";
+import ForgotPasswordPage from "./auth/ForgotPasswordPage";
+import ResetPasswordPage from "./auth/ResetPasswordPage";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -80,8 +83,6 @@ const router = createBrowserRouter([
             ],
           },
           { path: "/messages", element: <MessagesPage /> },
-
-          { path: "/messages", element: <MessagesPage /> },
           {
             path: "/adminSettings",
             element: <Layout />,
@@ -130,21 +131,18 @@ const router = createBrowserRouter([
     path: "/login",
     element: <SignInPage />,
   },
-
   {
-    path: "/signup",
-    element: <SignUpPage />,
+    path: "/forgot-password",
+    element: <ForgotPasswordPage />,
   },
   {
-    path: "/login",
-    element: <SignInPage />,
+    path: "/reset-password/:token",
+    element: <ResetPasswordPage />,
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />,
-    </AuthProvider>
-  </StrictMode>,
+  <AuthProvider>
+    <RouterProvider router={router} />,
+  </AuthProvider>,
 );

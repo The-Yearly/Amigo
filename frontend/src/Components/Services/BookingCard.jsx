@@ -11,6 +11,7 @@
 
 import StarRating from "../../components/StarRating";
 import FeatureBadge from "../../components/FeatureBadge";
+import { ToastContainer } from "react-toastify";
 
 export default function BookingCard({
   title,
@@ -20,9 +21,10 @@ export default function BookingCard({
   duration,
   features = [],
   onBook,
+  loading,
 }) {
   return (
-    <div className="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10 shadow-[0_32px_64px_rgba(26,28,28,0.06)]">
+    <div className="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/20 shadow-lg">
       <h1 className="text-3xl font-bold font-headline tracking-tight text-on-surface mb-2">
         {title}
       </h1>
@@ -42,7 +44,7 @@ export default function BookingCard({
       </div>
 
       {/* Price block */}
-      <div className="mb-8 p-6 bg-surface-container-low rounded-lg">
+      <div className="mb-8 p-6 bg-surface-container-low rounded-lg border border-outline-variant/10">
         <p className="text-tertiary text-sm font-semibold uppercase tracking-widest mb-1">
           Total per session
         </p>
@@ -62,11 +64,13 @@ export default function BookingCard({
       </div>
 
       {/* CTA */}
+
       <button
         onClick={onBook}
-        className="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-bold text-lg hover:shadow-xl active:scale-95 transition-all duration-200 shadow-primary/20"
+        disabled={loading}
+        className="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-bold text-lg shadow-md hover:shadow-xl active:scale-95 transition-all duration-200"
       >
-        Book Session Now
+        {loading ? "Booking..." : "Book Session Now"}
       </button>
       <p className="text-center text-xs text-tertiary mt-4">
         No payment required until after session confirmation
