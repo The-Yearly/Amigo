@@ -76,7 +76,26 @@ export default function MyServicesPage() {
   const [services, setServices] = useState([]);
   const [requests, setRequests] = useState([]);
   const [load, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const { user, loading } = useContext(AuthContext);
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/api/services/delete/${deleteTarget.id}`,{withCredentials:true});
+       api
+      .get("/api/services/my")
+      .then((res) => {
+        setServices(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching services:", err);
+      })
+      .finally(() => setLoading(false));
+    } catch (err) {
+      console.error("Error deleting service:", err);
+    } finally {
+      setDeleteTarget(null);
+    }
+  };
   useEffect(() => {
     // Only fetching the services created by the logged-in user
     api
@@ -93,8 +112,7 @@ export default function MyServicesPage() {
   return (
     <div className="bg-surface text-on-surface font-body antialiased">
       <style>{pulseStyles}</style>
-      <Navbar />
-
+      
       <main className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-surface via-surface to-surface-dim/30 ">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12">
           {/* Dashboard Header */}
@@ -152,7 +170,7 @@ export default function MyServicesPage() {
                     onEdit={() =>
                       (window.location.href = "/services/edit/" + service.id)
                     }
-                    onDelete={() => console.log("delete", service.id)}
+                    onDelete={() => setDeleteTarget(service)}
                   />
                 </div>
               ))
@@ -160,7 +178,45 @@ export default function MyServicesPage() {
           </div>
         </div>
       </main>
-
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-surface-container border border-outline-variant bg-white rounded-2xl p-7 w-[360px] shadow-xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-error-container flex items-center justify-center">
+                <span className="material-symbols-outlined text-error">
+                  delete
+                </span>
+              </div>
+              <div>
+                <p className="font-bold text-base">Delete service?</p>
+                <p className="text-sm text-on-surface-variant">
+                  This action cannot be undone.
+                </p>
+              </div>
+            </div>
+            <p className="text-sm text-on-surface-variant bg-surface-container-high rounded-xl p-3 mb-5 border-l-4 border-red-400">
+              <span className="font-semibold text-on-surface">
+                {deleteTarget.title}
+              </span>{" "}
+              will be permanently removed from your listings.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="flex-1 py-2.5 rounded-lg border border-outline text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 py-2.5  transition-all rounded-lg bg-error-container text-error text-sm font-semibold"
+              >
+                Delete service
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <ExploreFooter />
     </div>
   );

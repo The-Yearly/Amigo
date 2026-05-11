@@ -132,6 +132,7 @@ export const login = asyncHandler(async (req, res) => {
     console.log(user, "ASd");
     return res.status(401).json({ message: "User Not Found" });
   }
+  if(user.ban){return res.status(403).json({ message: "User Is Banned" });}
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     return res.status(401).json({ message: "Invalid credentials" });

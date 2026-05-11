@@ -128,7 +128,7 @@ export default function CreateServicePage() {
   }
   return (
     <div className="bg-surface font-body text-on-surface antialiased">
-      <ExploreNavBar />
+      
       <ToastContainer />
       <main className="pt-32 pb-24 px-6 md:px-12 max-w-[1440px] mx-auto">
         {/* Page header */}

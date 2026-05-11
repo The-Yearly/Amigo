@@ -31,7 +31,7 @@ const Dashboard = () => {
   if (!profile) {
     return (
       <div className="bg-gray-50 min-h-screen font-sans pb-20">
-        <Navbar />
+       
         <main className="max-w-6xl mx-auto px-4 mt-12">
           <p>Loading profile...</p>
         </main>
@@ -105,7 +105,7 @@ const Dashboard = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans pb-20">
-      <Navbar />
+      
       <main className="max-w-6xl mx-auto px-4 mt-12">
         {/* Profile Header */}
         <section className="flex flex-col md:flex-row gap-8 items-start mb-12">

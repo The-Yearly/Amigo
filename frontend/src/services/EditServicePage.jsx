@@ -131,7 +131,6 @@ export default function EditServicePage() {
   return (
     <div className="bg-surface font-body text-on-surface antialiased">
       <ToastContainer />
-      <ExploreNavBar />
 
       <main className="pt-32 pb-24 px-6 md:px-12 max-w-[1440px] mx-auto">
         {/* Page header */}

@@ -4,6 +4,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // GET ALL SERVICES
 export const getServices = asyncHandler(async (req, res) => {
   const services = await prisma.service.findMany({
+    where:{
+      hide:false
+    },
     include: {
       creator: true,
       requests: {
@@ -180,4 +183,32 @@ export const editService = asyncHandler(async (req, res) => {
   });
 
   res.status(201).json(service);
+});
+
+export const deleteService = asyncHandler(async (req, res) => {
+  const userId = req.user.uid;
+  const eid=req.params.id
+  console.log("ME Here",eid,userId)
+  const service = await prisma.service.findFirst({
+    where: {
+      id: eid,
+    },
+  });
+  if (!service) {
+    return res.status(404).json({ message: "Post not found" });
+  }
+  if (service.creatorId !== userId) {
+    res.status(403).json({
+      message: "Access denied. You can only delete your own posts.",
+    });
+  }
+  await prisma.service.delete({
+    where: {
+      id: eid,
+    },
+  });
+
+  return res.status(200).json({
+    message: "Service deleted successfully",
+  });
 });

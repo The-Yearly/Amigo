@@ -13,9 +13,9 @@ import { Link } from "react-router-dom";
 export default function ServicePage() {
   const { serviceId } = useParams();
   const [service, setService] = useState(null);
-
+  console.log(serviceId,useParams(),"Sds")
   useEffect(() => {
-    axios.get(`/api/services/${serviceId}`).then((res) => {
+    axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/services/${serviceId}`).then((res) => {
       setService(res.data);
     });
   }, [serviceId]);
@@ -26,7 +26,7 @@ export default function ServicePage() {
   console.log("Creator Data Check:", service.creator);
   return (
     <div className="bg-surface text-on-surface antialiased">
-      <TopAppBar avatarSrc={service.creator?.profileImage} />
+   
 
       <main className="pt-20 md:pt-24 pb-32 max-w-7xl mx-auto px-4 md:px-6">
         {/* Breadcrumb & Status */}

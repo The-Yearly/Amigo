@@ -21,7 +21,7 @@ export default function ServicePreviewCard({
   creatorName = "Alex Rivera",
 }) {
   return (
-    <section className="lg:col-span-3 space-y-6 order-2 lg:order-3 sticky top-32">
+    <section className="col-span-2 lg:col-span-3 space-y-6 order-2 lg:order-3 sticky top-32">
       {/* Label */}
       <h3 className="font-display font-bold text-primary flex items-center gap-2">
         <span className="material-symbols-outlined text-xl">visibility</span>

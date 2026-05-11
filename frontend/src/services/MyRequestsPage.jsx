@@ -77,7 +77,7 @@ export default function MyRequestsPage() {
 
   return (
     <div className="bg-surface text-on-surface font-body selection:bg-secondary-fixed selection:text-on-secondary-fixed">
-      <RequestNavBar avatarSrc={USER_AVATAR} />
+     
 
       <main className="pt-24 pb-24 px-6 md:px-12">
         <div className="max-w-[1400px] mx-auto">

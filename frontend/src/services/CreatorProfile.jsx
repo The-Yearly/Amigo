@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../Components/Landing/Navbar";
-
+import ServicePreviewCard from "@/Components/Services/ServicePreviewCard";
 const Portfolio = () => {
   const { creatorId } = useParams();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  useEffect(()=>{console.log(profile,"asd")},[profile])
   useEffect(() => {
     const fetchCreatorData = async () => {
       try {
@@ -15,6 +15,7 @@ const Portfolio = () => {
           `${import.meta.env.VITE_BACKEND_URL}/api/user/profile/${creatorId}`
         );
         const data = res.data;
+
         setProfile({
           name: data.name,
           role: data.department,
@@ -22,6 +23,7 @@ const Portfolio = () => {
           image: data.profileImage,
           year: data.year,
           rating: data.rating || 5.0,
+          services:data.services,
           // If your backend doesn't send these yet, we'll use your placeholders
           completedGigs: data.completedGigs || 0,
         });
@@ -52,8 +54,7 @@ const Portfolio = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen font-sans pb-20">
-      <Navbar />
-      
+
       <main className="max-w-6xl mx-auto px-4 mt-12 md:mt-16">
         {/* Profile Header */}
         <section className="flex flex-col md:flex-row gap-8 items-center md:items-start mb-12">
@@ -121,18 +122,10 @@ const Portfolio = () => {
               <div className="h-1 flex-1 mx-4 bg-gray-200 rounded-full"></div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
               {/* If you have real service data, map it here. For now, we'll keep the design style */}
-              <PortfolioServiceCard 
-                title="Academic Branding" 
-                price="$25/hr" 
-                category="Design" 
-              />
-              <PortfolioServiceCard 
-                title="Full-Stack Dev" 
-                price="$50/hr" 
-                category="Tech" 
-              />
+              {profile.services.map((service)=>
+              <ServicePreviewCard title={service.title} price={service.price} imageSrc={service.image} creatorImg={profile.image} creatorName={profile.creatorName}/>)}
             </div>
           </div>
 

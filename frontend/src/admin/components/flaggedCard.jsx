@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { User, Briefcase } from "lucide-react";
-export const FlaggedCard = ({ data }) => (
+export const FlaggedCard = ({ data }) =>{
+    console.log(data,"Sky")
+  return(
+  
   <motion.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
@@ -44,16 +47,15 @@ export const FlaggedCard = ({ data }) => (
       </p>
     </div>
     <div className="flex gap-4">
-      <button className="flex-1 bg-[#002107] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-black transition-colors">
+      <button onClick={()=>data.type==="ERRAND"?window.location.href="flagged/errand/"+data.service.id:window.location.href="flagged/user/"+data.user.id} className="flex-1 bg-[#002107] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-black transition-colors">
         Review Details
       </button>
-      <button className="flex-1 bg-[#efedf0] text-[#1a1c1e] py-3.5 rounded-xl font-bold text-sm hover:bg-[#e2e3de] transition-colors">
-        Dismiss
-      </button>
+     
     </div>
   </motion.div>
-);
 
+);
+}
 export const EmptyState = ({ label }) => (
   <div className="py-20 text-center bg-[#f4f3f5]/50 rounded-3xl border-2 border-dashed border-[#dadad5]">
     <p className="font-bold text-[#dadad5] uppercase tracking-widest text-sm">

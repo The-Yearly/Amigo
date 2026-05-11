@@ -12,7 +12,7 @@ model User {
   name            String
   email           String           @unique
   password        String
-  bio             String?
+  bio             String?          @default("")
   department      String?
   year            String?
   profileImage    String?
@@ -21,6 +21,7 @@ model User {
   isAdmin         Boolean          @default(false)
   admin           Admin?
   isEmailVerified Boolean          @default(false)
+  ban             Boolean           @default(false)
   services        Service[]
   requestsMade    ServiceRequest[] @relation("Requester")
   requestsRecv    ServiceRequest[] @relation("Provider")
@@ -81,7 +82,7 @@ model Service {
   location      String?
   estimatedTime String?
   createdAt     DateTime @default(now())
-
+  hide          Boolean
   creatorId String @db.ObjectId
   creator   User   @relation(fields: [creatorId], references: [id])
 

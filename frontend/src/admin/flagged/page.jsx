@@ -15,7 +15,6 @@ export default function AdminFlagged() {
         { withCredentials: true },
       );
       setFlagged(res.data.data);
-      console.log(res.data.data);
     };
     fetchData();
   }, []);

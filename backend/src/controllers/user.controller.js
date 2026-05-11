@@ -15,13 +15,17 @@ export const getProfile = asyncHandler(async (req, res) => {
       department: true,
       profileImage: true,
       bio: true,
+      services:{
+        select:{title:true,description:true,id:true,image:true,price:true}
+      }
+     
     },
   });
 
   if (!user) {
     return res.status(404).json({ error: "User not found" });
   }
-  userId;
+  console.log(user)
   return res.json(user);
 });
 

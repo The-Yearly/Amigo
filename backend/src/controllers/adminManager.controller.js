@@ -349,6 +349,249 @@ export const getFlagged = asyncHandler(async (req, res) => {
 });
 
 
+export const getFlaggedById = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const flagRecord = await prisma.flagRecord.findFirst({
+    where: {
+      serviceId: id,
+    },
+  });
+  if (!flagRecord) {
+    res.status(404).json({ message: "Record Not Found" });
+  } else {
+    console.log(flagRecord,"All for ")
+    res.status(200).json({ data: flagRecord });
+  }
+});
+
+export const getUserFlaggedId = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const flagRecord = await prisma.flagRecord.findFirst({
+    where: {
+      userId: id,
+    },
+  });
+  if (!flagRecord) {
+    res.status(404).json({ message: "Record Not Found" });
+  } else {
+    console.log(flagRecord,"All for ")
+    res.status(200).json({ data: flagRecord });
+  }
+});
+
+export const updateFlag = asyncHandler(async (req, res) => {
+  try {
+    const { id, status, reason } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: "id is required" });
+    }
+
+    const allowedStatus = ["PENDING", "UNDER_REVIEW", "COMPLETED"];
+    if (status && !allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const flag = await prisma.flagRecord.findUnique({ where: { id } });
+    if (!flag) {
+      return res.status(404).json({ message: "Flag not found" });
+    }
+
+    const flagRecord = await prisma.flagRecord.update({
+      where: { id },
+      data: { status, reason },
+    });
+
+    return res.status(200).json({ message:"Flag Updated" });
+  } catch (err) {
+    console.error("updateFlag error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+
+
+
+export const deleteFlag = asyncHandler(async (req, res) => {
+  try {
+    const { id, serviceId, status, reason, adminreason, userId } = req.body;
+
+    if (!id || !serviceId) {
+      return res.status(400).json({ message: "id and serviceId are required" });
+    }
+
+    const allowedStatus = ["PENDING", "UNDER_REVIEW", "COMPLETED"];
+    if (status && !allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const flag = await prisma.flagRecord.findUnique({ where: { id } });
+    if (!flag) {
+      return res.status(404).json({ message: "Flag not found" });
+    }
+
+    const updatedFlag = await prisma.flagRecord.update({
+      where: { id },
+      data: {
+        status,
+        reason,
+        adminreason,
+        ...(userId ? { userId } : {}),
+      },
+    });
+
+    const service = await prisma.service.findUnique({ where: { id: serviceId } });
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    await prisma.service.update({
+      where: { id: serviceId },
+      data: { hide: true },
+    });
+
+    const deletedRequests = await prisma.serviceRequest.deleteMany({
+      where: { serviceId },
+    });
+
+    return res.status(200).json({
+      message: "Flag processed successfully",
+      data: updatedFlag,
+      deletedRequestsCount: deletedRequests.count,
+    });
+  } catch (err) {
+    console.error("deleteFlag error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+export const  banUser = asyncHandler(async (req, res) => {
+  try {
+    const { id, serviceId, status, reason, adminreason, userId } = req.body;
+
+    if (!id || !userId) {
+      return res.status(400).json({ message: "id and serviceId are required" });
+    }
+
+    const allowedStatus = ["PENDING", "UNDER_REVIEW", "COMPLETED"];
+    if (status && !allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    const flag = await prisma.flagRecord.findUnique({ where: { id } });
+    if (!flag) {
+      return res.status(404).json({ message: "Flag not found" });
+    }
+
+    const updatedFlag = await prisma.flagRecord.update({
+      where: { id },
+      data: {
+        status,
+        reason,
+        adminreason,
+        ...(userId ? { userId } : {}),
+      },
+    });
+
+    const user = await prisma.user.findUnique({ where: { id:userId } });
+    if (!user) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { ban: true },
+    });
+const deletedRequests = await prisma.serviceRequest.deleteMany({
+  where: {
+    OR: [
+      { providerId: userId },
+      { requesterId: userId },
+    ],
+  },
+});
+    return res.status(200).json({
+      message: "Banned User",
+      data: updatedFlag,
+      deletedRequestsCount: deletedRequests.count,
+    });
+  } catch (err) {
+    console.error("deleteFlag error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+
+export const dismissFlag = asyncHandler(async (req, res) => {
+  try {
+    const { id, serviceId } = req.body;
+
+    if (!id || !serviceId) {
+      return res.status(400).json({ message: "id and serviceId are required" });
+    }
+
+    const flag = await prisma.flagRecord.findUnique({ where: { id } });
+    if (!flag) {
+      return res.status(404).json({ message: "Flag not found" });
+    }
+
+    await prisma.flagRecord.delete({ where: { id } });
+
+    const service = await prisma.service.findUnique({ where: { id: serviceId } });
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+
+    await prisma.service.update({
+      where: { id: serviceId },
+      data: { hide: false },
+    });
+
+    return res.status(200).json({ message: "Flag dismissed successfully" });
+  } catch (err) {
+    console.error("dismissFlag error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+
+
+export const dismissUserFlag = asyncHandler(async (req, res) => {
+  try {
+    const { id,  userId } = req.body;
+
+    if (!id || !userId) {
+      return res.status(400).json({ message: "id and userId are required" });
+    }
+
+    const flag = await prisma.flagRecord.findUnique({ where: { id } });
+    if (!flag) {
+      return res.status(404).json({ message: "Flag not found" });
+    }
+
+    await prisma.flagRecord.delete({ where: { id } });
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { ban: false },
+    });
+
+    return res.status(200).json({ message: "Flag dismissed successfully" });
+  } catch (err) {
+    console.error("dismissFlag error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 export const getAuditLogs = asyncHandler(async (req, res) => {
   const { page = 1, limit = 20 } = req.query;
   

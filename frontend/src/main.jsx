@@ -15,7 +15,6 @@ import ManageAdmins from "./admin/manageAdmins/page";
 import AuditLog from "./admin/auditlog/page";
 import CreateServicePage from "./services/CreateServicePage";
 import MessagesPage from "./messaging/MessagesPage";
-import SignUp from "./auth/page";
 import ProtectedRoutes from "./lib/protectedRoutes";
 import RootLayout from "./layout.jsx";
 import SignInPage from "./auth/SignInPage";
@@ -24,8 +23,11 @@ import ProfilePage from "./Components/Profile/ProfilePage";
 import AdminProfile from "./admin/components/adminProfile";
 import EditServicePage from "./services/EditServicePage";
 import axios from "axios";
+import ServiceLayout from "./ServiceLayout";
 import { redirect } from "react-router-dom";
 import Portfolio from "./services/CreatorProfile";
+import ReviewFlaggedErrand from "./admin/flagged/reviewFlaggedErrand";
+import ReviewFlaggedUser from "./admin/flagged/reviewFlaggedUser";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -34,15 +36,18 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <App />,
-      },
+      },  
       {
         element: <RootLayout />,
         children: [
-          { path: "/services", element: <ExplorePage /> },
-          { path: "/create-service", element: <CreateServicePage /> },
-          { path: "/my/services", element: <MyServicesPage /> },
-          { path: "/portfolio/:creatorId", element: <Portfolio /> },
           {
+                  element: <ServiceLayout/>,
+      children: [
+        { path: "/services", element: <ExplorePage /> },
+        { path: "/create-service", element: <CreateServicePage /> },
+        { path: "/my/services", element: <MyServicesPage /> },
+          { path: "/portfolio/:creatorId", element: <Portfolio /> },
+         {
             path: "/services/edit/:serviceId",
             element: <EditServicePage />,
             loader: async ({ params }) => {
@@ -67,10 +72,14 @@ const router = createBrowserRouter([
               return service;
             },
           },
-          { path: "/my/requests", element: <MyRequestsPage /> },
-          { path: "/services/:serviceId", element: <ServicePage /> },
+        { path: "/my/requests", element: <MyRequestsPage /> },
+        { path: "/services/:serviceId", element: <ServicePage /> },
+        { path: "/profile", element: <ProfilePage /> },
+      ],
+    },
+    { path: "/messages", element: <MessagesPage /> },
+        
           { path: "/messages", element: <MessagesPage /> },
-          { path: "/profile", element: <ProfilePage /> },
           {
             path: "/adminSettings",
             element: <Layout />,
@@ -82,6 +91,14 @@ const router = createBrowserRouter([
               {
                 path: "flagged",
                 element: <AdminFlagged />,
+              },
+              {
+                path:"flagged/errand/:serviceId",
+                element:<ReviewFlaggedErrand/>
+              },
+               {
+                path:"flagged/user/:creatorId",
+                element:<ReviewFlaggedUser/>
               },
               {
                 path: "permissions",

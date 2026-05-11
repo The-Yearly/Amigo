@@ -36,7 +36,7 @@ export default function ExplorePage() {
 
   return (
     <div className="bg-surface font-body text-on-surface">
-      <ExploreNavBar />
+      
 
       <main className="pt-24 pb-24 px-6 md:px-12">
         <div className="max-w-[1400px] mx-auto">
