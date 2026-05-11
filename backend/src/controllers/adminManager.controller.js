@@ -1,6 +1,40 @@
 import { prisma } from "../lib/prisma.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import bcrypt from "bcrypt";
+
+const createLog = async (
+  action,
+  category,
+  description,
+  performedById,
+  affectedUserId,
+  targetId,
+  reason,
+  color,
+  iconName,
+  details = {},
+) => {
+  try {
+    await prisma.auditLog.create({
+      data: {
+        action,
+        category,
+        description,
+        reason,
+        type: affectedUserId ? "user" : "system",
+        targetId,
+        color,
+        iconName,
+        details,
+        performedById,
+        affectedUserId,
+      },
+    });
+  } catch (err) {
+    console.error("Audit log failed:", err);
+  }
+};
+
 export const fetchAdmins = asyncHandler(async (req, res) => {
   console.log("Sj");
   const admins = await prisma.user.findMany({
@@ -39,18 +73,28 @@ export const fetchUsers = asyncHandler(async (req, res) => {
 
 export const managePermissions = asyncHandler(async (req, res) => {
   const perms = req.body;
+  const performerId = req.user.uid; // Get from auth middleware
+
   const admin = await prisma.admin.findUnique({
-    where: {
-      id: perms.id,
-    },
+    where: { id: perms.id },
+    include: { user: true }, // Include user data
   });
+
   if (!admin) {
     res.status(403).json({ message: "Admin Not Found" });
   } else {
+    // Track what changed
+    const changes = {};
+    if (admin.isSuperAdmin !== perms.perm.isSuperAdmin)
+      changes.isSuperAdmin = perms.perm.isSuperAdmin;
+    if (admin.canAdd !== perms.perm.canAdd) changes.canAdd = perms.perm.canAdd;
+    if (admin.canKick !== perms.perm.canKick)
+      changes.canKick = perms.perm.canKick;
+    if (admin.canOverride !== perms.perm.canOverride)
+      changes.canOverride = perms.perm.canOverride;
+
     const response = await prisma.admin.update({
-      where: {
-        id: perms.id,
-      },
+      where: { id: perms.id },
       data: {
         isSuperAdmin: perms.perm.isSuperAdmin,
         canAdd: perms.perm.canAdd,
@@ -58,7 +102,31 @@ export const managePermissions = asyncHandler(async (req, res) => {
         canOverride: perms.perm.canOverride,
       },
     });
+
     if (response) {
+      // Get performer name
+      const performer = await prisma.user.findUnique({
+        where: { id: performerId },
+      });
+
+      // Create audit log
+      const changesList = Object.entries(changes)
+        .map(([k, v]) => `${k}: ${v ? "enabled" : "disabled"}`)
+        .join(", ");
+
+      await createLog(
+        "Admin Permissions Updated",
+        "Permissions",
+        `**${performer?.name || "Admin"}** (ID: ${performerId.slice(-4)}) modified permissions for **${admin.user.name}** (ID: ${perms.id.slice(-4)}). Changes: ${changesList}`,
+        performerId,
+        perms.id,
+        perms.id,
+        `Permission modifications applied`,
+        "bg-[#b7f1b8] text-[#002108]",
+        "ShieldCheck",
+        { previousPermissions: admin, newPermissions: perms.perm, changes },
+      );
+
       res.status(200).json({ message: "Success" });
     }
   }
@@ -100,24 +168,22 @@ export const searchAdmins = asyncHandler(async (req, res) => {
 
 export const addAdmin = asyncHandler(async (req, res) => {
   const id = req.body.userIds[0];
-  console.log(id, "2 trailer park");
+  const performerId = req.user.uid;
+
   const findUser = await prisma.user.findFirst({
-    where: {
-      id: id,
-    },
+    where: { id: id },
   });
+
   if (!findUser) {
     res.status(404).json({ message: "Invalid User Id" });
   }
+
   try {
     await prisma.user.update({
-      where: {
-        id: id,
-      },
-      data: {
-        isAdmin: true,
-      },
+      where: { id: id },
+      data: { isAdmin: true },
     });
+
     await prisma.admin.create({
       data: {
         id: id,
@@ -127,36 +193,80 @@ export const addAdmin = asyncHandler(async (req, res) => {
         isSuperAdmin: false,
       },
     });
+
+    // Get performer name
+    const performer = await prisma.user.findUnique({
+      where: { id: performerId },
+    });
+
+    // Create audit log
+    await createLog(
+      "Admin Added",
+      "Permissions",
+      `**${performer?.name || "Super Admin"}** (ID: ${performerId.slice(-4)}) elevated **${findUser.name}** (ID: ${id.slice(-4)}) to Admin status`,
+      performerId,
+      id,
+      id,
+      "New administrator granted access",
+      "bg-[#b7f1b8] text-[#002108]",
+      "UserPlus",
+      {
+        grantedPermissions: {
+          canAdd: false,
+          canKick: false,
+          canOverride: false,
+          isSuperAdmin: false,
+        },
+      },
+    );
+
     res.status(200).json({ message: "Admin Created" });
   } catch (err) {
     res.json({ message: err });
   }
 });
-
 export const removeAdmin = asyncHandler(async (req, res) => {
   const id = req.params.id;
+  const performerId = req.user.uid;
+
   const findUser = await prisma.admin.findFirst({
-    where: {
-      id: id,
-    },
+    where: { id: id },
+    include: { user: true },
   });
+
   if (!findUser) {
     res.status(404).json({ message: "Invalid User Id" });
   }
+
   try {
     await prisma.user.update({
-      where: {
-        id: id,
-      },
-      data: {
-        isAdmin: false,
-      },
+      where: { id: id },
+      data: { isAdmin: false },
     });
+
     await prisma.admin.delete({
-      where: {
-        id: id,
-      },
+      where: { id: id },
     });
+
+    // Get performer name
+    const performer = await prisma.user.findUnique({
+      where: { id: performerId },
+    });
+
+    // Create audit log
+    await createLog(
+      "Admin Removed",
+      "Permissions",
+      `**${performer?.name || "Super Admin"}** (ID: ${performerId.slice(-4)}) removed admin privileges from **${findUser.user.name}** (ID: ${id.slice(-4)})`,
+      performerId,
+      id,
+      id,
+      "Administrative access revoked",
+      "bg-[#ffdad6] text-[#ba1a1a]",
+      "UserMinus",
+      { previousPermissions: findUser },
+    );
+
     res.status(200).json({ message: "Admin Deleted" });
   } catch (err) {
     res.json({ message: err });
@@ -236,4 +346,39 @@ export const getFlagged = asyncHandler(async (req, res) => {
   } catch (err) {
     res.json({ message: err });
   }
+});
+
+
+export const getAuditLogs = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 20 } = req.query;
+  
+  const logs = await prisma.auditLog.findMany({
+    orderBy: { createdAt: 'desc' },
+    skip: (page - 1) * limit,
+    take: parseInt(limit),
+  });
+  
+  // Format time
+  const formattedLogs = logs.map(log => {
+    const now = new Date();
+    const diff = now - new Date(log.createdAt);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    let time;
+    if (days === 0) {
+      const hours = new Date(log.createdAt).getHours();
+      const minutes = new Date(log.createdAt).getMinutes();
+      time = `Today, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    } else if (days === 1) {
+      const hours = new Date(log.createdAt).getHours();
+      const minutes = new Date(log.createdAt).getMinutes();
+      time = `Yesterday, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    } else {
+      time = new Date(log.createdAt).toLocaleDateString();
+    }
+    
+    return { ...log, time };
+  });
+  
+  res.status(200).json({ data: formattedLogs });
 });

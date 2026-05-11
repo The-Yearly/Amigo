@@ -23,7 +23,7 @@ export const AdminRow = ({
 }) => {
   const isMobile = useContext(IsMobileContext);
   const { user, loading } = useAuth();
-  console.log(user, admin);
+  console.log(user, admin, "ASDasd");
   console.log(user, "S");
   return (
     <div className="group">
@@ -33,11 +33,10 @@ export const AdminRow = ({
             ? onToggleExpand
             : undefined
         }
-        className={`grid grid-cols-12 items-center md:px-8 md:py-6 bg-white cursor-pointer transition-all duration-500 relative z-10 ${
-          isExpanded
-            ? "rounded-t-3xl shadow-sm"
-            : "rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-md"
-        }`}
+        className={`grid grid-cols-12 items-center md:px-8 md:py-6 bg-white cursor-pointer transition-all duration-500 relative z-10 ${isExpanded
+          ? "rounded-t-3xl shadow-sm"
+          : "rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:shadow-md"
+          }`}
       >
         <div className="col-span-4 flex items-center gap-4">
           <img
@@ -53,11 +52,10 @@ export const AdminRow = ({
         {isMobile && <div className="col-span-4"></div>}
         <div className="col-span-3  flex justify-center">
           <span
-            className={`px-1 py-1 md:px-4 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-wider transition-colors ${
-              admin.admin.isSuperAdmin
-                ? "bg-[#984063] text-white"
-                : "bg-[#efedf0] text-[#414940]"
-            }`}
+            className={`px-1 py-1 md:px-4 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-wider transition-colors ${admin.admin.isSuperAdmin
+              ? "bg-[#984063] text-white"
+              : "bg-[#efedf0] text-[#414940]"
+              }`}
           >
             {admin.admin.isSuperAdmin ? "Super Admin" : "Admin"}
           </span>

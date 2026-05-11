@@ -135,3 +135,23 @@ model Review {
   reviewerId String @db.ObjectId
   providerId String @db.ObjectId
 }
+
+model AuditLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  action      String
+  category    String
+  description String
+  reason      String?
+  type        String
+  targetId    String?
+  color       String
+  iconName    String
+  details     Json?
+  
+  performedById  String?  @db.ObjectId
+  affectedUserId String?  @db.ObjectId
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([createdAt(sort: Desc)])
+}

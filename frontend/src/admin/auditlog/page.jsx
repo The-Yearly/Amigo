@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
@@ -13,74 +13,86 @@ import {
   ExternalLink,
   User,
   Briefcase,
+  UserPlus,
+  UserMinus,
+  ShieldAlert,
 } from "lucide-react";
 
-const auditData = [
-  {
-    id: "LOG-8821",
-    action: "User Account Suspended",
-    category: "Moderation",
-    time: "Today, 14:32",
-    description:
-      "Admin **Sarah Jenkins** (ID: ADM-892) suspended user account **@runner_boy_99** (ID: USR-4421) for 7 days.",
-    reason:
-      "Repeated violations of community guidelines regarding appropriate language in errand descriptions.",
-    type: "user",
-    targetId: "USR-4421",
-    color: "bg-[#ffdad6] text-[#ba1a1a]",
-    icon: Ban,
-    details: {
-      status: "Suspended",
-      joined: "Oct 2025",
-      previousFlags: 3,
-      verified: false,
-    },
-  },
-  {
-    id: "LOG-8819",
-    action: "Role Elevated",
-    category: "Permissions",
-    time: "Today, 11:05",
-    description:
-      "SuperAdmin **Marcus Chen** (ID: ADM-001) elevated the role of **Elena Rodriguez** from 'Support Staff' to 'Senior Moderator'.",
-    reason: "Access granted to financial dispute resolution queues.",
-    type: "system", // No dropdown for system types
-    color: "bg-[#b7f1b8] text-[#002108]",
-    icon: ShieldCheck,
-  },
-  {
-    id: "LOG-8815",
-    action: "Global Config Updated",
-    category: "Settings",
-    time: "Yesterday, 16:45",
-    description:
-      "System configuration value **MAX_ERRAND_RADIUS_KM** was modified from **50** to **75** by **System Operations**.",
-    reason: "This change affects all active service zones globally.",
-    type: "errand", // Dropdown for errand-related configs
-    targetId: "CONFIG-RAD-01",
-    color: "bg-[#ffd9e3] text-[#7b284b]",
-    icon: Settings,
-    details: {
-      modifiedBy: "Ops_Bot_01",
-      affectedZones: "Global",
-      rollbackAvailable: true,
-    },
-  },
-  {
-    id: "LOG-8810",
-    action: "Automated Backup Completed",
-    category: "System",
-    time: "Yesterday, 02:00",
-    description:
-      "Routine automated database snapshot **SNAP-20231025-0200** completed successfully.",
-    type: "system",
-    color: "bg-[#efedf0] text-[#414940]",
-    icon: Database,
-  },
-];
+// Icon mapping - maps iconName from DB to actual icon component
+const iconMap = {
+  Ban,
+  ShieldCheck,
+  Settings,
+  Database,
+  UserPlus,
+  UserMinus,
+  ShieldAlert,
+};
 
 export default function AuditLog() {
   const [expandedId, setExpandedId] = useState(null);
+  const [auditData, setAuditData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchAuditLogs();
+  }, []);
+
+  const fetchAuditLogs = async () => {
+    try {
+      const response = await fetch("/api/admin/auditLogs", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Adjust based on your auth
+        },
+      });
+      
+      if (!response.ok) throw new Error("Failed to fetch audit logs");
+      
+      const result = await response.json();
+      
+      // Map the data to include the icon component
+      const mappedData = result.data.map((log) => ({
+        ...log,
+        icon: iconMap[log.iconName] || Database, // Fallback to Database icon
+        details: log.details || {}, // Ensure details exists
+      }));
+      
+      setAuditData(mappedData);
+    } catch (err) {
+      console.error("Failed to fetch audit logs:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#fafaf4] px-12 py-16 font-inter text-[#1a1c1e] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#003912] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#414940]">Loading audit logs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#fafaf4] px-12 py-16 font-inter text-[#1a1c1e] flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 font-bold">Error: {error}</p>
+          <button 
+            onClick={fetchAuditLogs}
+            className="mt-4 px-6 py-2 bg-[#003912] text-white rounded-lg hover:bg-[#015a24]"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#fafaf4] px-12 py-16 font-inter text-[#1a1c1e]">
@@ -94,6 +106,7 @@ export default function AuditLog() {
           filters below to isolate specific incident timelines.
         </p>
       </div>
+      
       <div className="bg-white p-4 rounded shadow-[0_8px_40px_rgba(0,0,0,0.03)] flex flex-wrap items-center gap-4 mb-12">
         <div className="relative flex-1 min-w-[300px]">
           <Search
@@ -111,18 +124,26 @@ export default function AuditLog() {
         <FilterButton icon={<Filter size={16} />} label="Category" active />
         <FilterButton icon={<ArrowUpDown size={16} />} label="Newest First" />
       </div>
-      <div className="space-y-6">
-        {auditData.map((log) => (
-          <LogCard
-            key={log.id}
-            log={log}
-            isExpanded={expandedId === log.id}
-            onToggle={() =>
-              setExpandedId(expandedId === log.id ? null : log.id)
-            }
-          />
-        ))}
-      </div>
+      
+      {auditData.length === 0 ? (
+        <div className="bg-white rounded-[1.5rem] p-12 text-center">
+          <Database size={48} className="mx-auto text-[#dadad5] mb-4" />
+          <p className="text-[#727970] text-lg">No audit logs found</p>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {auditData.map((log) => (
+            <LogCard
+              key={log.id}
+              log={log}
+              isExpanded={expandedId === log.id}
+              onToggle={() =>
+                setExpandedId(expandedId === log.id ? null : log.id)
+              }
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -171,7 +192,7 @@ function LogCard({ log, isExpanded, onToggle }) {
               }}
             />
 
-            {hasDropdown && (
+            {hasDropdown && log.details && Object.keys(log.details).length > 0 && (
               <div className="mt-4 flex items-center gap-2 text-[#dadad5] text-xs font-bold uppercase tracking-tighter transition-colors group-hover:text-[#003912]">
                 <ChevronDown
                   size={14}
@@ -183,8 +204,9 @@ function LogCard({ log, isExpanded, onToggle }) {
           </div>
         </div>
       </motion.div>
+      
       <AnimatePresence>
-        {isExpanded && (
+        {isExpanded && log.details && Object.keys(log.details).length > 0 && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -196,26 +218,31 @@ function LogCard({ log, isExpanded, onToggle }) {
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#727970]">
                   Incident Context
                 </p>
-                <p className="text-sm italic text-[#414940]">"{log.reason}"</p>
+                <p className="text-sm italic text-[#414940]">
+                  "{log.reason || 'No additional context provided'}"
+                </p>
               </div>
 
-              <div className="space-y-4 border-l border-[#dadad5] pl-12">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#727970]">
-                  Target {log.type === "user" ? "Profile" : "Config"}
-                </p>
-                <div className="flex items-center gap-3">
-                  {log.type === "user" ? (
-                    <User size={18} />
-                  ) : (
-                    <Briefcase size={18} />
-                  )}
-                  <span className="font-bold text-sm">{log.targetId}</span>
-                  <ExternalLink
-                    size={14}
-                    className="text-[#dadad5] cursor-pointer hover:text-[#002107]"
-                  />
+              {log.targetId && (
+                <div className="space-y-4 border-l border-[#dadad5] pl-12">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#727970]">
+                    Target {log.type === "user" ? "Profile" : "Config"}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    {log.type === "user" ? (
+                      <User size={18} />
+                    ) : (
+                      <Briefcase size={18} />
+                    )}
+                    <span className="font-bold text-sm">{log.targetId}</span>
+                    <ExternalLink
+                      size={14}
+                      className="text-[#dadad5] cursor-pointer hover:text-[#002107]"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
+              
               <div className="space-y-4 border-l border-[#dadad5] pl-12">
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#727970]">
                   Snapshot Metadata
@@ -227,7 +254,7 @@ function LogCard({ log, isExpanded, onToggle }) {
                         {key.replace(/([A-Z])/g, " $1")}
                       </span>
                       <span className="text-[10px] font-bold">
-                        {val.toString()}
+                        {typeof val === 'object' ? JSON.stringify(val) : val.toString()}
                       </span>
                     </React.Fragment>
                   ))}
