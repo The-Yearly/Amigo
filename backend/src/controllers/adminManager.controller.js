@@ -226,7 +226,6 @@ export const addAdmin = asyncHandler(async (req, res) => {
   }
 });
 
-
 export const removeAdmin = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const performerId = req.user.uid;
@@ -318,37 +317,9 @@ export const updateProfile = asyncHandler(async (req, res) => {
   });
 });
 
-// adminController.js
-
-export const getAdminStats = asyncHandler(async (req, res) => {
-  // Fetch counts in parallel for performance
-  const [totalFlags, urgentReports, profileReports, errandReports] = await Promise.all([
-    prisma.flagRecord.count(),
-    prisma.flagRecord.count({ where: { status: "PENDING" } }), // Assuming PENDING = Urgent
-    prisma.flagRecord.count({ where: { type: "USER" } }),      // Adjust enum values based on your Prisma schema
-    prisma.flagRecord.count({ where: { type: "SERVICE" } }),   // Assuming Service = Errand in your UI
-  ]);
-
-  res.status(200).json({
-    data: {
-      totalFlags,
-      urgentReports,
-      profileReports,
-      errandReports,
-    },
-  });
-});
-
 export const getFlagged = asyncHandler(async (req, res) => {
   try {
-    // Get limit from query params, default to 5 for recent activity
-    const limit = req.query.limit ? parseInt(req.query.limit) : 5;
-
     const flagged = await prisma.flagRecord.findMany({
-      take: limit,
-      orderBy: {
-        time: 'desc' // Ensure most recent is first
-      },
       select: {
         id: true,
         type: true,
@@ -374,10 +345,67 @@ export const getFlagged = asyncHandler(async (req, res) => {
     });
     res.status(200).json({ data: flagged });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({ message: err });
   }
 });
 
+export const getAdminStats = asyncHandler(async (req, res) => {
+  const [totalFlags, urgentReports, profileReports, errandReports] =
+    await Promise.all([
+      prisma.flagRecord.count(),
+      prisma.flagRecord.count({ where: { status: "PENDING" } }),
+      prisma.flagRecord.count({ where: { type: "USER" } }),
+      prisma.flagRecord.count({ where: { type: "ERRAND" } }), // Matches your Enum exactly
+    ]);
+
+  res.status(200).json({
+    data: {
+      totalFlags,
+      urgentReports,
+      profileReports,
+      errandReports,
+    },
+  });
+});
+export const getFlaggedNew = asyncHandler(async (req, res) => {
+  try {
+    // 1. Fetch Counts for Hero Cards
+    const [totalFlags, urgentReports, profileReports, errandReports] =
+      await Promise.all([
+        prisma.flagRecord.count(),
+        prisma.flagRecord.count({ where: { status: "PENDING" } }),
+        prisma.flagRecord.count({ where: { type: "USER" } }),
+        prisma.flagRecord.count({ where: { type: "ERRAND" } }), // Matches your Enum
+      ]);
+
+    // 2. Fetch Recent Activity (Limit 5)
+    const recentActivity = await prisma.flagRecord.findMany({
+      take: 5,
+      orderBy: { time: "desc" },
+      include: {
+        user: {
+          select: { id: true, name: true, profileImage: true },
+        },
+        service: {
+          select: { id: true, title: true },
+        },
+      },
+    });
+
+    res.status(200).json({
+      stats: {
+        totalFlags,
+        urgentReports,
+        profileReports,
+        errandReports,
+      },
+      recentActivity,
+    });
+  } catch (err) {
+    console.error("Dashboard Fetch Error:", err);
+    res.status(500).json({ message: "Failed to fetch admin dashboard data" });
+  }
+});
 
 export const getFlaggedById = asyncHandler(async (req, res) => {
   const id = req.params.id;
@@ -389,7 +417,7 @@ export const getFlaggedById = asyncHandler(async (req, res) => {
   if (!flagRecord) {
     res.status(404).json({ message: "Record Not Found" });
   } else {
-    console.log(flagRecord,"All for ")
+    console.log(flagRecord, "All for ");
     res.status(200).json({ data: flagRecord });
   }
 });
@@ -404,7 +432,7 @@ export const getUserFlaggedId = asyncHandler(async (req, res) => {
   if (!flagRecord) {
     res.status(404).json({ message: "Record Not Found" });
   } else {
-    console.log(flagRecord,"All for ")
+    console.log(flagRecord, "All for ");
     res.status(200).json({ data: flagRecord });
   }
 });
@@ -432,16 +460,12 @@ export const updateFlag = asyncHandler(async (req, res) => {
       data: { status, reason },
     });
 
-    return res.status(200).json({ message:"Flag Updated" });
+    return res.status(200).json({ message: "Flag Updated" });
   } catch (err) {
     console.error("updateFlag error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-
-
-
-
 
 export const deleteFlag = asyncHandler(async (req, res) => {
   try {
@@ -471,7 +495,9 @@ export const deleteFlag = asyncHandler(async (req, res) => {
       },
     });
 
-    const service = await prisma.service.findUnique({ where: { id: serviceId } });
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
     }
@@ -496,8 +522,7 @@ export const deleteFlag = asyncHandler(async (req, res) => {
   }
 });
 
-
-export const  banUser = asyncHandler(async (req, res) => {
+export const banUser = asyncHandler(async (req, res) => {
   try {
     const { id, serviceId, status, reason, adminreason, userId } = req.body;
 
@@ -525,7 +550,7 @@ export const  banUser = asyncHandler(async (req, res) => {
       },
     });
 
-    const user = await prisma.user.findUnique({ where: { id:userId } });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       return res.status(404).json({ message: "Service not found" });
     }
@@ -534,14 +559,11 @@ export const  banUser = asyncHandler(async (req, res) => {
       where: { id: userId },
       data: { ban: true },
     });
-const deletedRequests = await prisma.serviceRequest.deleteMany({
-  where: {
-    OR: [
-      { providerId: userId },
-      { requesterId: userId },
-    ],
-  },
-});
+    const deletedRequests = await prisma.serviceRequest.deleteMany({
+      where: {
+        OR: [{ providerId: userId }, { requesterId: userId }],
+      },
+    });
     return res.status(200).json({
       message: "Banned User",
       data: updatedFlag,
@@ -552,8 +574,6 @@ const deletedRequests = await prisma.serviceRequest.deleteMany({
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-
-
 
 export const dismissFlag = asyncHandler(async (req, res) => {
   try {
@@ -570,7 +590,9 @@ export const dismissFlag = asyncHandler(async (req, res) => {
 
     await prisma.flagRecord.delete({ where: { id } });
 
-    const service = await prisma.service.findUnique({ where: { id: serviceId } });
+    const service = await prisma.service.findUnique({
+      where: { id: serviceId },
+    });
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
     }
@@ -587,12 +609,9 @@ export const dismissFlag = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
 export const dismissUserFlag = asyncHandler(async (req, res) => {
   try {
-    const { id,  userId } = req.body;
+    const { id, userId } = req.body;
 
     if (!id || !userId) {
       return res.status(400).json({ message: "id and userId are required" });
@@ -624,35 +643,34 @@ export const dismissUserFlag = asyncHandler(async (req, res) => {
 
 export const getAuditLogs = asyncHandler(async (req, res) => {
   const { page = 1, limit = 20 } = req.query;
-  
+
   const logs = await prisma.auditLog.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     skip: (page - 1) * limit,
     take: parseInt(limit),
   });
-  
+
   // Format time
-  const formattedLogs = logs.map(log => {
+  const formattedLogs = logs.map((log) => {
     const now = new Date();
     const diff = now - new Date(log.createdAt);
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    
+
     let time;
     if (days === 0) {
       const hours = new Date(log.createdAt).getHours();
       const minutes = new Date(log.createdAt).getMinutes();
-      time = `Today, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      time = `Today, ${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
     } else if (days === 1) {
       const hours = new Date(log.createdAt).getHours();
       const minutes = new Date(log.createdAt).getMinutes();
-      time = `Yesterday, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      time = `Yesterday, ${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
     } else {
       time = new Date(log.createdAt).toLocaleDateString();
     }
-    
+
     return { ...log, time };
   });
-  
+
   res.status(200).json({ data: formattedLogs });
 });
-
