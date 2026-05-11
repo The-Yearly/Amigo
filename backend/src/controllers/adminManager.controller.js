@@ -467,67 +467,13 @@ export const updateFlag = asyncHandler(async (req, res) => {
   }
 });
 
-export const deleteFlag = asyncHandler(async (req, res) => {
-  try {
-    const { id, serviceId, status, reason, adminreason, userId } = req.body;
-
-    if (!id || !serviceId) {
-      return res.status(400).json({ message: "id and serviceId are required" });
-    }
-
-    const allowedStatus = ["PENDING", "UNDER_REVIEW", "COMPLETED"];
-    if (status && !allowedStatus.includes(status)) {
-      return res.status(400).json({ message: "Invalid status value" });
-    }
-
-    const flag = await prisma.flagRecord.findUnique({ where: { id } });
-    if (!flag) {
-      return res.status(404).json({ message: "Flag not found" });
-    }
-
-    const updatedFlag = await prisma.flagRecord.update({
-      where: { id },
-      data: {
-        status,
-        reason,
-        adminreason,
-        ...(userId ? { userId } : {}),
-      },
-    });
-
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId },
-    });
-    if (!service) {
-      return res.status(404).json({ message: "Service not found" });
-    }
-
-    await prisma.service.update({
-      where: { id: serviceId },
-      data: { hide: true },
-    });
-
-    const deletedRequests = await prisma.serviceRequest.deleteMany({
-      where: { serviceId },
-    });
-
-    return res.status(200).json({
-      message: "Flag processed successfully",
-      data: updatedFlag,
-      deletedRequestsCount: deletedRequests.count,
-    });
-  } catch (err) {
-    console.error("deleteFlag error:", err);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-});
-
 export const banUser = asyncHandler(async (req, res) => {
   try {
-    const { id, serviceId, status, reason, adminreason, userId } = req.body;
+    const { id, status, reason, adminreason, userId } = req.body;
+    const performerId = req.user.uid;
 
     if (!id || !userId) {
-      return res.status(400).json({ message: "id and serviceId are required" });
+      return res.status(400).json({ message: "id and userId are required" });
     }
 
     const allowedStatus = ["PENDING", "UNDER_REVIEW", "COMPLETED"];
@@ -536,45 +482,104 @@ export const banUser = asyncHandler(async (req, res) => {
     }
 
     const flag = await prisma.flagRecord.findUnique({ where: { id } });
-    if (!flag) {
-      return res.status(404).json({ message: "Flag not found" });
-    }
-
-    const updatedFlag = await prisma.flagRecord.update({
-      where: { id },
-      data: {
-        status,
-        reason,
-        adminreason,
-        ...(userId ? { userId } : {}),
-      },
-    });
+    if (!flag) return res.status(404).json({ message: "Flag not found" });
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      return res.status(404).json({ message: "Service not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
+    // 1. Find all service requests involving this user (as requester or provider)
+    const userRequests = await prisma.serviceRequest.findMany({
+      where: {
+        OR: [{ providerId: userId }, { requesterId: userId }],
+      },
+      select: { id: true },
+    });
+    const userRequestIds = userRequests.map((r) => r.id);
+
+    // 2. Find all services created by this user
+    const userServices = await prisma.service.findMany({
+      where: { creatorId: userId },
+      select: { id: true },
+    });
+    const userServiceIds = userServices.map((s) => s.id);
+
+    // 3. Find service requests on the user's services (other people's requests to their services)
+    const serviceRequests = await prisma.serviceRequest.findMany({
+      where: { serviceId: { in: userServiceIds } },
+      select: { id: true },
+    });
+    const allRequestIds = [
+      ...new Set([...userRequestIds, ...serviceRequests.map((r) => r.id)]),
+    ];
+
+    // 4. Delete messages first (depends on ServiceRequest)
+    await prisma.message.deleteMany({
+      where: { serviceRequestId: { in: allRequestIds } },
+    });
+
+    // 5. Delete reviews (depends on ServiceRequest)
+    await prisma.review.deleteMany({
+      where: { serviceRequestId: { in: allRequestIds } },
+    });
+
+    // 6. Delete all service requests
+    await prisma.serviceRequest.deleteMany({
+      where: { id: { in: allRequestIds } },
+    });
+
+    // 7. Delete flag records on user's services
+    await prisma.flagRecord.deleteMany({
+      where: { serviceId: { in: userServiceIds } },
+    });
+
+    // 8. Delete the user's services
+    await prisma.service.deleteMany({
+      where: { creatorId: userId },
+    });
+
+    // 9. Update the flag record that triggered the ban
+    const updatedFlag = await prisma.flagRecord.update({
+      where: { id },
+      data: { status, reason, adminreason },
+    });
+
+    // 10. Ban the user
     await prisma.user.update({
       where: { id: userId },
       data: { ban: true },
     });
-    const deletedRequests = await prisma.serviceRequest.deleteMany({
-      where: {
-        OR: [{ providerId: userId }, { requesterId: userId }],
+
+    // Audit log
+    const performer = await prisma.user.findUnique({ where: { id: performerId } });
+    await createLog(
+      "User Banned",
+      "Moderation",
+      `**${performer?.name || "Admin"}** (ID: ${performerId.slice(-4)}) banned **${user.name}** (ID: ${userId.slice(-4)}). Reason: ${adminreason || reason || "No reason provided"}`,
+      performerId,
+      userId,
+      id,
+      adminreason || reason || "User banned via flag review",
+      "bg-[#ffdad6] text-[#ba1a1a]",
+      "UserX",
+      {
+        flagId: id,
+        deletedRequestsCount: allRequestIds.length,
+        deletedServicesCount: userServiceIds.length,
+        status,
       },
-    });
+    );
+
     return res.status(200).json({
-      message: "Banned User",
+      message: "User banned successfully",
       data: updatedFlag,
-      deletedRequestsCount: deletedRequests.count,
+      deletedRequestsCount: allRequestIds.length,
+      deletedServicesCount: userServiceIds.length,
     });
   } catch (err) {
-    console.error("deleteFlag error:", err);
+    console.error("banUser error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-
 export const dismissFlag = asyncHandler(async (req, res) => {
   try {
     const { id, serviceId } = req.body;
@@ -590,9 +595,7 @@ export const dismissFlag = asyncHandler(async (req, res) => {
 
     await prisma.flagRecord.delete({ where: { id } });
 
-    const service = await prisma.service.findUnique({
-      where: { id: serviceId },
-    });
+    const service = await prisma.service.findUnique({ where: { id: serviceId } });
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
     }
@@ -608,10 +611,13 @@ export const dismissFlag = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-
+// ─── DISMISS USER FLAG ───────────────────────────────────────────────────────
+// Fixed: removed unconditional ban:false (was wiping bans from other reasons),
+//        added audit log, improved safety checks
 export const dismissUserFlag = asyncHandler(async (req, res) => {
   try {
     const { id, userId } = req.body;
+    const performerId = req.user.uid;
 
     if (!id || !userId) {
       return res.status(400).json({ message: "id and userId are required" });
@@ -622,24 +628,128 @@ export const dismissUserFlag = asyncHandler(async (req, res) => {
       return res.status(404).json({ message: "Flag not found" });
     }
 
-    await prisma.flagRecord.delete({ where: { id } });
-
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: { ban: false },
-    });
+    // Delete the flag only — do NOT touch ban status.
+    // The old code set ban:false unconditionally, which would un-ban a user
+    // who was legitimately banned by a separate flag/action.
+    await prisma.flagRecord.delete({ where: { id } });
+
+    // Audit log
+    const performer = await prisma.user.findUnique({ where: { id: performerId } });
+    await createLog(
+      "User Flag Dismissed",
+      "Moderation",
+      `**${performer?.name || "Admin"}** (ID: ${performerId.slice(-4)}) dismissed flag against **${user.name}** (ID: ${userId.slice(-4)}) — no action taken`,
+      performerId,
+      userId,
+      id,
+      "Flag reviewed and dismissed",
+      "bg-[#fff9c4] text-[#5a4a00]",
+      "FlagOff",
+      { flagId: id, flagType: flag.type },
+    );
 
     return res.status(200).json({ message: "Flag dismissed successfully" });
   } catch (err) {
-    console.error("dismissFlag error:", err);
+    console.error("dismissUserFlag error:", err);
     return res.status(500).json({ message: "Internal server error" });
   }
 });
+
+
+// ─── DELETE FLAG (service/errand flags) ─────────────────────────────────────
+// Fixed: serviceId is now optional for USER-type flags so it won't crash,
+//        added audit log
+export const deleteFlag = asyncHandler(async (req, res) => {
+  try {
+    const { id, serviceId, status, reason, adminreason, userId } = req.body;
+    const performerId = req.user.uid;
+
+    if (!id) {
+      return res.status(400).json({ message: "id is required" });
+    }
+
+    // serviceId is required only for ERRAND-type flags
+    const flag = await prisma.flagRecord.findUnique({ where: { id } });
+    if (!flag) {
+      return res.status(404).json({ message: "Flag not found" });
+    }
+
+    if (flag.type === "ERRAND" && !serviceId) {
+      return res.status(400).json({ message: "serviceId is required for errand flags" });
+    }
+
+    const allowedStatus = ["PENDING", "UNDER_REVIEW", "COMPLETED"];
+    if (status && !allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" });
+    }
+
+    // Update the flag record
+    const updatedFlag = await prisma.flagRecord.update({
+      where: { id },
+      data: {
+        status,
+        reason,
+        adminreason,
+        ...(userId ? { userId } : {}),
+      },
+    });
+
+    let deletedRequestsCount = 0;
+
+    if (serviceId) {
+      const service = await prisma.service.findUnique({ where: { id: serviceId } });
+      if (!service) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+
+      // Hide the service and clean up its requests
+      await prisma.service.update({
+        where: { id: serviceId },
+        data: { hide: true },
+      });
+
+      const deletedRequests = await prisma.serviceRequest.deleteMany({
+        where: { serviceId },
+      });
+      
+      deletedRequestsCount = deletedRequests.count;
+    }
+
+    // Audit log
+    const performer = await prisma.user.findUnique({ where: { id: performerId } });
+    const targetName = serviceId ? `Service (ID: ${serviceId.slice(-4)})` : `User (ID: ${userId?.slice(-4)})`;
+    await createLog(
+      "Flag Actioned — Content Removed",
+      "Moderation",
+      `**${performer?.name || "Admin"}** (ID: ${performerId.slice(-4)}) actioned flag on ${targetName}. Reason: ${adminreason || reason || "No reason provided"}`,
+      performerId,
+      userId || null,
+      id,
+      adminreason || reason || "Content removed via flag review",
+      "bg-[#ffdad6] text-[#ba1a1a]",
+      "Trash2",
+      { flagId: id, serviceId, status, deletedRequestsCount },
+    );
+
+    return res.status(200).json({
+      message: "Flag processed successfully",
+      data: updatedFlag,
+      deletedRequestsCount,
+    });
+  } catch (err) {
+    console.error("deleteFlag error:", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+
+
 
 export const getAuditLogs = asyncHandler(async (req, res) => {
   const { page = 1, limit = 20 } = req.query;

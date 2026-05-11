@@ -119,6 +119,7 @@ export const login = asyncHandler(async (req, res) => {
       id: true,
       isAdmin: true,
       password: true,
+      ban:true,
       admin: {
         select: {
           canAdd: true,
@@ -133,6 +134,7 @@ export const login = asyncHandler(async (req, res) => {
     console.log("No user found with email:", email);
     return res.status(401).json({ message: "User Not Found" });
   }
+  console.log(user)
   if (user.ban) { return res.status(403).json({ message: "User Is Banned" }); }
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
@@ -229,7 +231,7 @@ export const forgotPassword = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-
+    
     res.status(500).json({
       message: "Failed to send reset email",
     });

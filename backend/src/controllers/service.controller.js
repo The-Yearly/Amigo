@@ -4,7 +4,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // GET ALL SERVICES
 export const getServices = asyncHandler(async (req, res) => {
   const services = await prisma.service.findMany({
-
+    where:{
+      hide:false,
+    },
     include: {
       creator: true,
       requests: {
@@ -111,6 +113,7 @@ export const getMyServices = asyncHandler(async (req, res) => {
     const services = await prisma.service.findMany({
       where: {
         creatorId: userId,
+        hide:false
       },
       include: {
         requests: true,
@@ -216,6 +219,7 @@ export const myserviceStats = asyncHandler(async (req, res) => {
   const services = await prisma.service.findMany({
     where: {
       creatorId: userId,
+      hide:false,
     },
     include: {
       requests: true,

@@ -118,13 +118,13 @@ model Message {
   isRead    Boolean  @default(false)
 
   serviceRequestId String         @db.ObjectId
-  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id])
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id],onDelete:Cascade)
 
   senderId String @db.ObjectId
-  sender   User   @relation("Sender", fields: [senderId], references: [id])
+  sender   User   @relation("Sender", fields: [senderId], references: [id],onDelete:Cascade)
 
   receiverId String @db.ObjectId
-  receiver   User   @relation("Receiver", fields: [receiverId], references: [id])
+  receiver   User   @relation("Receiver", fields: [receiverId], references: [id],onDelete:Cascade)
 }
 
 model Review {
