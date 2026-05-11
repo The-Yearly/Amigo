@@ -16,7 +16,7 @@ export const createRequest = asyncHandler(async (req, res) => {
   const request = await prisma.serviceRequest.create({
     data: {
       serviceId,
-      requesterId: req.user,
+      requesterId: req.user.uid,
       providerId: service.creatorId,
       status: "Pending",
     },
@@ -26,10 +26,11 @@ export const createRequest = asyncHandler(async (req, res) => {
 });
 
 export const getMyRequests = asyncHandler(async (req, res) => {
-  console.log("Fetching requests for user:", req.user);
-  console.log(req.user, "Cause");
+  console.log("Fetching requests for user:", req.user.uid);
+  console.log(req.user.uid, "Cause");
   const requests = await prisma.serviceRequest.findMany({
     where: {
+      requesterId: req.user.uid,
       requesterId: req.user.uid,
     },
     include: {
@@ -73,7 +74,7 @@ export const getProviderRequests = asyncHandler(async (req, res) => {
 
   const requests = await prisma.serviceRequest.findMany({
     where: {
-      providerId: req.user.uid,
+      providerId: req.user.uid.uid,
     },
     include: {
       service: true,
@@ -116,4 +117,138 @@ export const newRequest = asyncHandler(async (req, res) => {
       }
     }})
   res.json({message:"Requested For Service"})
+});
+
+
+
+export const newRequest = asyncHandler(async (req, res) => {
+  const data = req.body;
+    const resp = await prisma.serviceRequest.create({
+    data: {
+      status: "Pending",
+      service: {
+        connect: { id: data.serviceId }
+      },
+      requester: {
+        connect: { id: data.requesterId }
+      },
+      provider: {
+        connect: { id: data.providerId }
+      }
+    }})
+  res.json({message:"Requested For Service"})
+});
+
+export const getIncomingRequests = asyncHandler(async (req, res) => {
+  const { status, search } = req.query;
+
+  const where = {
+    providerId: req.user.uid,
+  };
+
+  if (status && status !== "All") {
+    where.status = status;
+  }
+
+  const requests = await prisma.serviceRequest.findMany({
+    where,
+    include: {
+      service: true,
+      requester: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  let filtered = requests;
+
+  if (search) {
+    filtered = requests.filter((r) =>
+      r.service.title.toLowerCase().includes(search.toLowerCase()) ||
+      r.requester.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+  res.json(filtered);
+});
+
+
+export const getRequestDetail = asyncHandler(async (req, res) => {
+  const request = await prisma.serviceRequest.findUnique({
+    where: {
+      id: req.params.id,
+    },
+    include: {
+      service: true,
+      requester: true,
+      messages: {
+        orderBy: {
+          createdAt: "asc",
+        },
+        take: 5,
+      },
+    },
+  });
+
+  if (!request) {
+    return res.status(404).json({
+      message: "Request not found",
+    });
+  }
+
+  res.json(request);
+});
+
+
+const updateStatus = async (id, status) => {
+  return prisma.serviceRequest.update({
+    where: { id },
+    data: { status },
+  });
+};
+
+
+export const acceptRequest = asyncHandler(async (req, res) => {
+  const updated = await updateStatus(req.params.id, "Accepted");
+  res.json(updated);
+});
+
+
+export const rejectRequest = asyncHandler(async (req, res) => {
+  const updated = await updateStatus(req.params.id, "Cancelled");
+  res.json(updated);
+});
+
+export const startRequest = asyncHandler(async (req, res) => {
+  const updated = await updateStatus(req.params.id, "InProgress");
+  res.json(updated);
+});
+
+
+export const completeRequest = asyncHandler(async (req, res) => {
+  const updated = await updateStatus(req.params.id, "Completed");
+  res.json(updated);
+});
+
+
+export const getProviderStats = asyncHandler(async (req, res) => {
+  const requests = await prisma.serviceRequest.findMany({
+    where: {
+      providerId: req.user.uid,
+    },
+  });
+
+  const services = await prisma.service.count({
+    where: {
+      creatorId: req.user.uid,
+    },
+  });
+
+  res.json({
+    pending: requests.filter(r => r.status === "Pending").length,
+    accepted: requests.filter(r => r.status === "Accepted").length,
+    completed: requests.filter(r => r.status === "Completed").length,
+    activeServices: services,
+  });
 });
