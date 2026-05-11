@@ -44,4 +44,5 @@ router.patch("/requests/:id/complete", protect, completeRequest);
 // Generic status update
 router.patch("/:id/status", protect, updateRequestStatus);
 router.post("/newRequest",protect,newRequest)
+router.post("/newRequest",protect,newRequest)
 export default router;
