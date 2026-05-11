@@ -4,9 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 // GET ALL SERVICES
 export const getServices = asyncHandler(async (req, res) => {
   const services = await prisma.service.findMany({
-    where:{
-      hide:false
-    },
+
     include: {
       creator: true,
       requests: {
@@ -39,6 +37,7 @@ export const getServices = asyncHandler(async (req, res) => {
       title: s.title,
       rating,
       reviewCount: reviews.length,
+      category:s.category,
 
       // format here so frontend stays dumb
       price: `₹${s.price}`,

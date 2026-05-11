@@ -42,6 +42,16 @@ app.get("/", (req, res) => {
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+app.post('/api/logout', (req, res) => {
+  res.clearCookie('token', { 
+    path: '/', 
+    // These must match exactly how the cookie was created
+    httpOnly: true, 
+    secure: true, 
+    sameSite: 'None' 
+  });
+  res.status(200).json({ message: "Logged out" });
+});
 
 app.get("/api/me", (req, res) => {
   console.log("Rer", req.cookies.token);

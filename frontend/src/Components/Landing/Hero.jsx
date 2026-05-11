@@ -31,26 +31,6 @@ const Hero = () => {
             Collective
           </span>
         </h1>
-
-        <div className="mt-10 relative max-w-xl">
-          <input
-            type="text"
-            placeholder="Search for specialized services, editors, or campus gigs..."
-            className="w-full bg-gray-100 border-none py-4 px-6 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-green-800"
-          />
-          <button className="absolute right-3 top-2.5 bg-[#064e3b] p-2 rounded-md text-white">
-            <svg
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              viewBox="0 0 24 24"
-            >
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-          </button>
-        </div>
       </div>
 
       <div className="w-80 bg-white border border-gray-100 shadow-xl rounded-xl p-6 h-fit">

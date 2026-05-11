@@ -29,6 +29,8 @@ export const getProfile = asyncHandler(async (req, res) => {
   return res.json(user);
 });
 
+
+
 export const updateProfile = asyncHandler(async (req, res) => {
   console.log("IJskd", req.body);
   const { id, name, department, profileImage, bio } = req.body; // ✅ Added bio

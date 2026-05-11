@@ -1,8 +1,18 @@
 import React from "react";
 import { Bell, MessageSquare, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import { motion } from "framer-motion"; 
+import { LogOut } from "lucide-react";
 const Navbar = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+      // Clear local storage/state and redirect
+      window.location.href = '/login';
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
   return (
     <nav className="relative z-[60] flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100 shadow-sm">
       {/* LOGO */}
@@ -50,6 +60,16 @@ const Navbar = () => {
             <img src="user-avatar.jpg" />
           </div>
         </Link>
+        {/* LOGOUT BUTTON */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleLogout}
+          className="p-2 ml-1 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+          title="Logout"
+        >
+          <LogOut className="w-5 h-5" />
+        </motion.button>
       </div>
     </nav>
   );
