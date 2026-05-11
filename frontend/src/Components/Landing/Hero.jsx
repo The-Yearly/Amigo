@@ -9,12 +9,13 @@ const Hero = () => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/dashboard/stats",
+          `${import.meta.env.VITE_BACKEND_URL}/api/dashboard/stats`,
           {
             withCredentials: true,
           },
         );
         setStats(res.data);
+        console.log("Fetched stats:", res.data);
       } catch (error) {
         console.error("Error fetching stats:", error);
       }

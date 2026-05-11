@@ -28,6 +28,7 @@ import { redirect } from "react-router-dom";
 import Portfolio from "./services/CreatorProfile";
 import ReviewFlaggedErrand from "./admin/flagged/reviewFlaggedErrand";
 import ReviewFlaggedUser from "./admin/flagged/reviewFlaggedUser";
+import IncomingRequestsPage from "./services/IncomingRequestsPage";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -36,49 +37,50 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <App />,
-      },  
+      },
       {
         element: <RootLayout />,
         children: [
           {
-                  element: <ServiceLayout/>,
-      children: [
-        { path: "/services", element: <ExplorePage /> },
-        { path: "/create-service", element: <CreateServicePage /> },
-        { path: "/my/services", element: <MyServicesPage /> },
-          { path: "/portfolio/:creatorId", element: <Portfolio /> },
-         {
-            path: "/services/edit/:serviceId",
-            element: <EditServicePage />,
-            loader: async ({ params }) => {
-              const { data: user } = await axios
-                .get(`${import.meta.env.VITE_BACKEND_URL}/api/me`, {
-                  withCredentials: true,
-                })
-                .catch(() => {
-                  throw redirect("/");
-                });
+            element: <ServiceLayout />,
+            children: [
+              { path: "/services", element: <ExplorePage /> },
+              { path: "/create-service", element: <CreateServicePage /> },
+              { path: "/my/services", element: <MyServicesPage /> },
+              { path: "/incomingrequests", element: <IncomingRequestsPage /> },
+              { path: "/portfolio/:creatorId", element: <Portfolio /> },
+              {
+                path: "/services/edit/:serviceId",
+                element: <EditServicePage />,
+                loader: async ({ params }) => {
+                  const { data: user } = await axios
+                    .get(`${import.meta.env.VITE_BACKEND_URL}/api/me`, {
+                      withCredentials: true,
+                    })
+                    .catch(() => {
+                      throw redirect("/");
+                    });
 
-              const { data: service } = await axios
-                .get(
-                  `${import.meta.env.VITE_BACKEND_URL}/api/services/${params.serviceId}`,
-                  { withCredentials: true },
-                )
-                .catch(() => {
-                  throw redirect("/");
-                });
+                  const { data: service } = await axios
+                    .get(
+                      `${import.meta.env.VITE_BACKEND_URL}/api/services/${params.serviceId}`,
+                      { withCredentials: true },
+                    )
+                    .catch(() => {
+                      throw redirect("/");
+                    });
 
-              if (service.creatorId !== user.uid) throw redirect("/");
-              return service;
-            },
+                  if (service.creatorId !== user.uid) throw redirect("/");
+                  return service;
+                },
+              },
+              { path: "/my/requests", element: <MyRequestsPage /> },
+              { path: "/services/:serviceId", element: <ServicePage /> },
+              { path: "/profile", element: <ProfilePage /> },
+            ],
           },
-        { path: "/my/requests", element: <MyRequestsPage /> },
-        { path: "/services/:serviceId", element: <ServicePage /> },
-        { path: "/profile", element: <ProfilePage /> },
-      ],
-    },
-    { path: "/messages", element: <MessagesPage /> },
-        
+          { path: "/messages", element: <MessagesPage /> },
+
           { path: "/messages", element: <MessagesPage /> },
           {
             path: "/adminSettings",
@@ -93,12 +95,12 @@ const router = createBrowserRouter([
                 element: <AdminFlagged />,
               },
               {
-                path:"flagged/errand/:serviceId",
-                element:<ReviewFlaggedErrand/>
+                path: "flagged/errand/:serviceId",
+                element: <ReviewFlaggedErrand />,
               },
-               {
-                path:"flagged/user/:creatorId",
-                element:<ReviewFlaggedUser/>
+              {
+                path: "flagged/user/:creatorId",
+                element: <ReviewFlaggedUser />,
               },
               {
                 path: "permissions",

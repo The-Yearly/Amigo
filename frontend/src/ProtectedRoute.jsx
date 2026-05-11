@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
   const hasCookie = document.cookie
     .split(";")
     .some((item) => item.trim().startsWith("creds="));
-
+  console.log("Checking for creds cookie:", hasCookie);
   if (!hasCookie) {
     // If no cookie, boot them to the authentication page
     return <Navigate to="/signup" replace />;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Bell, MessageSquare, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/lib/authProvider";
-import axios from "axios";import { motion } from "framer-motion"; 
+import axios from "axios";import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 const Navbar = () => {
   const [image,useImage]=useState("")
@@ -14,9 +14,9 @@ const Navbar = () => {
   fetchData()})
   const handleLogout = async () => {
     try {
-      await fetch('/api/logout', { method: 'POST' });
+      await fetch("/api/logout", { method: "POST" });
       // Clear local storage/state and redirect
-      window.location.href = '/login';
+      window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed", error);
     }
@@ -39,7 +39,10 @@ const Navbar = () => {
           My Services
         </Link>
         <Link to="/my/requests" className="hover:text-black">
-          Requests
+          My Requests
+        </Link>
+        <Link to="/incomingrequests" className="hover:text-black">
+          Incoming Requests
         </Link>
         <Link to="/messages" className="hover:text-black">
           Messages
