@@ -38,7 +38,9 @@ export default function RequestDetailPanel({
         <h2 className="text-2xl font-black text-primary-container font-display leading-tight">
           {title}
         </h2>
-        <p className="text-sm text-on-surface-variant mt-2">Request ID: {requestId}</p>
+        <p className="text-sm text-on-surface-variant mt-2">
+          Request ID: {requestId}
+        </p>
       </div>
 
       {/* Body */}
@@ -48,7 +50,9 @@ export default function RequestDetailPanel({
           <h4 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">
             Project Description
           </h4>
-          <p className="text-sm leading-relaxed text-on-surface">"{description}"</p>
+          <p className="text-sm leading-relaxed text-on-surface">
+            "{description}"
+          </p>
         </div>
 
         {/* Attachments */}
@@ -63,8 +67,12 @@ export default function RequestDetailPanel({
                   key={i}
                   className="flex items-center gap-3 p-3 bg-surface-container rounded-lg border border-outline-variant/10 shadow-sm"
                 >
-                  <span className="material-symbols-outlined text-secondary">{att.icon}</span>
-                  <span className="text-xs font-semibold truncate flex-1">{att.name}</span>
+                  <span className="material-symbols-outlined text-secondary">
+                    {att.icon}
+                  </span>
+                  <span className="text-xs font-semibold truncate flex-1">
+                    {att.name}
+                  </span>
                   <span className="material-symbols-outlined text-xs text-on-surface-variant">
                     {att.type === "link" ? "open_in_new" : "download"}
                   </span>
@@ -89,10 +97,14 @@ export default function RequestDetailPanel({
                     }`}
                   />
                   <div>
-                    <p className={`text-xs font-bold ${step.done ? "" : "text-on-surface-variant"}`}>
+                    <p
+                      className={`text-xs font-bold ${step.done ? "" : "text-on-surface-variant"}`}
+                    >
                       {step.label}
                     </p>
-                    <p className="text-[10px] text-on-surface-variant">{step.time}</p>
+                    <p className="text-[10px] text-on-surface-variant">
+                      {step.time}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -104,7 +116,9 @@ export default function RequestDetailPanel({
         <div className="pt-6 border-t border-outline-variant/20">
           <div className="bg-surface-container-high p-4 rounded-xl flex items-center gap-3 border border-outline-variant/10 shadow-sm">
             <div className="flex-grow">
-              <p className="text-xs font-bold text-primary-container">Send a direct message</p>
+              <p className="text-xs font-bold text-primary-container">
+                Send a direct message
+              </p>
               <p className="text-[10px] text-on-surface-variant">
                 Start a conversation with {requesterName}
               </p>

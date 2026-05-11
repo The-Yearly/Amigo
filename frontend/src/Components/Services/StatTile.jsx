@@ -15,7 +15,9 @@ export default function StatTile({ label, value, primary = false }) {
       <span className="text-on-surface-variant text-sm font-medium uppercase tracking-wider">
         {label}
       </span>
-      <span className="text-3xl font-black text-primary-container font-display">{value}</span>
+      <span className="text-3xl font-black text-primary-container font-display">
+        {value}
+      </span>
     </div>
   );
 }
