@@ -19,7 +19,7 @@ export default function ExplorePage() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/services")
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/services`)
       .then((res) => {
         console.log("API data:", res.data);
         setServices(res.data);

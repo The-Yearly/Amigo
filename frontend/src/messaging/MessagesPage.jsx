@@ -33,7 +33,7 @@ export default function MessagesPage() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/messages", {
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/messages`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -50,7 +50,7 @@ export default function MessagesPage() {
 
   async function sendMessage(content) {
     await axios.post(
-      "http://localhost:5000/api/messages",
+      `${import.meta.env.VITE_BACKEND_URL}/api/messages`,
       {
         serviceRequestId: activeChat,
         content,
@@ -61,7 +61,7 @@ export default function MessagesPage() {
     );
 
     fetchMessages();
-    const convRes = await axios.get("http://localhost:5000/api/messages", {
+    const convRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/messages`, {
       withCredentials: true,
     });
     setConversations(convRes.data);
@@ -72,7 +72,7 @@ export default function MessagesPage() {
     if (!activeChat) return;
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/messages/${activeChat}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/messages/${activeChat}`,
         {
           withCredentials: true,
         },
@@ -90,12 +90,12 @@ export default function MessagesPage() {
     const markRead = async () => {
       try {
         await axios.patch(
-          `http://localhost:5000/api/messages/${activeChat}/read`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/messages/${activeChat}/read`,
           {},
           { withCredentials: true },
         );
         // Refresh the conversation list to remove the "NEW" badge immediately
-        const convRes = await axios.get("http://localhost:5000/api/messages", {
+        const convRes = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/messages`, {
           withCredentials: true,
         });
         setConversations(convRes.data);

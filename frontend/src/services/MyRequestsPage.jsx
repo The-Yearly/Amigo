@@ -51,7 +51,7 @@ export default function MyRequestsPage() {
   useEffect(() => {
     console.log("HE;l");
     api
-      .get("http://localhost:5000/api/requests/my/" + user.uid, {
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/requests/my/${user.uid}`, {
         withCredentials: true,
       })
       .then((res) => setRequests(res.data));
@@ -59,7 +59,7 @@ export default function MyRequestsPage() {
 
   async function handleRequest(serviceId) {
     await api.post(
-      "http://localhost:5000/api/requests",
+      `${import.meta.env.VITE_BACKEND_URL}/api/requests`,
       {
         serviceId,
       },
@@ -111,7 +111,7 @@ export default function MyRequestsPage() {
                   onOpenChat={() => navigate(`/messages?chat=${req.id}`)}
                   onCancel={async () => {
                     await api.patch(
-                      `http://localhost:5000/api/requests/${req.id}/status`,
+                      `${import.meta.env.VITE_BACKEND_URL}/api/requests/${req.id}/status`,
                       { status: "Cancelled" },
                     );
                   }}

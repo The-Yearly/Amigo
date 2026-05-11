@@ -15,6 +15,8 @@ const Dashboard = () => {
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/user/profile/` + user.uid,
       );
+      console.log("User object:", user);
+
       const data = res.data;
       {
         setProfile({

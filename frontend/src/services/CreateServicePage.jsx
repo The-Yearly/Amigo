@@ -105,7 +105,7 @@ export default function CreateServicePage() {
 
       console.log(updatedForm);
 
-      await axios.post("http://localhost:5000/api/services", updatedForm, {
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/services`, updatedForm, {
         withCredentials: true,
       });
 

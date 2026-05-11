@@ -23,10 +23,10 @@ const Dashboard = () => {
 
   useEffect(() => {
     Promise.all([
-      axios.get("http://localhost:5000/api/dashboard", {
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/dashboard`, {
         withCredentials: true,
       }),
-      axios.get("http://localhost:5000/api/services", {
+      axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/services`, {
         withCredentials: true,
       }),
     ])

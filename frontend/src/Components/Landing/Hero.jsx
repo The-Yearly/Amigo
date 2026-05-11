@@ -9,7 +9,7 @@ const Hero = () => {
     const fetchStats = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/dashboard/stats",
+          `${import.meta.env.VITE_BACKEND_URL}/api/dashboard/stats`,
           {
             withCredentials: true,
           },

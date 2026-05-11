@@ -21,7 +21,8 @@ const AdminProfile = () => {
     const fetchAdminData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/admin/profile/${user.uid}`,
+          // `http://localhost:5000/api/admin/profile/${user.uid}`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/admin/profile/${user.uid}`,
           {
             withCredentials: true,
           }
@@ -99,7 +100,8 @@ const AdminProfile = () => {
 
       // Update password API call
       await axios.put(
-        "http://localhost:5000/api/admin/update-profile",
+        // "http://localhost:5000/api/admin/update-profile",
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/update-profile`,
         {
           newPassword,
           adminId: admin.id,
