@@ -225,6 +225,8 @@ export const addAdmin = asyncHandler(async (req, res) => {
     res.json({ message: err });
   }
 });
+
+
 export const removeAdmin = asyncHandler(async (req, res) => {
   const id = req.params.id;
   const performerId = req.user.uid;
@@ -316,9 +318,37 @@ export const updateProfile = asyncHandler(async (req, res) => {
   });
 });
 
+// adminController.js
+
+export const getAdminStats = asyncHandler(async (req, res) => {
+  // Fetch counts in parallel for performance
+  const [totalFlags, urgentReports, profileReports, errandReports] = await Promise.all([
+    prisma.flagRecord.count(),
+    prisma.flagRecord.count({ where: { status: "PENDING" } }), // Assuming PENDING = Urgent
+    prisma.flagRecord.count({ where: { type: "USER" } }),      // Adjust enum values based on your Prisma schema
+    prisma.flagRecord.count({ where: { type: "SERVICE" } }),   // Assuming Service = Errand in your UI
+  ]);
+
+  res.status(200).json({
+    data: {
+      totalFlags,
+      urgentReports,
+      profileReports,
+      errandReports,
+    },
+  });
+});
+
 export const getFlagged = asyncHandler(async (req, res) => {
   try {
+    // Get limit from query params, default to 5 for recent activity
+    const limit = req.query.limit ? parseInt(req.query.limit) : 5;
+
     const flagged = await prisma.flagRecord.findMany({
+      take: limit,
+      orderBy: {
+        time: 'desc' // Ensure most recent is first
+      },
       select: {
         id: true,
         type: true,
@@ -344,7 +374,7 @@ export const getFlagged = asyncHandler(async (req, res) => {
     });
     res.status(200).json({ data: flagged });
   } catch (err) {
-    res.json({ message: err });
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -625,3 +655,4 @@ export const getAuditLogs = asyncHandler(async (req, res) => {
   
   res.status(200).json({ data: formattedLogs });
 });
+

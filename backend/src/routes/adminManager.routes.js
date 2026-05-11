@@ -17,7 +17,8 @@ import {
   dismissFlag,
   getUserFlaggedId,
   banUser,
-  dismissUserFlag
+  dismissUserFlag,
+  getAdminStats,
 } from "../controllers/adminManager.controller.js";
 import { adminOnly } from "../middleware/auth.middleware.js";
 const router = express.Router();
@@ -38,4 +39,6 @@ router.post("/dismissFlag/", adminOnly, dismissFlag);
 router.get("/getFlaggedUserId/:id", adminOnly, getUserFlaggedId);
 router.post("/removeUserFlag/", adminOnly, banUser);
 router.post("/dismissUserFlag/", adminOnly, dismissUserFlag);
+router.get("/stats", getAdminStats);
+router.get("/flagged", getFlagged);
 export default router;
